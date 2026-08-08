@@ -1,5 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { getSiteOrigin } from "@/domains/weddings/site-origin";
+import { DyraneMotionProvider } from "@/ui/motion";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,20 +15,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Alexander & Chioma — A Wedding World",
-  description: "Enter the wedding world of Alexander and Chioma. September 15, 2027 · Lagos.",
-  openGraph: {
-    title: "Alexander & Chioma — You’re invited",
-    description: "September 15, 2027 · Lagos. Enter our wedding world.",
-    type: "website",
+  metadataBase: getSiteOrigin(),
+  title: {
+    default: "Dyrane Weddings",
+    template: "%s · Dyrane Weddings",
   },
-  other: {
-    "codex-preview": "development",
-  },
+  description: "Personal invitations, beautifully told.",
+  ...(process.env.NODE_ENV === "development"
+    ? { other: { "codex-preview": "development" } }
+    : {}),
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
   },
+};
+
+export const viewport: Viewport = {
+  colorScheme: "dark",
+  themeColor: "#120e17",
 };
 
 export default function RootLayout({
@@ -39,7 +45,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <DyraneMotionProvider>{children}</DyraneMotionProvider>
       </body>
     </html>
   );

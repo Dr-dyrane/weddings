@@ -2,11 +2,30 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Float, MeshReflectorMaterial, RoundedBox, Sparkles } from "@react-three/drei";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import * as THREE from "three";
 
 const clamp = (n: number, min = 0, max = 1) => Math.min(max, Math.max(min, n));
 const range = (p: number, start: number, length: number) => clamp((p - start) / length);
+
+const subscribeOnce = () => () => {};
+
+function useClientExperience() {
+  const hydrated = useSyncExternalStore(subscribeOnce, () => true, () => false);
+  const guest = useSyncExternalStore(
+    subscribeOnce,
+    () => new URLSearchParams(location.search).get("guest") || "Friend",
+    () => "Friend",
+  );
+  let webgl = false;
+  if (hydrated) {
+    try {
+      const canvas = document.createElement("canvas");
+      webgl = Boolean(canvas.getContext("webgl2") || canvas.getContext("webgl"));
+    } catch { webgl = false; }
+  }
+  return { guest, webgl };
+}
 
 function useJourney() {
   const progress = useRef(0);
@@ -159,11 +178,11 @@ function RSVP() {
 }
 
 export default function Home() {
-  const journey=useJourney(); const [begun,setBegun]=useState(false); const [guest] = useState(() => typeof window === "undefined" ? "Friend" : new URLSearchParams(location.search).get("guest") || "Friend");
+  const journey=useJourney(); const [begun,setBegun]=useState(false); const { guest, webgl } = useClientExperience();
   useEffect(()=>{document.body.classList.add("locked");return()=>document.body.classList.remove("locked")},[]);
   const begin=()=>{setBegun(true);document.body.classList.remove("locked");setTimeout(()=>scrollTo({top:innerHeight*.7,behavior:"smooth"}),500)};
   return <main className={begun?"experience begun":"experience"}>
-    <WorldCanvas journey={journey}/><div className="vignette"/><div className="noise"/>
+    {webgl ? <WorldCanvas journey={journey}/> : <div className="fallback-world" aria-hidden="true"><div className="fallback-glow"/><div className="fallback-envelope"><div className="fallback-flap"/><div className="fallback-card"><i>A</i><span>&</span><i>C</i></div><div className="fallback-seal">∞</div></div></div>}<div className="vignette"/><div className="noise"/>
     <header><a href="#invitation">A<span>∞</span>C</a><div className="journey-line"><i/><span>Our wedding world</span></div><button onClick={()=>scrollTo({top:document.body.scrollHeight,behavior:"smooth"})}>RSVP</button></header>
     <section id="invitation" className="beat beat-intro">
       <div className="intro-copy"><p className="kicker">A private world for {guest}</p><h1>You’re invited<br/>to step inside.</h1><button className="enter" onClick={begin}><span>Open the envelope</span><i>↓</i></button></div>

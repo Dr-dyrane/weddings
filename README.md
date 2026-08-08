@@ -13,7 +13,9 @@ Alexander and Chioma are the yardstick build. The current content is simulated a
 
 The checked-in personalized token is a non-secret preview fixture. Production credentials will be random, hashed at rest, revocable, and supplied by the invitation service.
 
-## Product contracts
+## Product canon
+
+Start with the [`docs/INDEX.md`](docs/INDEX.md) canon map. It links the product constitution, research dossier, Alexander–Chioma art bible, scene storyboard, asset intake, recovered brand-mark reference, autonomous build runbook and release gates.
 
 The project-specific design constitution lives in [`docs/WEDDINGS-PROFILE.md`](docs/WEDDINGS-PROFILE.md). Its adjacent copy, content, motion, privacy, and verification contracts are release requirements. Architecture decisions are recorded in [`docs/adr`](docs/adr).
 

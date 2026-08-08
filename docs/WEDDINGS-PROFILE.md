@@ -2,7 +2,7 @@
 
 Status: authoritative for the Alexander and Chioma yardstick build
 
-Version: 0.1.0
+Version: 0.2.0
 
 Frozen: 2026-08-08
 
@@ -11,6 +11,12 @@ This profile turns the wider Dyrane design canon into product rules for wedding 
 ## Product promise
 
 A shared link first feels like a formal invitation worthy of keeping. Opening it reveals a cinematic, responsive celebration whose beauty never hides the couple, date, place, people, or response action.
+
+## Experiential north star
+
+The guest does not browse a wedding-themed page. The guest crosses a threshold and arrives at a living ceremonial place. For the Alexander and Chioma yardstick, that place is a twilight garden leading into a luminous glass pavilion.
+
+The environment follows the arc `Receive → Open → Cross → Wander → Gather → Arrive → Reply → Anticipate`. This direction is locked in `YARDSTICK-ART-BIBLE.md` and decomposed in `SCENE-STORYBOARD.md`.
 
 ## Surface grammar
 

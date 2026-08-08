@@ -33,8 +33,11 @@ test("attendance is a semantic single choice with progressive disclosure", async
 
   const attending = page.getByRole("radio", { name: "Joyfully, yes" });
   const declining = page.getByRole("radio", { name: "With love, no" });
+  const attendingControl = page
+    .locator("label.dyrane-choice")
+    .filter({ has: attending });
   await expect(attending).not.toBeChecked();
-  await attending.click();
+  await attendingControl.click();
   await expect(attending).toBeChecked();
   await expect(declining).not.toBeChecked();
   await expect(
@@ -102,7 +105,7 @@ test("reduced motion keeps the full invitation and removes the spatial canvas", 
 
   await expect(page.locator("canvas")).toHaveCount(0);
   await expect(page.getByRole("link", { name: "View invitation details" })).toBeVisible();
-  await expect(page.getByText("The Glass House")).toBeAttached();
+  await expect(page.locator("#details")).toContainText("The Glass House");
 });
 
 test("an invalid credential reveals no recipient", async ({ page }) => {

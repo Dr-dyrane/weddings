@@ -28,7 +28,13 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 if [[ "${production_preview}" == "1" && -f ".next/BUILD_ID" ]]; then
-  exec next start --hostname "${dev_host}" --port "${dev_port}" "${next_args[@]}"
+  if [[ "${#next_args[@]}" -gt 0 ]]; then
+    exec next start --hostname "${dev_host}" --port "${dev_port}" "${next_args[@]}"
+  fi
+  exec next start --hostname "${dev_host}" --port "${dev_port}"
 fi
 
-exec next dev --hostname "${dev_host}" --port "${dev_port}" "${next_args[@]}"
+if [[ "${#next_args[@]}" -gt 0 ]]; then
+  exec next dev --hostname "${dev_host}" --port "${dev_port}" "${next_args[@]}"
+fi
+exec next dev --hostname "${dev_host}" --port "${dev_port}"

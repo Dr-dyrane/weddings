@@ -1,7 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { getImageProps } from "next/image";
 import {
+  Component,
+  type ReactNode,
   useCallback,
   useEffect,
   useState,
@@ -10,6 +13,10 @@ import {
 
 import type { InvitationProjection } from "@/domains/invitations/invitation";
 import type { PublishedWedding } from "@/domains/weddings/published-wedding";
+import {
+  journeyById,
+  milestoneProgress,
+} from "@/features/invitation/journey";
 import { Button } from "@/ui/primitives/button";
 import { Choice, ChoiceGroup } from "@/ui/primitives/choice-group";
 import {
@@ -27,6 +34,25 @@ const SpatialInvitation = dynamic(
     ),
   { ssr: false },
 );
+
+class SpatialErrorBoundary extends Component<
+  { children: ReactNode; onUnavailable: () => void },
+  { failed: boolean }
+> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch() {
+    this.props.onUnavailable();
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
 
 const subscribeToHydration = () => () => undefined;
 let cachedWebGLSupport: boolean | undefined;
@@ -65,6 +91,96 @@ function useClientCapabilities() {
   );
   const webgl = hydrated && !reducedMotion ? supportsWebGL() : false;
   return { reducedMotion, webgl };
+}
+
+type StaticScene = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+function useActiveStaticScene() {
+  const [scene, setScene] = useState<StaticScene>(1);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const point = window.scrollY + window.innerHeight * 0.52;
+      let closest: { distance: number; scene: StaticScene } | undefined;
+
+      document.querySelectorAll<HTMLElement>("[data-scene]").forEach((beat) => {
+        const nextScene = Number(beat.dataset.scene) as StaticScene;
+        if (nextScene < 1 || nextScene > 7) return;
+        const center = beat.offsetTop + Math.min(beat.offsetHeight, innerHeight) * 0.45;
+        const distance = Math.abs(center - point);
+        if (!closest || distance < closest.distance) {
+          closest = { distance, scene: nextScene };
+        }
+      });
+
+      if (closest) setScene((current) =>
+        current === closest?.scene ? current : closest!.scene,
+      );
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+
+    update();
+    addEventListener("scroll", schedule, { passive: true });
+    addEventListener("resize", schedule, { passive: true });
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      removeEventListener("scroll", schedule);
+      removeEventListener("resize", schedule);
+    };
+  }, []);
+
+  return scene;
+}
+
+function StaticWeddingWorld({ scene }: { scene: StaticScene }) {
+  const basename = `/concepts/scene-${scene}-${
+    scene === 1
+      ? "envelope"
+      : scene === 2
+        ? "threshold"
+        : scene === 3
+          ? "story-garden"
+          : scene === 4
+            ? "wedding-circle"
+            : scene === 5
+              ? "pavilion"
+              : scene === 6
+                ? "dress-atmosphere"
+                : "rsvp"
+  }`;
+  const desktop = getImageProps({
+    alt: "",
+    fetchPriority: scene === 1 ? "high" : "auto",
+    height: 960,
+    loading: scene === 1 ? "eager" : "lazy",
+    quality: 82,
+    sizes: "100vw",
+    src: `${basename}-desktop.webp`,
+    width: 1440,
+  }).props;
+  const mobile = getImageProps({
+    alt: "",
+    height: 1600,
+    quality: 82,
+    sizes: "100vw",
+    src: `${basename}-mobile.webp`,
+    width: 900,
+  }).props;
+
+  return (
+    <div className="static-world" data-static-scene={scene} aria-hidden="true">
+      <picture key={scene}>
+        <source media="(max-width: 700px)" srcSet={mobile.srcSet} />
+        {/* getImageProps preserves responsive Next image optimization in picture. */}
+        <img {...desktop} className="static-world-image" alt="" />
+      </picture>
+      <div className="static-world-wash" />
+    </div>
+  );
 }
 
 function RSVP({
@@ -216,17 +332,32 @@ export function WeddingExperience({
   calendarHref,
 }: WeddingExperienceProps) {
   const [begun, setBegun] = useState(false);
+  const [introDeparted, setIntroDeparted] = useState(false);
+  const [spatialReady, setSpatialReady] = useState(false);
   const [spatialUnavailable, setSpatialUnavailable] = useState(false);
   const { reducedMotion, webgl } = useClientCapabilities();
-  const introHidden = begun && !reducedMotion;
+  const activeStaticScene = useActiveStaticScene();
+  const spatialActive = webgl && !spatialUnavailable;
+  const introHidden = introDeparted && !reducedMotion;
   const markSpatialUnavailable = useCallback(
-    () => setSpatialUnavailable(true),
+    () => {
+      setSpatialReady(false);
+      setSpatialUnavailable(true);
+    },
     [],
   );
+  const markSpatialPending = useCallback(() => setSpatialReady(false), []);
+  const markSpatialReady = useCallback(() => setSpatialReady(true), []);
 
   useEffect(() => {
     const markOpened = () => {
-      setBegun(window.scrollY > 24);
+      const story = document.querySelector<HTMLElement>("#story");
+      const departAt = Math.min(
+        420,
+        Math.max(220, (story?.offsetTop ?? window.innerHeight) * 0.34),
+      );
+      if (window.scrollY > 24) setBegun(true);
+      setIntroDeparted(window.scrollY > departAt);
     };
     markOpened();
     addEventListener("scroll", markOpened, { passive: true });
@@ -250,7 +381,19 @@ export function WeddingExperience({
       : `${wedding.couple.first} & ${wedding.couple.second} — You’re invited`;
 
   return (
-    <main className={begun ? "experience begun" : "experience"}>
+    <main
+      className={[
+        "experience",
+        begun ? "begun" : "",
+        introDeparted ? "intro-departed" : "",
+        spatialActive ? "spatial-active" : "static-active",
+        spatialActive
+          ? spatialReady
+            ? "spatial-ready"
+            : "spatial-loading"
+          : "",
+      ].filter(Boolean).join(" ")}
+    >
       <a
         className="skip-link"
         href="#details"
@@ -264,21 +407,15 @@ export function WeddingExperience({
       >
         Skip to celebration details
       </a>
-      {webgl && !spatialUnavailable ? (
-        <SpatialInvitation onUnavailable={markSpatialUnavailable} />
-      ) : (
-        <div className="fallback-world" aria-hidden="true">
-          <div className="fallback-glow" />
-          <div className="fallback-envelope">
-            <div className="fallback-flap" />
-            <div className="fallback-card">
-              <i>{wedding.couple.first.slice(0, 1)}</i>
-              <span>&</span>
-              <i>{wedding.couple.second.slice(0, 1)}</i>
-            </div>
-            <div className="fallback-seal">∞</div>
-          </div>
-        </div>
+      <StaticWeddingWorld scene={activeStaticScene} />
+      {spatialActive && (
+        <SpatialErrorBoundary onUnavailable={markSpatialUnavailable}>
+          <SpatialInvitation
+            onPending={markSpatialPending}
+            onReady={markSpatialReady}
+            onUnavailable={markSpatialUnavailable}
+          />
+        </SpatialErrorBoundary>
       )}
       <div className="vignette" />
       <div className="noise" />
@@ -299,11 +436,13 @@ export function WeddingExperience({
       <section
         id="invitation"
         className="beat beat-intro"
-        data-journey-progress="0"
+        data-chapter={journeyById.invitation.id}
+        data-journey-progress={journeyById.invitation.progress}
+        data-scene={journeyById.invitation.scene}
       >
         <div
           aria-hidden={introHidden}
-          className="intro-copy"
+          className="intro-copy copy-surface copy-surface-night"
           inert={introHidden ? true : undefined}
         >
           <p className="kicker">{guestEyebrow}</p>
@@ -322,10 +461,12 @@ export function WeddingExperience({
       <section
         id="story"
         className="beat beat-card"
-        data-journey-progress="0.2"
+        data-chapter={journeyById.threshold.id}
+        data-journey-progress={journeyById.threshold.progress}
+        data-scene={journeyById.threshold.scene}
         tabIndex={-1}
       >
-        <div className="glass-copy">
+        <div className="glass-copy copy-surface copy-surface-night">
           <p className="kicker">{wedding.invitation.eyebrow}</p>
           <h2>
             {wedding.couple.first}
@@ -339,13 +480,12 @@ export function WeddingExperience({
       {wedding.story.map((milestone, index) => (
         <section
           className={`beat ${index === 0 ? "beat-begin" : "beat-yes"}`}
-          data-journey-progress={String(
-            0.28 +
-              index * (0.18 / Math.max(1, wedding.story.length - 1)),
-          )}
+          data-chapter={journeyById.story.id}
+          data-journey-progress={milestoneProgress(index, wedding.story.length)}
+          data-scene={journeyById.story.scene}
           key={milestone.id}
         >
-          <div className={`story-label ${index % 2 === 0 ? "left" : "right"}`}>
+          <div className={`story-label copy-surface copy-surface-night ${index % 2 === 0 ? "left" : "right"}`}>
             <span>{milestone.sequence}</span>
             <p>{milestone.eyebrow}</p>
             <h3>{milestone.title}</h3>
@@ -354,7 +494,12 @@ export function WeddingExperience({
         </section>
       ))}
 
-      <section className="beat beat-circle" data-journey-progress="0.5">
+      <section
+        className="beat beat-circle"
+        data-chapter={journeyById.circle.id}
+        data-journey-progress={journeyById.circle.progress}
+        data-scene={journeyById.circle.scene}
+      >
         <div className="circle-copy">
           <p className="kicker">The wedding circle</p>
           <h2>The people beside us.</h2>
@@ -372,7 +517,9 @@ export function WeddingExperience({
       <section
         id="details"
         className="beat beat-venue"
-        data-journey-progress="0.58"
+        data-chapter={journeyById.pavilion.id}
+        data-journey-progress={journeyById.pavilion.progress}
+        data-scene={journeyById.pavilion.scene}
         tabIndex={-1}
       >
         <div className="detail-copy">
@@ -408,7 +555,12 @@ export function WeddingExperience({
         </div>
       </section>
 
-      <section className="beat beat-dress" data-journey-progress="0.72">
+      <section
+        className="beat beat-dress"
+        data-chapter={journeyById.dress.id}
+        data-journey-progress={journeyById.dress.progress}
+        data-scene={journeyById.dress.scene}
+      >
         <div className="dress-copy">
           <p className="kicker">{wedding.dress.eyebrow}</p>
           <h2>{wedding.dress.title}</h2>
@@ -428,7 +580,12 @@ export function WeddingExperience({
         </div>
       </section>
 
-      <section className="beat beat-vendors" data-journey-progress="0.8">
+      <section
+        className="beat beat-vendors"
+        data-chapter={journeyById.vendors.id}
+        data-journey-progress={journeyById.vendors.progress}
+        data-scene={journeyById.vendors.scene}
+      >
         <div className="vendors-copy">
           <p className="kicker">Made possible by</p>
           <h2>Hands behind the celebration.</h2>
@@ -443,7 +600,13 @@ export function WeddingExperience({
         </div>
       </section>
 
-      <section id="rsvp" className="beat beat-rsvp" data-journey-progress="0.9">
+      <section
+        id="rsvp"
+        className="beat beat-rsvp"
+        data-chapter={journeyById.rsvp.id}
+        data-journey-progress={journeyById.rsvp.progress}
+        data-scene={journeyById.rsvp.scene}
+      >
         <div className="sunset" aria-hidden="true"><i /><i /><i /></div>
         <RSVP invitation={invitation} wedding={wedding} />
         <footer>

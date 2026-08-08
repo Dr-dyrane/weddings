@@ -457,6 +457,10 @@ export function WeddingExperience({
         >
           <p className="kicker">{guestEyebrow}</p>
           <h1>{wedding.invitation.headline}</h1>
+          <p className="intro-date">
+            {wedding.dateLabel} <span aria-hidden="true">·</span>{" "}
+            {wedding.locationLabel}
+          </p>
           <div className="intro-actions">
             <Button className="enter" tone="light" onPress={begin}>
               <span>Open your invitation</span>

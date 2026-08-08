@@ -95,10 +95,18 @@ a{color:inherit}
   gap:17px;
   margin-top:auto;
 }
+.intro-date{
+  color:#d6c3a0;
+  font-size:12px;
+  letter-spacing:.13em;
+  line-height:1.5;
+  margin:20px 0 0;
+  text-transform:uppercase;
+}
 .intro-actions>a{
   font-size:10px;
   letter-spacing:.16em;
-  min-height:44px;
+  min-height:46px;
   padding:14px;
   text-transform:uppercase;
   text-underline-offset:5px;
@@ -529,7 +537,7 @@ a{color:inherit}
   justify-content:flex-start;
   padding-left:5vw;
   padding-right:5vw;
-  padding-top:16svh;
+  padding-top:max(39svh,calc(25svh + 106px));
 }
 .rsvp-card{background:#f8f1e9;width:min(52vw,700px)}
 

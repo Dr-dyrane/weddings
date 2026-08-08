@@ -31,8 +31,12 @@ This directory is the durable memory for the product. A decision is not consider
 
 - Phase 0 foundation: complete.
 - Phase 1 research package: complete.
-- Phase 1 visual production: ready to begin.
+- Phase 1 visual production: implemented through the invitation threshold,
+  story garden, wedding circle, pavilion, dress atmosphere and simulated RSVP
+  place setting; reference-device release verification is active.
 - Phase 1 concept stills: generated for desktop and mobile; provisional pending
   couple/venue approval.
 - Alexander–Chioma brand-mark reference: recovered and preserved.
+- OG/share-card edition `1`: implemented for public and personalized links with
+  a neutral unmarked runtime seal; it opens the same invitation experience.
 - Final vector, meaning and provenance approval: open; `A ∞ C` is only a development placeholder.

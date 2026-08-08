@@ -82,6 +82,32 @@ async function createShareCard(
         <div
           style={{
             alignItems: "center",
+            background: "#b8873f",
+            border: "3px solid #d7b36e",
+            borderRadius: "999px",
+            boxShadow: "0 8px 18px rgba(48, 25, 16, .28)",
+            display: "flex",
+            height: "146px",
+            justifyContent: "center",
+            left: "893px",
+            position: "absolute",
+            top: "468px",
+            width: "146px",
+          }}
+        >
+          <div
+            style={{
+              border: "2px solid rgba(255, 231, 179, .58)",
+              borderRadius: "999px",
+              display: "flex",
+              height: "108px",
+              width: "108px",
+            }}
+          />
+        </div>
+        <div
+          style={{
+            alignItems: "center",
             color: "#29161f",
             display: "flex",
             flexDirection: "column",

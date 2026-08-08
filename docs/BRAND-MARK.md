@@ -67,3 +67,9 @@ Reduced motion uses a short opacity reveal of the completed mark.
 The `A ∞ C` text glyph currently in code is a development placeholder. It must not be presented as the final logo, used to derive the final geometry or silently replace this recovered concept.
 
 Until the vector is approved, environmental blockouts may use the recovered concept only as a clearly labelled reference or use a neutral plain seal in the rendered experience.
+
+## Current share-card delivery
+
+Card edition `1` is implemented for both the public and personalized invitation routes. It renders the approved wedding snapshot into a deterministic 1200×630 card with the couple, recipient, date and location, and links into the same invitation experience.
+
+The underlying blockout art contains an exploratory stamped motif. Runtime delivery deliberately covers it with a neutral unmarked burnished-gold seal. The recovered Alexander–Chioma concept is not promoted into the share card until its meaning, vector, ownership and small-size form are approved.

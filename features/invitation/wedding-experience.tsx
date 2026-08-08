@@ -7,6 +7,7 @@ import {
   type ReactNode,
   useCallback,
   useEffect,
+  useMemo,
   useState,
   useSyncExternalStore,
 } from "react";
@@ -99,9 +100,7 @@ function useActiveStaticScene() {
   const [scene, setScene] = useState<StaticScene>(1);
 
   useEffect(() => {
-    let frame = 0;
     const update = () => {
-      frame = 0;
       const point = window.scrollY + window.innerHeight * 0.52;
       let closest: { distance: number; scene: StaticScene } | undefined;
 
@@ -119,17 +118,13 @@ function useActiveStaticScene() {
         current === closest?.scene ? current : closest!.scene,
       );
     };
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
 
     update();
-    addEventListener("scroll", schedule, { passive: true });
-    addEventListener("resize", schedule, { passive: true });
+    addEventListener("scroll", update, { passive: true });
+    addEventListener("resize", update, { passive: true });
     return () => {
-      if (frame) cancelAnimationFrame(frame);
-      removeEventListener("scroll", schedule);
-      removeEventListener("resize", schedule);
+      removeEventListener("scroll", update);
+      removeEventListener("resize", update);
     };
   }, []);
 
@@ -337,6 +332,13 @@ export function WeddingExperience({
   const [spatialUnavailable, setSpatialUnavailable] = useState(false);
   const { reducedMotion, webgl } = useClientCapabilities();
   const activeStaticScene = useActiveStaticScene();
+  const spatialStoryProgress = useMemo(
+    () =>
+      wedding.story.map((_, index) =>
+        milestoneProgress(index, wedding.story.length),
+      ),
+    [wedding.story],
+  );
   const spatialActive = webgl && !spatialUnavailable;
   const introHidden = introDeparted && !reducedMotion;
   const markSpatialUnavailable = useCallback(
@@ -414,6 +416,8 @@ export function WeddingExperience({
             onPending={markSpatialPending}
             onReady={markSpatialReady}
             onUnavailable={markSpatialUnavailable}
+            peopleCount={wedding.people.length}
+            storyProgress={spatialStoryProgress}
           />
         </SpatialErrorBoundary>
       )}
@@ -501,11 +505,13 @@ export function WeddingExperience({
         data-scene={journeyById.circle.scene}
       >
         <div className="circle-copy">
-          <p className="kicker">The wedding circle</p>
-          <h2>The people beside us.</h2>
-          <ul>
+          <div className="circle-heading copy-surface copy-surface-night">
+            <p className="kicker">The wedding circle</p>
+            <h2>The people beside us.</h2>
+          </div>
+          <ul className="circle-people" aria-label="The wedding circle">
             {wedding.people.map((person) => (
-              <li key={person.id}>
+              <li className="copy-surface copy-surface-night" key={person.id}>
                 <span>{person.role}</span>
                 <strong>{person.displayName}</strong>
               </li>

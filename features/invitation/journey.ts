@@ -54,8 +54,8 @@ export const journeyChapters = [
     copySide: "left",
     copySurface: "night",
     camera: {
-      desktop: { position: [-1.8, 0.55, -7.5], target: [-1, 0.15, -14] },
-      mobile: { position: [0, 0.45, -6.7], target: [0, 0, -13] },
+      desktop: { position: [-1.35, 0.7, -7.8], target: [1.1, -0.6, -14.4] },
+      mobile: { position: [0, 0.95, -7], target: [0, -0.7, -13.4] },
     },
   },
   {
@@ -65,8 +65,8 @@ export const journeyChapters = [
     copySide: "right",
     copySurface: "night",
     camera: {
-      desktop: { position: [1.5, 0.6, -18], target: [0, 0.1, -25] },
-      mobile: { position: [0, 0.6, -17], target: [0, 0.1, -24] },
+      desktop: { position: [1.4, 1, -18.2], target: [-1.2, -0.75, -25.8] },
+      mobile: { position: [0, 1.25, -17.6], target: [0, -1.1, -25.2] },
     },
   },
   {

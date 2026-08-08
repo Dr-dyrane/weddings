@@ -420,13 +420,54 @@ a{color:inherit}
 
 .story-label{
   padding:clamp(28px,4vw,48px);
-  top:42%;
+  top:min(18vh,180px);
   width:min(46vw,600px);
 }
 .story-label.left{left:5vw}
 .story-label.right{right:5vw}
 .story-label h3{font-size:clamp(38px,4.6vw,68px)}
 .story-label>p,.story-label time{color:#d0c5d2}
+
+.beat-circle{overflow:clip;padding:0}
+.circle-copy{
+  background:none;
+  backdrop-filter:none;
+  border-radius:0;
+  box-shadow:none;
+  inset:0;
+  padding:0;
+  position:absolute;
+  width:100%;
+}
+.circle-heading{
+  padding:clamp(28px,4vw,48px);
+  position:absolute;
+  right:5vw;
+  top:12svh;
+  width:min(43vw,620px);
+}
+.circle-heading h2{margin-bottom:0}
+.circle-people{
+  display:grid;
+  gap:10px;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  left:5vw;
+  list-style:none;
+  margin:0;
+  padding:0;
+  position:absolute;
+  top:min(58svh,540px);
+  width:min(48vw,680px);
+}
+.circle-copy .circle-people li{
+  border:0;
+  display:block;
+  min-width:0;
+  padding:14px 16px;
+}
+.circle-copy .circle-people li+li{border:0}
+.circle-copy .circle-people li span{display:block;margin-bottom:5px}
+.circle-copy .circle-people li strong{display:block;font-size:clamp(18px,2vw,26px)}
 
 .dress-copy{
   background:linear-gradient(135deg,rgba(14,9,17,.9),rgba(23,14,27,.8));
@@ -487,10 +528,29 @@ a{color:inherit}
     left:14px!important;
     padding:28px 24px;
     right:14px!important;
-    top:46%;
+    top:12svh;
     width:auto;
   }
   .story-label h3{font-size:clamp(38px,11vw,54px)}
+
+  .beat-circle{padding:0}
+  .circle-heading{
+    left:14px;
+    padding:20px;
+    right:14px;
+    top:10svh;
+    width:auto;
+  }
+  .circle-heading h2{font-size:clamp(31px,10vw,39px);margin:12px 0 0}
+  .circle-people{
+    left:14px;
+    right:14px;
+    top:58svh;
+    width:auto;
+  }
+  .circle-copy .circle-people li{padding:10px 11px}
+  .circle-copy .circle-people li span{font-size:8px;letter-spacing:.11em}
+  .circle-copy .circle-people li strong{font-size:clamp(16px,5vw,20px);overflow-wrap:anywhere}
 
   .dress-copy{
     border-radius:24px;

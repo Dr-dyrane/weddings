@@ -6,6 +6,10 @@ import { Suspense, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
 import { journeyChapters } from "@/features/invitation/journey";
+import {
+  StoryClearings,
+  WeddingCircle,
+} from "@/features/invitation/spatial-story";
 
 const clamp = (value: number, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));
@@ -356,7 +360,11 @@ function GardenFoliage() {
     for (let index = 0; index < 54; index += 1) {
       const side = index % 2 === 0 ? -1 : 1;
       const depth = -4.5 - (index % 27) * 1.45;
-      const offset = 2.75 + (index % 6) * 0.26;
+      const clearingGap =
+        (side > 0 && depth < -11 && depth > -16.5) ||
+        (side < 0 && depth < -18.5 && depth > -23.8) ||
+        (depth < -23.5 && depth > -30.5);
+      const offset = 2.75 + (index % 6) * 0.26 + (clearingGap ? 1.85 : 0);
       position.set(
         side * offset + Math.sin(index * 1.7) * 0.2,
         -1.24 + (index % 5) * 0.17,
@@ -438,7 +446,14 @@ function DistantPavilion() {
   );
 }
 
-function LivingGarden({ progress }: Pick<JourneyState, "progress">) {
+function LivingGarden({
+  peopleCount,
+  progress,
+  storyProgress,
+}: Pick<JourneyState, "progress"> & {
+  peopleCount: number;
+  storyProgress: readonly number[];
+}) {
   const group = useRef<THREE.Group>(null);
   const ribbonCurve = useMemo(() => createGardenCurve(), []);
   const pathGeometry = useMemo(() => createPathGeometry(ribbonCurve), [ribbonCurve]);
@@ -462,6 +477,8 @@ function LivingGarden({ progress }: Pick<JourneyState, "progress">) {
         <meshStandardMaterial color="#11140f" roughness={1} />
       </mesh>
       <GardenFoliage />
+      <StoryClearings progress={progress} storyProgress={storyProgress} />
+      <WeddingCircle peopleCount={peopleCount} progress={progress} />
       <DistantPavilion />
     </group>
   );
@@ -554,10 +571,14 @@ export function SpatialInvitation({
   onPending,
   onReady,
   onUnavailable,
+  peopleCount,
+  storyProgress,
 }: {
   onPending: () => void;
   onReady: () => void;
   onUnavailable: () => void;
+  peopleCount: number;
+  storyProgress: readonly number[];
 }) {
   const journey = useJourney();
 
@@ -578,7 +599,11 @@ export function SpatialInvitation({
       <directionalLight position={[5, 8, 7]} intensity={2.8} color="#ffe3c2" />
       <pointLight position={[4, -0.4, 3]} intensity={24} distance={12} color="#c9a565" />
       <Suspense fallback={null}>
-        <LivingGarden progress={journey.progress} />
+        <LivingGarden
+          peopleCount={peopleCount}
+          progress={journey.progress}
+          storyProgress={storyProgress}
+        />
         <PaperEnvelope {...journey} />
         <InvitationThreshold progress={journey.progress} />
       </Suspense>

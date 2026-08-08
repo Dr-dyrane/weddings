@@ -76,8 +76,8 @@ export const journeyChapters = [
     copySide: "right",
     copySurface: "paper",
     camera: {
-      desktop: { position: [0, 0.5, -26], target: [0, 0, -34] },
-      mobile: { position: [0, 0.45, -25], target: [0, 0, -32] },
+      desktop: { position: [0, 0.5, -26], target: [0, 0.15, -40.4] },
+      mobile: { position: [0, 0.45, -25], target: [0, 0.75, -41.5] },
     },
   },
   {
@@ -87,8 +87,8 @@ export const journeyChapters = [
     copySide: "left",
     copySurface: "night",
     camera: {
-      desktop: { position: [-2, 0.35, -31], target: [1, 0, -38] },
-      mobile: { position: [0, 0.3, -30], target: [0, 0, -37] },
+      desktop: { position: [-2, 0.35, -31], target: [1.45, -0.15, -42.7] },
+      mobile: { position: [0, 0.3, -30], target: [0, 0.55, -43.3] },
     },
   },
   {
@@ -98,8 +98,8 @@ export const journeyChapters = [
     copySide: "center",
     copySurface: "paper",
     camera: {
-      desktop: { position: [1.5, 0.25, -35], target: [0, 0, -41] },
-      mobile: { position: [0, 0.2, -34], target: [0, 0, -40] },
+      desktop: { position: [1.5, 0.25, -35], target: [0, 0.3, -45.4] },
+      mobile: { position: [0, 0.2, -34], target: [0, 0.5, -45.2] },
     },
   },
   {
@@ -109,8 +109,8 @@ export const journeyChapters = [
     copySide: "center",
     copySurface: "paper",
     camera: {
-      desktop: { position: [0, 0.1, -40], target: [0, -0.2, -47] },
-      mobile: { position: [0, 0, -39], target: [0, -0.4, -46] },
+      desktop: { position: [0, 0.1, -40], target: [-1.65, -0.55, -47.8] },
+      mobile: { position: [0, 0, -39], target: [0, -0.55, -47.8] },
     },
   },
 ] as const satisfies readonly JourneyChapter[];

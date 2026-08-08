@@ -68,7 +68,7 @@ function StoryClearing({
     if (!group.current || !fold.current || !glow.current) return;
 
     const current = progress.current;
-    const mobile = size.width <= 700;
+    const mobile = size.width <= 850;
     const revealStart = revealAt - (index === 0 ? 0.05 : 0.07);
     const reveal = ease(range(current, revealStart, index === 0 ? 0.05 : 0.06));
     const pathPosition = total <= 1 ? 0 : index / (total - 1);
@@ -146,7 +146,7 @@ export function WeddingCircle({
   useFrame(() => {
     if (!group.current || !glow.current) return;
     const current = progress.current;
-    const mobile = size.width <= 700;
+    const mobile = size.width <= 850;
     const reveal = ease(range(current, 0.505, 0.025));
     const exit = ease(range(current, 0.59, 0.045));
 

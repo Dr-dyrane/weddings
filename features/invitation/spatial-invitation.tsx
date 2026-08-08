@@ -5,6 +5,7 @@ import { Canvas, invalidate, useFrame, useThree } from "@react-three/fiber";
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
+import { CeremonyWorld } from "@/features/invitation/spatial-ceremony";
 import { journeyChapters } from "@/features/invitation/journey";
 import {
   StoryClearings,
@@ -130,7 +131,7 @@ function PaperEnvelope({ progress, pointer }: JourneyState) {
   useFrame(() => {
     if (!group.current || !flap.current || !seal.current) return;
     const current = progress.current;
-    const mobile = size.width <= 700;
+    const mobile = size.width <= 850;
     const open = ease(range(current, 0.025, 0.075));
     const release = ease(range(current, 0.018, 0.028));
     const leave = ease(range(current, 0.048, 0.052));
@@ -206,7 +207,7 @@ function InvitationThreshold({ progress }: Pick<JourneyState, "progress">) {
       !rightDoor.current
     ) return;
     const current = progress.current;
-    const mobile = size.width <= 700;
+    const mobile = size.width <= 850;
     const open = ease(range(current, 0.025, 0.075));
     const expand = ease(range(current, 0.055, 0.07));
     const doorway = ease(range(current, 0.092, 0.05));
@@ -420,39 +421,17 @@ function GardenFoliage() {
   );
 }
 
-function DistantPavilion() {
-  return (
-    <group position={[0, -0.45, -44]}>
-      <mesh position={[0, 1.2, 0]}>
-        <planeGeometry args={[8.6, 5.2]} />
-        <meshBasicMaterial color="#5c3c36" transparent opacity={0.42} />
-      </mesh>
-      {[-4.1, -2.05, 0, 2.05, 4.1].map((x) => (
-        <mesh key={x} position={[x, 1.25, 0.15]}>
-          <boxGeometry args={[0.12, 5.3, 0.12]} />
-          <meshStandardMaterial color="#59412f" metalness={0.36} roughness={0.48} />
-        </mesh>
-      ))}
-      <mesh position={[0, 3.9, 0.08]} rotation={[0, 0, 0]}>
-        <boxGeometry args={[9.4, 0.16, 0.2]} />
-        <meshStandardMaterial color="#6f5236" metalness={0.3} roughness={0.5} />
-      </mesh>
-      <mesh position={[0, -1.35, 0.22]}>
-        <planeGeometry args={[7.2, 0.12]} />
-        <meshBasicMaterial color="#e5b76b" />
-      </mesh>
-      <pointLight color="#f0b96f" intensity={55} distance={22} position={[0, 1, 2]} />
-    </group>
-  );
-}
-
 function LivingGarden({
+  palette,
   peopleCount,
   progress,
   storyProgress,
+  vendorCount,
 }: Pick<JourneyState, "progress"> & {
+  palette: readonly string[];
   peopleCount: number;
   storyProgress: readonly number[];
+  vendorCount: number;
 }) {
   const group = useRef<THREE.Group>(null);
   const ribbonCurve = useMemo(() => createGardenCurve(), []);
@@ -479,7 +458,11 @@ function LivingGarden({
       <GardenFoliage />
       <StoryClearings progress={progress} storyProgress={storyProgress} />
       <WeddingCircle peopleCount={peopleCount} progress={progress} />
-      <DistantPavilion />
+      <CeremonyWorld
+        palette={palette}
+        progress={progress}
+        vendorCount={vendorCount}
+      />
     </group>
   );
 }
@@ -524,7 +507,7 @@ function CameraRig({ progress, pointer }: JourneyState) {
         ? ease(range(current, 0.08, 0.12))
         : ease(clamp((current - previous.progress) / segment));
     const curveProgress = clamp((lower + local) / (journeyChapters.length - 1));
-    const mobile = size.width <= 700;
+    const mobile = size.width <= 850;
     const positionCurve = mobile ? curves.mobilePosition : curves.desktopPosition;
     const targetCurve = mobile ? curves.mobileTarget : curves.desktopTarget;
     const position = positionCurve.getPoint(curveProgress);
@@ -571,14 +554,18 @@ export function SpatialInvitation({
   onPending,
   onReady,
   onUnavailable,
+  palette,
   peopleCount,
   storyProgress,
+  vendorCount,
 }: {
   onPending: () => void;
   onReady: () => void;
   onUnavailable: () => void;
+  palette: readonly string[];
   peopleCount: number;
   storyProgress: readonly number[];
+  vendorCount: number;
 }) {
   const journey = useJourney();
 
@@ -600,9 +587,11 @@ export function SpatialInvitation({
       <pointLight position={[4, -0.4, 3]} intensity={24} distance={12} color="#c9a565" />
       <Suspense fallback={null}>
         <LivingGarden
+          palette={palette}
           peopleCount={peopleCount}
           progress={journey.progress}
           storyProgress={storyProgress}
+          vendorCount={vendorCount}
         />
         <PaperEnvelope {...journey} />
         <InvitationThreshold progress={journey.progress} />

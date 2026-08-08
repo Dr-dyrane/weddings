@@ -169,7 +169,7 @@ function StaticWeddingWorld({ scene }: { scene: StaticScene }) {
   return (
     <div className="static-world" data-static-scene={scene} aria-hidden="true">
       <picture key={scene}>
-        <source media="(max-width: 700px)" srcSet={mobile.srcSet} />
+        <source media="(max-width: 850px)" srcSet={mobile.srcSet} />
         {/* getImageProps preserves responsive Next image optimization in picture. */}
         <img {...desktop} className="static-world-image" alt="" />
       </picture>
@@ -339,6 +339,10 @@ export function WeddingExperience({
       ),
     [wedding.story],
   );
+  const spatialPalette = useMemo(
+    () => wedding.dress.palette.map((colour) => colour.hex),
+    [wedding.dress.palette],
+  );
   const spatialActive = webgl && !spatialUnavailable;
   const introHidden = introDeparted && !reducedMotion;
   const markSpatialUnavailable = useCallback(
@@ -416,8 +420,10 @@ export function WeddingExperience({
             onPending={markSpatialPending}
             onReady={markSpatialReady}
             onUnavailable={markSpatialUnavailable}
+            palette={spatialPalette}
             peopleCount={wedding.people.length}
             storyProgress={spatialStoryProgress}
+            vendorCount={wedding.vendors.length}
           />
         </SpatialErrorBoundary>
       )}
@@ -528,7 +534,7 @@ export function WeddingExperience({
         data-scene={journeyById.pavilion.scene}
         tabIndex={-1}
       >
-        <div className="detail-copy">
+        <div className="detail-copy copy-surface copy-surface-paper">
           <p className="kicker">Celebration details</p>
           <h2>
             {wedding.dateLabel}
@@ -592,7 +598,7 @@ export function WeddingExperience({
         data-journey-progress={journeyById.vendors.progress}
         data-scene={journeyById.vendors.scene}
       >
-        <div className="vendors-copy">
+        <div className="vendors-copy copy-surface copy-surface-paper">
           <p className="kicker">Made possible by</p>
           <h2>Hands behind the celebration.</h2>
           <ul>

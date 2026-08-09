@@ -6,6 +6,7 @@ import {
   SHARE_CARD_SIZE,
 } from "@/domains/invitations/card-edition";
 import { getPublicInvitation } from "@/domains/invitations/invitation";
+import { getWeddingBrandMetadata } from "@/domains/weddings/couple-brand";
 import { getPublishedWedding } from "@/domains/weddings/published-wedding";
 import { WeddingExperience } from "@/features/invitation/wedding-experience";
 
@@ -25,6 +26,7 @@ export async function generateMetadata({
   const cardPath = getPublicCardPath(wedding, getPublicInvitation());
 
   return {
+    ...getWeddingBrandMetadata(wedding),
     title,
     description,
     robots:

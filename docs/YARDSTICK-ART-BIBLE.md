@@ -48,7 +48,8 @@ The experience is not futuristic because it contains chrome or neon. It is futur
 - Heavy warm ivory with a subtle fibre texture.
 - Black typographic ink and burnished champagne-gold accents.
 - Gilded edge expressed as a narrow travelling highlight.
-- Seal uses the confirmed simple infinity. Do not add initials, a heart, centre ornament or other symbolism.
+- The envelope seal carries only the couple’s slanted `A & C` lockup.
+  Do not add a heart, generic infinity or stock wedding symbol.
 
 ## Palette
 
@@ -76,7 +77,9 @@ The palette is a lighting system, not a set of equally loud swatches. Ivory and 
 
 Avoid liquid chrome, holographic gradients, generic purple neon, excessive bloom, plastic florals, glitter shaders and stock luxury emblems.
 
-The confirmed simple infinity may appear as a subtle foil, emboss or architectural emblem. The clean optical runtime edition is active; the raster reference itself must not be composited into the experience as a finished logo.
+The couple-specific monogram may appear as a subtle foil or emboss. Use the same
+frame-free italic initials at every size; never add a wreath, shield or border,
+and never composite the old raster reference as a finished logo.
 
 ## Light direction
 

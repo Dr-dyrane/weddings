@@ -36,9 +36,9 @@ This directory is the durable memory for the product. A decision is not consider
   place setting; reference-device release verification is active.
 - Phase 1 concept stills: generated for desktop and mobile; provisional pending
   couple/venue approval.
-- Alexander–Chioma brand-mark reference: recovered and preserved; one simple
-  infinity is active by explicit user direction.
-- OG/share-card edition `1`: implemented for public and personalized links with
-  the infinity-marked runtime seal; it opens the same invitation experience.
-- Final production master and provenance approval: open; the former `A ∞ C`
-  glyph is not the logo.
+- Couple identity system: the published first names generate one frame-free,
+  slanted `FIRST INITIAL & SECOND INITIAL` mark.
+- OG/share-card edition `2`: implemented for public and personalized links with
+  the same couple-specific monogram used by the invitation experience.
+- The recovered Alexander–Chioma reference remains provenance only. Neither its
+  former `A ∞ C` glyph nor a generic infinity is an active wedding logo.

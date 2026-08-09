@@ -20,7 +20,9 @@ Royal wedding stationery provides a useful material lesson without requiring imi
 
 **Adopt:** recipient specificity, formal hierarchy, burnished highlights, edge light, tactile ivory, disciplined black and gold.
 
-**Adapt:** the crest becomes the couple's own approved mark; gilded edges become controlled light response; calligraphy is used for one ceremonial accent, not paragraphs.
+**Adapt:** discard the badge and use only the couple's frame-free italic initials;
+gilded edges become controlled light response; calligraphy is used for one
+ceremonial accent, not paragraphs.
 
 **Reject:** crowns, generic coats of arms, excessive baroque borders, faux nobility and literal imitation of a royal household.
 

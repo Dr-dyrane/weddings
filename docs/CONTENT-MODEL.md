@@ -5,6 +5,7 @@ Authoritative content is relational. Publishing compiles it into an immutable, v
 ## Core entities
 
 - Wedding: identity, locale, timezone, visibility, theme reference, publication state.
+- Couple identity: first names are authoritative; the monogram and icon family are derived from their initials at render time rather than stored as a freeform symbol.
 - Published version: immutable revision, approval record, generated timestamp, share-card edition.
 - Event: name, start/end, venue, address, map target, dress guidance, guest access policy.
 - Story milestone: date label, title, narrative, art direction, sort order, visibility.

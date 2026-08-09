@@ -9,6 +9,7 @@ import {
   projectWeddingForInvitation,
   resolveInvitation,
 } from "@/domains/invitations/invitation";
+import { getWeddingBrandMetadata } from "@/domains/weddings/couple-brand";
 import { getPublishedWedding } from "@/domains/weddings/published-wedding";
 import { WeddingExperience } from "@/features/invitation/wedding-experience";
 
@@ -32,6 +33,7 @@ export async function generateMetadata({
   const cardPath = getPersonalizedCardPath(wedding, token, invitation);
 
   return {
+    ...getWeddingBrandMetadata(wedding),
     title,
     description,
     robots: { index: false, follow: false, nocache: true },

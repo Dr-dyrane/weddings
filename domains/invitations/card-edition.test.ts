@@ -23,7 +23,7 @@ describe("share-card editions", () => {
     expect(personalized).not.toBeNull();
 
     expect(getPublicCardPath(wedding, publicInvitation)).toBe(
-      "/the_ogranyas/card/1",
+      "/the_ogranyas/card/2",
     );
     expect(
       getPersonalizedCardPath(
@@ -31,7 +31,7 @@ describe("share-card editions", () => {
         DEMO_INVITATION_TOKEN,
         personalized!,
       ),
-    ).toContain(`/invite/${DEMO_INVITATION_TOKEN}/card/1`);
+    ).toContain(`/invite/${DEMO_INVITATION_TOKEN}/card/2`);
   });
 
   it("matches only canonical numeric editions", () => {

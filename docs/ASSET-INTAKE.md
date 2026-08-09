@@ -36,7 +36,7 @@ The future Studio asks one meaningful question at a time in this order:
 | Couple portraits | Open | No generated faces; typographic frames |
 | Venue photography | Open | Generated architectural concepts with provenance |
 | Ring reference | Candidate exists | Use only after ownership and relevance are confirmed |
-| Final logo/monogram | Simple infinity confirmed; production master/provenance open | Use one clean infinity on the seal; add no initials or symbolism |
+| Final logo/monogram | Dynamic couple monogram locked | Derive the partners’ first-name initials; use the single frame-free italic mark |
 | Sound | Open | Silent experience |
 
 ## Required media set
@@ -62,13 +62,17 @@ The future Studio asks one meaningful question at a time in this order:
 - Architectural plans only when the couple has permission to share them.
 - Florals, furniture, table setting and signage references.
 
-### Brand mark
+### Couple identity
 
-- Original concept image — recovered at [`references/brand/alexander-chioma-mark-concept.jpeg`](references/brand/alexander-chioma-mark-concept.jpeg).
-- Production-master vector and optical small-size edition.
-- Confirmed provenance and commercial-use rights.
-- Whether it belongs to this wedding only or the Dyrane Weddings product.
-- Uses required: seal, card, favicon, loading mark, footer and social preview.
+- First names are the authoritative source; a culturally preferred grapheme may
+  be supplied as an explicit initial override.
+- The renderer owns the single frame-free italic production mark; arbitrary
+  uploaded SVG or HTML is never accepted.
+- Uses required: envelope seal, card, header, footer, favicon, manifest icon,
+  spatial mark and social preview.
+- The original Alexander–Chioma concept remains a historical reference at
+  [`references/brand/alexander-chioma-mark-concept.jpeg`](references/brand/alexander-chioma-mark-concept.jpeg),
+  not a production logo source.
 
 ## File and provenance record
 

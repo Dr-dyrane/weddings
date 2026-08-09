@@ -30,7 +30,10 @@ At rest, a textured envelope floats just above a pearl stone table in darkness. 
 
 **Job:** produce the defining threshold moment.
 
-The card surface becomes translucent. Its gilded edge widens into a doorway of warm light. The camera passes through and lands at human height on the garden path. This is the only dramatic spatial transition in the experience.
+The rising invitation reveals gathered antique-gold velvet curtains. Their
+pleated fabric parts into a warm ceremonial entrance, and only then does the
+camera pass through at human height onto the garden path. This is the only
+dramatic spatial transition in the experience.
 
 **Copy:** couple names and one-line invitation introduction.
 

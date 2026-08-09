@@ -62,7 +62,6 @@ export const publishedWeddingSchema = z.object({
   couple: z.object({
     first: z.string().min(1).max(40),
     second: z.string().min(1).max(40),
-    monogram: z.string().min(1).max(16),
   }),
   invitation: z.object({
     eyebrow: z.string().min(1).max(80),
@@ -128,7 +127,6 @@ const alexanderAndChioma = publishedWeddingSchema.parse({
   couple: {
     first: "Alexander",
     second: "Chioma",
-    monogram: "∞",
   },
   invitation: {
     eyebrow: "Together with their families",

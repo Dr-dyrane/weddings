@@ -28,7 +28,10 @@ import {
   Share2,
   Sparkles as SparklesIcon,
 } from "@/ui/icons";
-import { CoupleSealMark } from "@/ui/brand/couple-seal-mark";
+import {
+  CoupleMonogram,
+  getCoupleInitials,
+} from "@/ui/brand/couple-monogram";
 
 const SpatialInvitation = dynamic(
   () =>
@@ -135,7 +138,15 @@ function useActiveStaticScene(enabled: boolean) {
   return scene;
 }
 
-function StaticWeddingWorld({ scene }: { scene: StaticScene }) {
+function StaticWeddingWorld({
+  firstName,
+  scene,
+  secondName,
+}: {
+  firstName: string;
+  scene: StaticScene;
+  secondName: string;
+}) {
   const basename = `/concepts/scene-${scene}-${
     scene === 1
       ? "envelope"
@@ -179,7 +190,10 @@ function StaticWeddingWorld({ scene }: { scene: StaticScene }) {
       </picture>
       {scene === 1 ? (
         <div className="static-seal-mark">
-          <CoupleSealMark />
+          <CoupleMonogram
+            firstName={firstName}
+            secondName={secondName}
+          />
         </div>
       ) : null}
       <div className="static-world-wash" />
@@ -344,17 +358,13 @@ export function WeddingExperience({
   const activeStaticScene = useActiveStaticScene(
     !spatialActive || !spatialReady,
   );
-  const spatialStoryProgress = useMemo(
-    () =>
-      wedding.story.map((_, index) =>
-        milestoneProgress(index, wedding.story.length),
-      ),
-    [wedding.story],
-  );
-  const spatialPalette = useMemo(
-    () => wedding.dress.palette.map((colour) => colour.hex),
-    [wedding.dress.palette],
-  );
+  const spatialInitials = useMemo(() => {
+    const initials = getCoupleInitials(
+      wedding.couple.first,
+      wedding.couple.second,
+    );
+    return [initials.first, initials.second] as const;
+  }, [wedding.couple.first, wedding.couple.second]);
   const introHidden = introDeparted && !reducedMotion;
   const markSpatialUnavailable = useCallback(
     () => {
@@ -374,7 +384,7 @@ export function WeddingExperience({
         Math.max(220, (story?.offsetTop ?? window.innerHeight) * 0.34),
       );
       if (window.scrollY > 24) setBegun(true);
-      setIntroDeparted(window.scrollY > departAt);
+      if (window.scrollY > departAt) setIntroDeparted(true);
     };
     markOpened();
     addEventListener("scroll", markOpened, { passive: true });
@@ -383,13 +393,32 @@ export function WeddingExperience({
 
   const begin = () => {
     setBegun(true);
-    requestAnimationFrame(() => {
+    setIntroDeparted(true);
+    window.setTimeout(() => {
       const story = document.querySelector<HTMLElement>("#story");
       story?.focus({ preventScroll: true });
-      story?.scrollIntoView({
-        behavior: reducedMotion ? "auto" : "smooth",
-      });
-    });
+      if (!story) return;
+      if (reducedMotion) {
+        story.scrollIntoView({ behavior: "auto" });
+        return;
+      }
+
+      const start = window.scrollY;
+      const target = story.offsetTop;
+      const duration = 1_800;
+      let startedAt: number | undefined;
+      const travel = (now: number) => {
+        startedAt ??= now;
+        const elapsed = Math.min(1, (now - startedAt) / duration);
+        const eased = elapsed * elapsed * (3 - 2 * elapsed);
+        window.scrollTo({
+          behavior: "instant",
+          top: start + (target - start) * eased,
+        });
+        if (elapsed < 1) requestAnimationFrame(travel);
+      };
+      requestAnimationFrame(travel);
+    }, reducedMotion ? 0 : 360);
   };
 
   const guestEyebrow =
@@ -424,17 +453,18 @@ export function WeddingExperience({
       >
         Skip to celebration details
       </a>
-      <StaticWeddingWorld scene={activeStaticScene} />
+      <StaticWeddingWorld
+        firstName={wedding.couple.first}
+        scene={activeStaticScene}
+        secondName={wedding.couple.second}
+      />
       {spatialActive && (
         <SpatialErrorBoundary onUnavailable={markSpatialUnavailable}>
           <SpatialInvitation
+            initials={spatialInitials}
             onPending={markSpatialPending}
             onReady={markSpatialReady}
             onUnavailable={markSpatialUnavailable}
-            palette={spatialPalette}
-            peopleCount={wedding.people.length}
-            storyProgress={spatialStoryProgress}
-            vendorCount={wedding.vendors.length}
           />
         </SpatialErrorBoundary>
       )}
@@ -442,7 +472,11 @@ export function WeddingExperience({
 
       <header className="invitation-header">
         <a className="monogram" href="#invitation" aria-label="Back to invitation">
-          <CoupleSealMark className="monogram-mark" />
+          <CoupleMonogram
+            className="monogram-mark"
+            firstName={wedding.couple.first}
+            secondName={wedding.couple.second}
+          />
         </a>
         <div className="journey-line" aria-hidden="true">
           <span>{wedding.couple.first} & {wedding.couple.second}</span>
@@ -635,7 +669,11 @@ export function WeddingExperience({
         <div className="sunset" aria-hidden="true"><i /><i /><i /></div>
         <RSVP invitation={invitation} wedding={wedding} />
         <footer>
-          <CoupleSealMark className="footer-mark" />
+          <CoupleMonogram
+            className="footer-mark"
+            firstName={wedding.couple.first}
+            secondName={wedding.couple.second}
+          />
           <p>{wedding.dateLabel} · {wedding.locationLabel}</p>
           <small>Created with Dyrane Weddings</small>
         </footer>

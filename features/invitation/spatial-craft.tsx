@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { Text } from "@react-three/drei";
 import * as THREE from "three";
 
 const PAPER_GRAIN_SIZE = 64;
@@ -68,38 +68,90 @@ export function FoilMaterial({ color = "#c9a565" }: { color?: string }) {
   );
 }
 
-class InfinitySealCurve extends THREE.Curve<THREE.Vector3> {
-  constructor() {
-    super();
-  }
+const coupleMonogramShear = new THREE.Matrix4().makeShear(
+  0.16,
+  0,
+  0,
+  0,
+  0,
+  0,
+);
 
-  override getPoint(t: number, target = new THREE.Vector3()) {
-    // Start at the outer edge, not the crossing, so the closed tube has no
-    // visible join or heavy centre knot.
-    const angle = t * Math.PI * 2 - Math.PI / 2;
-    return target.set(
-      Math.sin(angle) * 0.31,
-      Math.sin(angle * 2) * 0.16,
-      0,
-    );
-  }
-}
-
-export function SealMark3D() {
-  const curve = useMemo(() => new InfinitySealCurve(), []);
-
+export function CoupleMonogram3D({
+  initials,
+}: {
+  initials: readonly [string, string];
+}) {
   return (
     <group position={[0, 0, 0.028]}>
-      <mesh>
-        <tubeGeometry args={[curve, 128, 0.0125, 12, true]} />
-        <meshStandardMaterial
-          color="#6f4b25"
-          metalness={0.34}
-          roughness={0.48}
-        />
-      </mesh>
+      <group matrix={coupleMonogramShear} matrixAutoUpdate={false}>
+        <Text
+          anchorX="center"
+          anchorY="middle"
+          color="#573417"
+          font="/fonts/dyrane-monogram-cinzel.ttf"
+          fontSize={0.22}
+          position={[0, -0.01, 0.032]}
+        >
+          {initials[0]} &amp; {initials[1]}
+        </Text>
+      </group>
     </group>
   );
+}
+
+export function createCurtainPanelGeometry(
+  width: number,
+  height: number,
+  phase: number,
+) {
+  const columns = 24;
+  const rows = 32;
+  const positions: number[] = [];
+  const indices: number[] = [];
+
+  for (let row = 0; row <= rows; row += 1) {
+    const v = row / rows;
+    const lowerDrape = THREE.MathUtils.smoothstep(v, 0.58, 1);
+    for (let column = 0; column <= columns; column += 1) {
+      const u = column / columns;
+      const x = (u - 0.5) * width;
+      const y = (0.5 - v) * height;
+      const pleat = Math.sin(u * Math.PI * 12 + phase);
+      const secondaryPleat = Math.sin(u * Math.PI * 24 + phase * 0.7);
+      const z =
+        pleat * (0.13 + Math.sin(v * Math.PI) * 0.11) +
+        secondaryPleat * 0.025;
+      const hem =
+        lowerDrape *
+        (Math.sin(u * Math.PI * 3 + phase) * 0.12 +
+          Math.cos(u * Math.PI * 7 - phase) * 0.035);
+      positions.push(x, y + hem, z);
+    }
+  }
+
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      const cursor = row * (columns + 1) + column;
+      indices.push(
+        cursor,
+        cursor + columns + 1,
+        cursor + 1,
+        cursor + 1,
+        cursor + columns + 1,
+        cursor + columns + 2,
+      );
+    }
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(positions, 3),
+  );
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
 }
 
 export function createLeafGeometry() {

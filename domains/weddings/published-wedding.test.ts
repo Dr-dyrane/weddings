@@ -14,6 +14,7 @@ describe("published wedding snapshot", () => {
     expect(wedding.people).toHaveLength(4);
     expect(wedding.vendors).toHaveLength(3);
     expect(wedding.events).toHaveLength(2);
+    expect(wedding.couple).not.toHaveProperty("monogram");
   });
 
   it("returns null for an unknown wedding", () => {

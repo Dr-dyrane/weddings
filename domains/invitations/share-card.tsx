@@ -6,11 +6,49 @@ import { ImageResponse } from "next/og";
 
 import type { InvitationProjection } from "@/domains/invitations/invitation";
 import type { PublishedWedding } from "@/domains/weddings/published-wedding";
-import { CoupleSealMark } from "@/ui/brand/couple-seal-mark";
+import {
+  getCoupleInitials,
+  type CoupleInitials,
+} from "@/ui/brand/couple-monogram";
 
 const fontPromise = readFile(
   path.join(process.cwd(), "public/fonts/dyrane-invitation-serif.ttf"),
 );
+const monogramFontPromise = readFile(
+  path.join(process.cwd(), "public/fonts/dyrane-monogram-cinzel.ttf"),
+);
+
+function ShareCardMonogram({
+  color,
+  initials,
+  size,
+}: {
+  color: string;
+  initials: CoupleInitials;
+  size: number;
+}) {
+  return (
+    <div
+      style={{
+        alignItems: "center",
+        color,
+        display: "flex",
+        fontFamily: "Dyrane Monogram",
+        fontSize: `${size * 0.3125}px`,
+        fontStyle: "normal",
+        fontWeight: 400,
+        height: `${size}px`,
+        justifyContent: "center",
+        lineHeight: 1,
+        transform: "skewX(-9deg)",
+        whiteSpace: "nowrap",
+        width: `${size}px`,
+      }}
+    >
+      {initials.first} &amp; {initials.second}
+    </div>
+  );
+}
 
 function codePointLength(value: string) {
   return Array.from(value).length;
@@ -47,10 +85,17 @@ async function createShareCard(
   wedding: PublishedWedding | null,
   invitation: InvitationProjection | null,
 ) {
-  const font = await fontPromise;
+  const [font, monogramFont] = await Promise.all([
+    fontPromise,
+    monogramFontPromise,
+  ]);
   const fontData = font.buffer.slice(
     font.byteOffset,
     font.byteOffset + font.byteLength,
+  ) as ArrayBuffer;
+  const monogramFontData = monogramFont.buffer.slice(
+    monogramFont.byteOffset,
+    monogramFont.byteOffset + monogramFont.byteLength,
   ) as ArrayBuffer;
   const coupleLine = wedding
     ? `${wedding.couple.first} & ${wedding.couple.second}`
@@ -60,6 +105,9 @@ async function createShareCard(
   const dateLine = wedding?.dateLabel ?? "Personal digital invitations";
   const locationLine = wedding?.locationLabel ?? "Designed by Dyrane";
   const edition = String(invitation?.cardEdition ?? 1).padStart(2, "0");
+  const brandFirstName = wedding?.couple.first ?? "Dyrane";
+  const brandSecondName = wedding?.couple.second ?? "Weddings";
+  const initials = getCoupleInitials(brandFirstName, brandSecondName);
 
   return new ImageResponse(
     (
@@ -123,10 +171,10 @@ async function createShareCard(
               }}
             >
               <div style={{ alignItems: "center", display: "flex" }}>
-                <CoupleSealMark
-                  height="28"
-                  style={{ color: "#a56e2e" }}
-                  width="52"
+                <ShareCardMonogram
+                  color="#a56e2e"
+                  initials={initials}
+                  size={34}
                 />
                 <div
                   style={{
@@ -326,10 +374,10 @@ async function createShareCard(
                 position: "relative",
               }}
             >
-              <CoupleSealMark
-                height="82"
-                style={{ color: "#d6a95e" }}
-                width="154"
+              <ShareCardMonogram
+                color="#d6a95e"
+                initials={initials}
+                size={144}
               />
               <div
                 style={{
@@ -392,6 +440,12 @@ async function createShareCard(
         {
           name: "Dyrane Invitation",
           data: fontData,
+          style: "normal",
+          weight: 400,
+        },
+        {
+          name: "Dyrane Monogram",
+          data: monogramFontData,
           style: "normal",
           weight: 400,
         },

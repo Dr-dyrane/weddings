@@ -72,7 +72,7 @@ Execution follows `BUILD-RUNBOOK.md`:
 7. Atmosphere polish.
 8. Reference-device release.
 
-Research, art direction, storyboard and intake are now durable in `RESEARCH-DOSSIER.md`, `YARDSTICK-ART-BIBLE.md`, `SCENE-STORYBOARD.md` and `ASSET-INTAKE.md`. The couple mark is confirmed as one simple infinity and its optical runtime edition is active; production-master construction and provenance remain explicit open items in `BRAND-MARK.md`.
+Research, art direction, storyboard and intake are now durable in `RESEARCH-DOSSIER.md`, `YARDSTICK-ART-BIBLE.md`, `SCENE-STORYBOARD.md` and `ASSET-INTAKE.md`. The identity contract is a dynamic frame-free italic couple monogram used consistently at every optical size; its renderer, metadata routes and asset matrix are specified in `BRAND-MARK.md`.
 
 Exit gate: approved storyboard and visual references; long-name and Unicode fixtures; 320–1440px layouts; 200% zoom; reverse-scroll; context loss; reference-device frame and Core Web Vitals budgets.
 

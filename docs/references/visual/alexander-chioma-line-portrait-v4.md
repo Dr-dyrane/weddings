@@ -1,6 +1,7 @@
 # Alexander and Chioma line portrait v4
 
-Status: **approved** for OGB edition 3.
+Status: approved palette study; superseded for publication by the exact-token
+v5 derivative.
 
 Generated: 2026-08-09 with the built-in Codex `image_gen` workflow. The
 provider-managed model identifier was not exposed and is not guessed.
@@ -34,7 +35,6 @@ The chroma-key background was removed locally with the imagegen skill's
 1024 × 1536 RGBA. The server-side renderer embeds it directly rather than
 exposing the identity asset from `public/`.
 
-Edition 3 renders the image at 460 × 690, positioned 15 px beyond the right
-edge and 30 px above the canvas at 100% opacity. The illuminated contour and
-progress fill now read as one light system; receding strokes carry their own
-lower luminance instead of relying on global opacity.
+V5 preserves this image exactly and normalizes the saturated illuminated core
+pixels to the literal `#FFD21E` interface token. Antialiased edges, champagne
+transitions and smoke-grey receding strokes remain varied.

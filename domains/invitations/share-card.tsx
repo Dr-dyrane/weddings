@@ -12,10 +12,10 @@ const spaceGroteskFontPromise = readFile(
 );
 
 const couplePortraitPromises = {
-  "alexander-chioma-line-v4": readFile(
+  "alexander-chioma-line-v5": readFile(
     path.join(
       process.cwd(),
-      "docs/references/visual/alexander-chioma-line-portrait-v4.png",
+      "docs/references/visual/alexander-chioma-line-portrait-v5.png",
     ),
   ),
 } as const;

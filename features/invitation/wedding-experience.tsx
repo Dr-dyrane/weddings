@@ -97,10 +97,12 @@ function useClientCapabilities() {
 
 type StaticScene = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
-function useActiveStaticScene() {
+function useActiveStaticScene(enabled: boolean) {
   const [scene, setScene] = useState<StaticScene>(1);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const update = () => {
       const point = window.scrollY + window.innerHeight * 0.52;
       let closest: { distance: number; scene: StaticScene } | undefined;
@@ -127,7 +129,7 @@ function useActiveStaticScene() {
       removeEventListener("scroll", update);
       removeEventListener("resize", update);
     };
-  }, []);
+  }, [enabled]);
 
   return scene;
 }
@@ -337,7 +339,10 @@ export function WeddingExperience({
   const [spatialReady, setSpatialReady] = useState(false);
   const [spatialUnavailable, setSpatialUnavailable] = useState(false);
   const { reducedMotion, webgl } = useClientCapabilities();
-  const activeStaticScene = useActiveStaticScene();
+  const spatialActive = webgl && !spatialUnavailable;
+  const activeStaticScene = useActiveStaticScene(
+    !spatialActive || !spatialReady,
+  );
   const spatialStoryProgress = useMemo(
     () =>
       wedding.story.map((_, index) =>
@@ -349,7 +354,6 @@ export function WeddingExperience({
     () => wedding.dress.palette.map((colour) => colour.hex),
     [wedding.dress.palette],
   );
-  const spatialActive = webgl && !spatialUnavailable;
   const introHidden = introDeparted && !reducedMotion;
   const markSpatialUnavailable = useCallback(
     () => {

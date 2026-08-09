@@ -363,6 +363,7 @@ a{color:inherit}
 }
 .invitation-header{
   background:linear-gradient(180deg,rgba(9,6,11,.94),rgba(9,6,11,.82) 68%,transparent);
+  mix-blend-mode:normal;
   padding-bottom:38px;
 }
 .journey-line{color:#d4cbd5}

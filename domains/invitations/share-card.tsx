@@ -77,13 +77,14 @@ async function createShareCard(wedding: PublishedWedding | null) {
   const coupleLine = wedding
     ? `${wedding.couple.first} & ${wedding.couple.second}`
     : "Dyrane Weddings";
-  const { date } = splitDateLabel(
-    wedding?.dateLabel ?? "Personal Invitations 2027",
-  );
+  const { date } = wedding
+    ? splitDateLabel(wedding.dateLabel)
+    : { date: "00 00" };
   const progress = wedding
     ? getWeddingDayProgress(wedding.dateLabel, wedding.timezone)
-    : 0.28;
+    : 1;
   const loadingWidth = `${Math.round(progress * 1000) / 10}%`;
+  const loadingColor = wedding ? "#FFD21E" : "#FFFFFF";
 
   return new ImageResponse(
     (
@@ -145,7 +146,7 @@ async function createShareCard(wedding: PublishedWedding | null) {
         >
           <div
             style={{
-              background: "#FFD21E",
+              background: loadingColor,
               display: "flex",
               height: "100%",
               width: loadingWidth,

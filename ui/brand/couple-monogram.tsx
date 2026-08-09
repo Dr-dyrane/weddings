@@ -1,7 +1,7 @@
 import type { SVGProps } from "react";
 
 export const COUPLE_MONOGRAM_VIEWBOX = "0 0 160 160";
-export const COUPLE_MONOGRAM_VERSION = 3;
+export const COUPLE_MONOGRAM_VERSION = 4;
 export const COUPLE_MONOGRAM_FONT_URL =
   "/fonts/dyrane-space-grotesk.ttf";
 export const COUPLE_MONOGRAM_BACKGROUND = "#000000";

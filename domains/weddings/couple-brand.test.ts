@@ -75,13 +75,13 @@ describe("dynamic couple brand", () => {
     const metadata = getWeddingBrandMetadata(source);
 
     expect(assets).toEqual({
-      appleIcon: "/the_ogranyas/icon/180?v=monogram-3-revision-1",
-      favicon: "/the_ogranyas/icon/32?v=monogram-3-revision-1",
-      icon192: "/the_ogranyas/icon/192?v=monogram-3-revision-1",
-      icon512: "/the_ogranyas/icon/512?v=monogram-3-revision-1",
-      logo: "/the_ogranyas/logo.svg?v=monogram-3-revision-1",
+      appleIcon: "/the_ogranyas/icon/180?v=monogram-4-revision-1",
+      favicon: "/the_ogranyas/icon/32?v=monogram-4-revision-1",
+      icon192: "/the_ogranyas/icon/192?v=monogram-4-revision-1",
+      icon512: "/the_ogranyas/icon/512?v=monogram-4-revision-1",
+      logo: "/the_ogranyas/logo.svg?v=monogram-4-revision-1",
       manifest:
-        "/the_ogranyas/manifest.webmanifest?v=monogram-3-revision-1",
+        "/the_ogranyas/manifest.webmanifest?v=monogram-4-revision-1",
     });
     expect(metadata.manifest).toBe(assets.manifest);
     expect(metadata.icons).toBeTruthy();

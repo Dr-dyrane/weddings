@@ -2,7 +2,7 @@ import type { InvitationProjection } from "@/domains/invitations/invitation";
 import type { PublishedWedding } from "@/domains/weddings/published-wedding";
 
 export const SHARE_CARD_SIZE = { height: 630, width: 1200 } as const;
-export const SHARE_CARD_ASSET_VERSION = "approved-ogb-20260809-2";
+export const SHARE_CARD_ASSET_VERSION = "approved-ogb-20260809-3";
 
 export function getShareCardDayKey(
   wedding: PublishedWedding,

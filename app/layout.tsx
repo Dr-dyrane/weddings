@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { getWeddingBrandMetadata } from "@/domains/weddings/couple-brand";
+import { getYardstickWedding } from "@/domains/weddings/published-wedding";
 import { getSiteOrigin } from "@/domains/weddings/site-origin";
 import { DyraneMotionProvider } from "@/ui/motion";
 import "./globals.css";
@@ -21,13 +23,10 @@ export const metadata: Metadata = {
     template: "%s · Dyrane Weddings",
   },
   description: "Personal invitations, beautifully told.",
+  ...getWeddingBrandMetadata(getYardstickWedding()),
   ...(process.env.NODE_ENV === "development"
     ? { other: { "codex-preview": "development" } }
     : {}),
-  icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-  },
 };
 
 export const viewport: Viewport = {

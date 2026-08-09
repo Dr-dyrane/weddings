@@ -1,11 +1,24 @@
 import { describe, expect, it } from "vitest";
 
 import { getPublicInvitation } from "@/domains/invitations/invitation";
-import { createInvitationShareCard } from "@/domains/invitations/share-card";
+import {
+  createDyraneShareCard,
+  createInvitationShareCard,
+} from "@/domains/invitations/share-card";
 import { getWeddingDayProgress } from "@/domains/invitations/wedding-progress";
 import { getYardstickWedding } from "@/domains/weddings/published-wedding";
 
 describe("invitation share card", () => {
+  it("renders the Dyrane root card as a real 1200 by 630 image", async () => {
+    const response = await createDyraneShareCard();
+    const png = Buffer.from(await response.arrayBuffer());
+
+    expect(response.headers.get("content-type")).toContain("image/png");
+    expect(png.byteLength).toBeGreaterThan(10_000);
+    expect(png.readUInt32BE(16)).toBe(1200);
+    expect(png.readUInt32BE(20)).toBe(630);
+  });
+
   it("advances determinately from the prior calendar year to the wedding day", () => {
     const date = "September 15, 2027";
     const timezone = "Africa/Lagos";

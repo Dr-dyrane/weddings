@@ -24,7 +24,7 @@ describe("share-card editions", () => {
     expect(personalized).not.toBeNull();
 
     expect(getPublicCardPath(wedding, publicInvitation, now)).toBe(
-      "/the_ogranyas/card/3?day=2026-08-09&v=approved-ogb-20260809-2",
+      "/the_ogranyas/card/3?day=2026-08-09&v=approved-ogb-20260809-3",
     );
     expect(
       getPersonalizedCardPath(
@@ -34,7 +34,7 @@ describe("share-card editions", () => {
         now,
       ),
     ).toContain(
-      `/invite/${DEMO_INVITATION_TOKEN}/card/3?day=2026-08-09&v=approved-ogb-20260809-2`,
+      `/invite/${DEMO_INVITATION_TOKEN}/card/3?day=2026-08-09&v=approved-ogb-20260809-3`,
     );
   });
 

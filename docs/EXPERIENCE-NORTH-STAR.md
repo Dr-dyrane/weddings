@@ -128,12 +128,18 @@ name and the current chapter label; the monogram and permanent RSVP shortcut do
 not return as application chrome.
 
 The WebGL layer is atmospheric, never a second interface. Each chapter may own
-one restrained spatial artifact: a conversation thread, a wedding band, a
-pavilion trace, a fabric edge or a horizon. These forms use thin directional
-light and negative space rather than filled geometry. They render only while
-scroll or pointer state is settling, remain behind semantic DOM content, fade
-before the next chapter takes over and are omitted entirely for reduced motion
-or unavailable WebGL. A static DOM journey remains the complete experience.
+one restrained spatial subject: a conversation thread, a wedding band, a
+pavilion threshold, a fabric edge or a horizon. A subject may use authored
+2.5D imagery, depth-aware planes or simple real-time geometry when material,
+scale and occlusion are essential to its meaning. It must still preserve black
+negative space and use yellow only as physically justified directional light.
+Subjects render only while scroll or pointer state is settling, remain behind
+semantic DOM content, fade before the next chapter takes over and are omitted
+entirely for reduced motion or unavailable WebGL. A static DOM journey remains
+the complete experience.
+
+The locked reference implementation and fallback point for this technique is
+documented in `PAVILION-2_5D-CHECKPOINT.md`.
 
 ## Reduction rules
 

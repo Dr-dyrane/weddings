@@ -1424,19 +1424,6 @@ body.live-opening-locked{overflow:hidden}
   font-size:clamp(18px,2vw,28px);
   margin-top:20px;
 }
-.journey-date-art{
-  color:rgba(255,255,255,.045);
-  font-size:min(54vw,760px);
-  font-variant-numeric:tabular-nums;
-  font-weight:500;
-  letter-spacing:-.1em;
-  line-height:.7;
-  pointer-events:none;
-  position:absolute;
-  right:-.04em;
-  top:5svh;
-  z-index:1;
-}
 .journey-events{
   display:grid;
   gap:54px;
@@ -1652,7 +1639,6 @@ body.live-opening-locked{overflow:hidden}
   .journey-story-2 .journey-chapter-copy{margin-left:0;text-align:left}
   .journey-celebration{min-height:190svh;padding-bottom:18svh}
   .journey-celebration h2{font-size:clamp(52px,15vw,76px)}
-  .journey-date-art{font-size:78vw;right:-.08em;top:9svh}
   .journey-events{gap:42px;grid-template-columns:1fr;margin-top:72px}
   .journey-events article{gap:12px;grid-template-columns:62px 1fr}
   .journey-actions{align-items:stretch;flex-direction:column;margin-top:56px}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import {
   type RefObject,
   Suspense,
@@ -22,6 +22,55 @@ const windowOpacity = (
   leaveStart: number,
   leaveEnd: number,
 ) => range(value, enterStart, enterEnd) * (1 - range(value, leaveStart, leaveEnd));
+
+const PAVILION_TEXTURES = [
+  "/journey/pavilion-depth-desktop.webp",
+  "/journey/pavilion-depth-mobile.webp",
+];
+
+const PAVILION_VERTEX_SHADER = /* glsl */ `
+  varying vec2 vUv;
+
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const PAVILION_FRAGMENT_SHADER = /* glsl */ `
+  uniform sampler2D uMap;
+  uniform float uOpacity;
+  uniform float uReveal;
+  uniform vec2 uParallax;
+  varying vec2 vUv;
+
+  void main() {
+    vec3 source = texture2D(uMap, vUv).rgb;
+    float luminance = dot(source, vec3(0.299, 0.587, 0.114));
+    float rightPlane = smoothstep(0.34, 1.0, vUv.x);
+    float floorPlane = smoothstep(0.18, 1.0, 1.0 - vUv.y);
+    float lightPlane = smoothstep(0.025, 0.55, luminance);
+    float depth = clamp(
+      rightPlane * 0.4 + floorPlane * 0.34 + lightPlane * 0.26,
+      0.0,
+      1.0
+    );
+    vec2 shiftedUv = clamp(
+      vUv + uParallax * (depth - 0.24),
+      vec2(0.002),
+      vec2(0.998)
+    );
+    vec3 colour = texture2D(uMap, shiftedUv).rgb;
+    float warmSignal = smoothstep(0.08, 0.56, colour.r - colour.b);
+    float colourLuminance = dot(colour, vec3(0.299, 0.587, 0.114));
+    vec3 signalYellow = vec3(1.0, 0.8235, 0.1176) * max(colourLuminance, 0.025);
+    colour = mix(colour, signalYellow, warmSignal * 0.24);
+
+    float reveal = 1.0 - smoothstep(uReveal - 0.055, uReveal + 0.08, vUv.x);
+    gl_FragColor = vec4(colour, uOpacity * reveal);
+    #include <colorspace_fragment>
+  }
+`;
 
 type JourneyMotion = {
   pointer: RefObject<THREE.Vector2>;
@@ -265,74 +314,86 @@ function ProposalBand({ motion }: { motion: JourneyMotion }) {
   );
 }
 
-function LightPavilion({ motion }: { motion: JourneyMotion }) {
-  const { size } = useThree();
+function PavilionDepthScene({ motion }: { motion: JourneyMotion }) {
+  const { gl, size } = useThree();
   const group = useRef<THREE.Group>(null);
-  const materials = useRef<THREE.MeshBasicMaterial[]>([]);
-  const archCurve = useMemo(
-    () =>
-      new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-1.72, 0.22, 0),
-        new THREE.Vector3(-1.1, 1.42, 0),
-        new THREE.Vector3(0, 1.82, 0),
-        new THREE.Vector3(1.1, 1.42, 0),
-        new THREE.Vector3(1.72, 0.22, 0),
-      ]),
-    [],
+  const material = useRef<THREE.ShaderMaterial>(null);
+  const [desktopTexture, mobileTexture] = useLoader(
+    THREE.TextureLoader,
+    PAVILION_TEXTURES,
   );
-  const archGeometry = useMemo(
-    () => new THREE.TubeGeometry(archCurve, 100, 0.009, 6, false),
-    [archCurve],
+  const uniforms = useMemo(
+    () => ({
+      uMap: { value: desktopTexture },
+      uOpacity: { value: 0 },
+      uParallax: { value: new THREE.Vector2() },
+      uReveal: { value: -0.15 },
+    }),
+    [desktopTexture],
   );
 
-  useEffect(() => () => archGeometry.dispose(), [archGeometry]);
+  useEffect(() => {
+    const anisotropy = Math.min(8, gl.capabilities.getMaxAnisotropy());
+    [desktopTexture, mobileTexture].forEach((texture) => {
+      texture.anisotropy = anisotropy;
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.needsUpdate = true;
+    });
+  }, [desktopTexture, gl, mobileTexture]);
 
   useFrame(() => {
-    if (!group.current) return;
-    const opacity = windowOpacity(motion.progress.current, 0.47, 0.54, 0.68, 0.74);
-    const local = range(motion.progress.current, 0.48, 0.72);
+    if (!group.current || !material.current) return;
+    const opacity = windowOpacity(
+      motion.progress.current,
+      0.445,
+      0.515,
+      0.665,
+      0.72,
+    );
+    const local = range(motion.progress.current, 0.455, 0.71);
+    const reveal = range(motion.progress.current, 0.45, 0.555);
     const mobile = size.width <= 700;
-    const fidelity = mobile ? 0.42 : 1;
     group.current.visible = opacity > 0.004;
-    group.current.position.set(mobile ? 1.32 : 3.25, -0.72, -20);
-    group.current.rotation.y = -0.12 + local * 0.22 + motion.pointer.current.x * 0.06;
-    group.current.scale.setScalar((mobile ? 0.58 : 0.7) + local * 0.05);
-    materials.current.forEach((material, index) => {
-      material.opacity = opacity * (index === 0 ? 0.24 : 0.12) * fidelity;
-    });
+    group.current.position.set(
+      mobile ? 1.28 - local * 0.14 : 1.35 - local * 0.3,
+      mobile ? -0.18 + local * 0.08 : -0.08 + local * 0.06,
+      -22.5,
+    );
+    group.current.rotation.set(
+      (local - 0.5) * -0.012 - motion.pointer.current.y * 0.006,
+      (local - 0.5) * 0.035 + motion.pointer.current.x * 0.014,
+      0,
+    );
+    group.current.scale.setScalar((mobile ? 1.02 : 0.98) + local * 0.075);
+
+    material.current.uniforms.uMap.value = mobile
+      ? mobileTexture
+      : desktopTexture;
+    material.current.uniforms.uOpacity.value = opacity * (mobile ? 0.88 : 0.96);
+    material.current.uniforms.uReveal.value = -0.15 + reveal * 1.3;
+    material.current.uniforms.uParallax.value.set(
+      motion.pointer.current.x * (mobile ? 0.004 : 0.012) +
+        (local - 0.5) * (mobile ? 0.006 : 0.012),
+      -motion.pointer.current.y * (mobile ? 0.003 : 0.008) +
+        (local - 0.5) * 0.004,
+    );
   });
 
-  const addMaterial = (material: THREE.MeshBasicMaterial | null) => {
-    if (material && !materials.current.includes(material)) {
-      materials.current.push(material);
-    }
-  };
+  const mobile = size.width <= 700;
 
   return (
-    <group ref={group} position={[3.25, -0.72, -20]}>
-      <mesh geometry={archGeometry}>
-        <meshBasicMaterial
-          color="#ffd21e"
+    <group ref={group} position={[1.35, -0.08, -22.5]}>
+      <mesh>
+        <planeGeometry args={mobile ? [4.5, 6.75, 1, 1] : [12.6, 8.4, 1, 1]} />
+        <shaderMaterial
           depthWrite={false}
-          opacity={0}
-          ref={addMaterial}
-          toneMapped={false}
+          fragmentShader={PAVILION_FRAGMENT_SHADER}
+          ref={material}
           transparent
+          uniforms={uniforms}
+          vertexShader={PAVILION_VERTEX_SHADER}
         />
       </mesh>
-      {[-1.58, 1.58].map((x) => (
-        <mesh key={x} position={[x, -1.5, 0]}>
-          <cylinderGeometry args={[0.01, 0.01, 3.45, 8]} />
-          <meshBasicMaterial
-            color="#ffffff"
-            depthWrite={false}
-            opacity={0}
-            ref={addMaterial}
-            toneMapped={false}
-            transparent
-          />
-        </mesh>
-      ))}
     </group>
   );
 }
@@ -577,7 +638,7 @@ function SpatialJourney() {
       <pointLight color="#ffd21e" intensity={7} position={[3, 2, 4]} />
       <ConversationThread motion={motion} />
       <ProposalBand motion={motion} />
-      <LightPavilion motion={motion} />
+      <PavilionDepthScene motion={motion} />
       <DressRibbon motion={motion} />
       <RsvpHorizon motion={motion} />
     </>

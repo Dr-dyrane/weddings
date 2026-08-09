@@ -442,9 +442,6 @@ export function WeddingExperience({
         id="details"
         tabIndex={-1}
       >
-        <div className="journey-date-art" aria-hidden="true">
-          {String(date.day).padStart(2, "0")}
-        </div>
         <div className="journey-chapter-copy">
           <p className="journey-index">03</p>
           <p className="journey-eyebrow">The celebration</p>

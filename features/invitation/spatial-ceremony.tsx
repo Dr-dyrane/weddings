@@ -8,7 +8,6 @@ import * as THREE from "three";
 import {
   createCanopyGeometry,
   createFabricPanelGeometry,
-  HairlineFrame,
   PaperMaterial,
 } from "@/features/invitation/spatial-craft";
 
@@ -302,14 +301,9 @@ function DressTableau({
           const x = (index - (visibleCount - 1) / 2) * spacing;
           return (
             <group key={index} position={[x, 0, -0.72]} rotation={[-0.1, 0, 0]}>
-              <RoundedBox args={[1.15, 0.72, 0.045]} radius={0.022} smoothness={4}>
+              <RoundedBox args={[1.15, 0.72, 0.045]} radius={0.07} smoothness={6}>
                 <PaperMaterial color="#f2e9de" />
               </RoundedBox>
-              <HairlineFrame
-                height={0.6}
-                position={[0, 0, 0.027]}
-                width={1.03}
-              />
             </group>
           );
         })}
@@ -379,14 +373,9 @@ function RSVPPlace({
       </mesh>
 
       <group ref={placeCard} position={[0.95, 0.83, -0.52]} rotation={[-0.09, -0.14, 0]}>
-        <RoundedBox args={[1.7, 0.92, 0.05]} radius={0.026} smoothness={4}>
+        <RoundedBox args={[1.7, 0.92, 0.05]} radius={0.09} smoothness={6}>
           <PaperMaterial />
         </RoundedBox>
-        <HairlineFrame
-          height={0.78}
-          position={[0, 0, 0.03]}
-          width={1.56}
-        />
       </group>
 
       <mesh position={[-1.78, 0.65, -0.55]}>

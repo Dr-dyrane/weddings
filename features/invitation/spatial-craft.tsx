@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import * as THREE from "three";
 
 const PAPER_GRAIN_SIZE = 64;
@@ -68,55 +68,15 @@ export function FoilMaterial({ color = "#c9a565" }: { color?: string }) {
   );
 }
 
-export function HairlineFrame({
-  color = "#c9a565",
-  height,
-  opacity = 0.76,
-  position = [0, 0, 0],
-  width,
-}: {
-  color?: string;
-  height: number;
-  opacity?: number;
-  position?: [number, number, number];
-  width: number;
-}) {
-  const geometry = useMemo(() => {
-    const halfWidth = width / 2;
-    const halfHeight = height / 2;
-    return new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(-halfWidth, -halfHeight, 0),
-      new THREE.Vector3(halfWidth, -halfHeight, 0),
-      new THREE.Vector3(halfWidth, -halfHeight, 0),
-      new THREE.Vector3(halfWidth, halfHeight, 0),
-      new THREE.Vector3(halfWidth, halfHeight, 0),
-      new THREE.Vector3(-halfWidth, halfHeight, 0),
-      new THREE.Vector3(-halfWidth, halfHeight, 0),
-      new THREE.Vector3(-halfWidth, -halfHeight, 0),
-    ]);
-  }, [height, width]);
-
-  useEffect(() => () => geometry.dispose(), [geometry]);
-
-  return (
-    <lineSegments geometry={geometry} position={position}>
-      <lineBasicMaterial
-        color={color}
-        opacity={opacity}
-        toneMapped={false}
-        transparent={opacity < 1}
-      />
-    </lineSegments>
-  );
-}
-
 class InfinitySealCurve extends THREE.Curve<THREE.Vector3> {
   constructor() {
     super();
   }
 
   override getPoint(t: number, target = new THREE.Vector3()) {
-    const angle = t * Math.PI * 2;
+    // Start at the outer edge, not the crossing, so the closed tube has no
+    // visible join or heavy centre knot.
+    const angle = t * Math.PI * 2 - Math.PI / 2;
     return target.set(
       Math.sin(angle) * 0.31,
       Math.sin(angle * 2) * 0.16,
@@ -131,7 +91,7 @@ export function SealMark3D() {
   return (
     <group position={[0, 0, 0.028]}>
       <mesh>
-        <tubeGeometry args={[curve, 72, 0.016, 8, true]} />
+        <tubeGeometry args={[curve, 128, 0.0125, 12, true]} />
         <meshStandardMaterial
           color="#6f4b25"
           metalness={0.34}

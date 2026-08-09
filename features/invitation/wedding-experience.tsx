@@ -21,6 +21,7 @@ import {
 import { Button } from "@/ui/primitives/button";
 import { Choice, ChoiceGroup } from "@/ui/primitives/choice-group";
 import {
+  ArrowRight,
   CalendarPlus,
   Heart,
   MapPin,
@@ -249,7 +250,7 @@ function RSVP({
         isDisabled={!answer || !invitation.canRespond}
       >
         {invitation.canRespond ? "Send my response" : "Replies open soon"}
-        <span aria-hidden="true">→</span>
+        <ArrowRight aria-hidden="true" size={17} strokeWidth={1.75} />
       </Button>
       {!invitation.canRespond && (
         <p className="rsvp-availability">
@@ -438,14 +439,12 @@ export function WeddingExperience({
         </SpatialErrorBoundary>
       )}
       <div className="vignette" />
-      <div className="noise" />
 
       <header className="invitation-header">
         <a className="monogram" href="#invitation" aria-label="Back to invitation">
           <CoupleSealMark className="monogram-mark" />
         </a>
         <div className="journey-line" aria-hidden="true">
-          <i />
           <span>{wedding.couple.first} & {wedding.couple.second}</span>
         </div>
         <a className="header-action" href="#rsvp">Kindly reply</a>
@@ -472,7 +471,9 @@ export function WeddingExperience({
           <div className="intro-actions">
             <Button className="enter" tone="light" onPress={begin}>
               <span>Open your invitation</span>
-              <i aria-hidden="true">↓</i>
+              <span className="enter-icon" aria-hidden="true">
+                <ArrowRight size={17} strokeWidth={1.75} />
+              </span>
             </Button>
             <a href="#details">View invitation details</a>
           </div>

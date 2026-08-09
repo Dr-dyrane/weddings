@@ -8,7 +8,6 @@ import * as THREE from "three";
 import {
   createFabricPanelGeometry,
   createIrregularDiscGeometry,
-  HairlineFrame,
   PaperMaterial,
 } from "@/features/invitation/spatial-craft";
 
@@ -29,14 +28,9 @@ function PaperPanel({
 }) {
   return (
     <group position={position} rotation={rotation}>
-      <RoundedBox args={[1.28, 0.86, 0.055]} radius={0.025} smoothness={4}>
+      <RoundedBox args={[1.28, 0.86, 0.055]} radius={0.08} smoothness={6}>
         <PaperMaterial />
       </RoundedBox>
-      <HairlineFrame
-        height={0.72}
-        position={[0, 0, 0.032]}
-        width={1.14}
-      />
     </group>
   );
 }
@@ -243,14 +237,9 @@ export function WeddingCircle({
               position={[x, 0.62, z]}
               rotation={[0, angle, 0]}
             >
-              <RoundedBox args={[1.08, 0.7, 0.055]} radius={0.022} smoothness={4}>
+              <RoundedBox args={[1.08, 0.7, 0.055]} radius={0.07} smoothness={6}>
                 <PaperMaterial />
               </RoundedBox>
-              <HairlineFrame
-                height={0.58}
-                position={[0, 0, 0.032]}
-                width={0.96}
-              />
             </group>
           </group>
         );

@@ -10,7 +10,6 @@ import { journeyChapters } from "@/features/invitation/journey";
 import {
   createFlowerGeometry,
   createLeafGeometry,
-  HairlineFrame,
   PaperMaterial,
   SealMark3D,
 } from "@/features/invitation/spatial-craft";
@@ -285,7 +284,7 @@ function PaperEnvelope({ progress, pointer }: JourneyState) {
 
   return (
     <group ref={group}>
-      <RoundedBox args={[4.25, 2.8, 0.14]} radius={0.065} smoothness={5}>
+      <RoundedBox args={[4.25, 2.8, 0.14]} radius={0.14} smoothness={6}>
         <PaperMaterial color="#e8ddce" />
       </RoundedBox>
       <mesh position={[0, 0, 0.09]}>
@@ -304,21 +303,10 @@ function PaperEnvelope({ progress, pointer }: JourneyState) {
         <shapeGeometry args={[folds.flap]} />
         <PaperMaterial color="#f4ebdf" side={THREE.DoubleSide} />
       </mesh>
-      <HairlineFrame
-        color="#b58e53"
-        height={2.67}
-        opacity={0.68}
-        position={[0, 0, 0.122]}
-        width={4.12}
-      />
       <group ref={seal} position={[0, 0.05, 0.32]}>
         <mesh>
           <circleGeometry args={[0.38, 48]} />
           <meshStandardMaterial color="#b58e53" metalness={0.42} roughness={0.52} />
-        </mesh>
-        <mesh position={[0, 0, 0.018]}>
-          <ringGeometry args={[0.25, 0.275, 48]} />
-          <meshStandardMaterial color="#d8b878" metalness={0.5} roughness={0.4} />
         </mesh>
         <SealMark3D />
       </group>
@@ -379,34 +367,28 @@ function InvitationThreshold({ progress }: Pick<JourneyState, "progress">) {
           transparent
         />
       </mesh>
-      <HairlineFrame
-        height={9.46}
-        opacity={0.88}
-        position={[0, 0, 0.16]}
-        width={15.88}
-      />
-      <RoundedBox args={[5.8, 7.2, 0.12]} radius={0.04} position={[-5, 0, -0.04]}>
+      <RoundedBox args={[5.8, 7.2, 0.12]} radius={0.14} smoothness={6} position={[-5, 0, -0.04]}>
         <PaperMaterial />
       </RoundedBox>
-      <RoundedBox args={[5.8, 7.2, 0.12]} radius={0.04} position={[5, 0, -0.04]}>
+      <RoundedBox args={[5.8, 7.2, 0.12]} radius={0.14} smoothness={6} position={[5, 0, -0.04]}>
         <PaperMaterial />
       </RoundedBox>
-      <RoundedBox args={[4.25, 2.3, 0.12]} radius={0.04} position={[0, 3.55, -0.04]}>
+      <RoundedBox args={[4.25, 2.3, 0.12]} radius={0.12} smoothness={6} position={[0, 3.55, -0.04]}>
         <PaperMaterial />
       </RoundedBox>
-      <RoundedBox args={[4.25, 2.3, 0.12]} radius={0.04} position={[0, -3.55, -0.04]}>
+      <RoundedBox args={[4.25, 2.3, 0.12]} radius={0.12} smoothness={6} position={[0, -3.55, -0.04]}>
         <PaperMaterial />
       </RoundedBox>
-      <RoundedBox args={[0.48, 5.25, 0.18]} radius={0.035} position={[-2.1, 0, 0]}>
+      <RoundedBox args={[0.48, 5.25, 0.18]} radius={0.1} smoothness={6} position={[-2.1, 0, 0]}>
         <PaperMaterial />
       </RoundedBox>
-      <RoundedBox args={[0.48, 5.25, 0.18]} radius={0.035} position={[2.1, 0, 0]}>
+      <RoundedBox args={[0.48, 5.25, 0.18]} radius={0.1} smoothness={6} position={[2.1, 0, 0]}>
         <PaperMaterial />
       </RoundedBox>
-      <RoundedBox args={[4.7, 0.48, 0.18]} radius={0.035} position={[0, 2.38, 0]}>
+      <RoundedBox args={[4.7, 0.48, 0.18]} radius={0.1} smoothness={6} position={[0, 2.38, 0]}>
         <PaperMaterial />
       </RoundedBox>
-      <RoundedBox args={[4.7, 0.48, 0.18]} radius={0.035} position={[0, -2.38, 0]}>
+      <RoundedBox args={[4.7, 0.48, 0.18]} radius={0.1} smoothness={6} position={[0, -2.38, 0]}>
         <PaperMaterial />
       </RoundedBox>
       <group ref={leftDoor} position={[-0.93, 0, 0.035]}>
@@ -839,9 +821,9 @@ export function SpatialInvitation({
       camera={{ position: [0, 0, 8.8], fov: 32, near: 0.1, far: 180 }}
       gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
     >
-      <color attach="background" args={["#100a14"]} />
-      <fog attach="fog" args={["#100a14", 9, 52]} />
-      <ambientLight intensity={0.72} color="#d4c1d4" />
+      <color attach="background" args={["#0d0712"]} />
+      <fog attach="fog" args={["#0d0712", 18, 72]} />
+      <ambientLight intensity={0.64} color="#d9c6db" />
       <directionalLight position={[5, 8, 7]} intensity={2.8} color="#ffe3c2" />
       <pointLight position={[4, -0.4, 3]} intensity={24} distance={12} color="#c9a565" />
       <JourneySmoother {...journey} />

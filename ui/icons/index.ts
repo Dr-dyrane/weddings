@@ -1,4 +1,5 @@
 export {
+  ArrowRight,
   CalendarPlus,
   Check,
   ChevronDown,

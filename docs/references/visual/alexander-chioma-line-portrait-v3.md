@@ -1,6 +1,7 @@
 # Alexander and Chioma line portrait v3
 
-Status: **approved** for OGB edition 3.
+Status: approved directional-light study; superseded for publication by the
+full-strength, palette-aligned v4 asset.
 
 Generated: 2026-08-09 with the built-in Codex `image_gen` workflow. The
 provider-managed model identifier was not exposed and is not guessed.
@@ -35,7 +36,7 @@ The chroma-key background was removed locally with the imagegen skill's
 1024 × 1536 RGBA. The server-side OGB renderer embeds it directly; the identity
 asset is not exposed from `public/`.
 
-Edition 3 renders it at 460 × 690, positioned 15 px beyond the right edge and
-30 px above the canvas at 68% opacity. The date and year remain above the
-portrait. Yellow line weight is permitted only where the left-side progress
-threshold physically illuminates the figure.
+The approved placement renders this composition at 460 × 690, positioned 15 px
+beyond the right edge and 30 px above the canvas. V4 removes the blanket
+opacity reduction so the brightest contour can share the progress signal's
+yellow while the receding lines remain intrinsically dim.

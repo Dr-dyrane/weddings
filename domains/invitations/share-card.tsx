@@ -12,10 +12,10 @@ const spaceGroteskFontPromise = readFile(
 );
 
 const couplePortraitPromises = {
-  "alexander-chioma-line-v3": readFile(
+  "alexander-chioma-line-v4": readFile(
     path.join(
       process.cwd(),
-      "docs/references/visual/alexander-chioma-line-portrait-v3.png",
+      "docs/references/visual/alexander-chioma-line-portrait-v4.png",
     ),
   ),
 } as const;
@@ -117,7 +117,7 @@ async function createShareCard(wedding: PublishedWedding | null) {
   const coupleLine = wedding
     ? `${wedding.couple.first} & ${wedding.couple.second}`
     : "Dyrane Weddings";
-  const { date, year } = splitDateLabel(
+  const { date } = splitDateLabel(
     wedding?.dateLabel ?? "Personal Invitations 2027",
   );
   const progress = wedding
@@ -174,7 +174,6 @@ async function createShareCard(wedding: PublishedWedding | null) {
 
         <div
           style={{
-            background: "#303030",
             display: "flex",
             height: "34px",
             left: "50%",
@@ -210,21 +209,6 @@ async function createShareCard(wedding: PublishedWedding | null) {
           {date}
         </div>
 
-        <div
-          style={{
-            bottom: "18px",
-            display: "flex",
-            fontSize: "96px",
-            fontWeight: 500,
-            letterSpacing: "-5px",
-            lineHeight: 0.8,
-            position: "absolute",
-            right: "28px",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {year}
-        </div>
       </div>
     ),
     {

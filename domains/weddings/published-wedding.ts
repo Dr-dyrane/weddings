@@ -65,7 +65,7 @@ export const publishedWeddingSchema = z.object({
   }),
   shareCard: z
     .object({
-      portraitAsset: z.enum(["alexander-chioma-line-v3"]),
+      portraitAsset: z.enum(["alexander-chioma-line-v4"]),
       portraitOpacity: z.number().min(0).max(1),
     })
     .optional(),
@@ -135,8 +135,8 @@ const alexanderAndChioma = publishedWeddingSchema.parse({
     second: "Chioma",
   },
   shareCard: {
-    portraitAsset: "alexander-chioma-line-v3",
-    portraitOpacity: 0.68,
+    portraitAsset: "alexander-chioma-line-v4",
+    portraitOpacity: 1,
   },
   invitation: {
     eyebrow: "Together with their families",

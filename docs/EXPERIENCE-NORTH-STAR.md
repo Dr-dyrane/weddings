@@ -29,18 +29,17 @@ Locked composition:
 - pitch-black canvas: `#000000`;
 - white information: `#FFFFFF`;
 - Chioma yellow active signal: `#FFD21E`;
-- inactive progress track: `#303030`;
 - Space Grotesk Medium (`500`) for every visible word and numeral;
 - couple first names at the top left, joined by a literal ampersand;
 - numeric month and day at bottom left;
-- four-digit year at bottom right;
-- a centered 170 × 34 progress track;
+- a centered live yellow fill using a 170 × 34 full-progress geometry, with no
+  visible inactive track;
 - one slim, full-height contour portrait of the actual couple, entering from
-  the right edge behind the year;
+  the right edge;
 - directional line weight on that portrait: contours facing the progress
   light are thicker and champagne-yellow; receding contours are hairline
   smoke-grey;
-- 28 px horizontal safe margins and 18 px bottom clearance;
+- 28 px left safe margin and 18 px bottom clearance for the date;
 - no logo, monogram, border, gradient, texture, photographic image, ornament,
   salutation, venue, subtitle or wedding cliché.
 

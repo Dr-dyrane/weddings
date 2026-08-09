@@ -128,7 +128,7 @@ const alexanderAndChioma = publishedWeddingSchema.parse({
   couple: {
     first: "Alexander",
     second: "Chioma",
-    monogram: "A ∞ C",
+    monogram: "∞",
   },
   invitation: {
     eyebrow: "Together with their families",

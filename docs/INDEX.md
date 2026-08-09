@@ -36,7 +36,9 @@ This directory is the durable memory for the product. A decision is not consider
   place setting; reference-device release verification is active.
 - Phase 1 concept stills: generated for desktop and mobile; provisional pending
   couple/venue approval.
-- Alexander–Chioma brand-mark reference: recovered and preserved.
+- Alexander–Chioma brand-mark reference: recovered and preserved; one simple
+  infinity is active by explicit user direction.
 - OG/share-card edition `1`: implemented for public and personalized links with
-  a neutral unmarked runtime seal; it opens the same invitation experience.
-- Final vector, meaning and provenance approval: open; `A ∞ C` is only a development placeholder.
+  the infinity-marked runtime seal; it opens the same invitation experience.
+- Final production master and provenance approval: open; the former `A ∞ C`
+  glyph is not the logo.

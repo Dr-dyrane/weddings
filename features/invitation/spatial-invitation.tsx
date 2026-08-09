@@ -8,6 +8,13 @@ import * as THREE from "three";
 import { CeremonyWorld } from "@/features/invitation/spatial-ceremony";
 import { journeyChapters } from "@/features/invitation/journey";
 import {
+  createFlowerGeometry,
+  createLeafGeometry,
+  HairlineFrame,
+  PaperMaterial,
+  SealMark3D,
+} from "@/features/invitation/spatial-craft";
+import {
   StoryClearings,
   WeddingCircle,
 } from "@/features/invitation/spatial-story";
@@ -22,11 +29,14 @@ type JourneyState = ReturnType<typeof useJourney>;
 
 function useJourney() {
   const progress = useRef(0);
-  const pointer = useRef({ x: 0, y: 0 });
+  const targetProgress = useRef(0);
+  const pointer = useRef(new THREE.Vector2());
+  const targetPointer = useRef(new THREE.Vector2());
   const anchors = useRef<Array<{ progress: number; top: number }>>([]);
 
   useEffect(() => {
     let active = true;
+    let initialized = false;
     const measure = () => {
       if (!active) return;
       anchors.current = Array.from(
@@ -47,9 +57,10 @@ function useJourney() {
       const measured = anchors.current;
       const first = measured[0];
       const last = measured.at(-1);
+      let nextProgress = 0;
 
       if (!first || !last || point <= first.top) {
-        progress.current = first?.progress ?? 0;
+        nextProgress = first?.progress ?? 0;
       } else {
         const nextIndex = measured.findIndex((anchor) => anchor.top >= point);
         if (nextIndex > 0) {
@@ -57,14 +68,19 @@ function useJourney() {
           const next = measured[nextIndex];
           const distance = Math.max(1, next.top - previous.top);
           const local = clamp((point - previous.top) / distance);
-          progress.current =
-            previous.progress + (next.progress - previous.progress) * ease(local);
+          nextProgress =
+            previous.progress + (next.progress - previous.progress) * local;
         } else {
           const end = document.documentElement.scrollHeight - innerHeight * 0.5;
           const distance = Math.max(1, end - last.top);
           const local = clamp((point - last.top) / distance);
-          progress.current = last.progress + (1 - last.progress) * ease(local);
+          nextProgress = last.progress + (1 - last.progress) * local;
         }
+      }
+      targetProgress.current = nextProgress;
+      if (!initialized) {
+        progress.current = nextProgress;
+        initialized = true;
       }
       invalidate();
     };
@@ -73,8 +89,10 @@ function useJourney() {
       update();
     };
     const move = (event: PointerEvent) => {
-      pointer.current.x = (event.clientX / innerWidth - 0.5) * 2;
-      pointer.current.y = (event.clientY / innerHeight - 0.5) * 2;
+      targetPointer.current.set(
+        (event.clientX / innerWidth - 0.5) * 2,
+        (event.clientY / innerHeight - 0.5) * 2,
+      );
       invalidate();
     };
 
@@ -96,7 +114,48 @@ function useJourney() {
     };
   }, []);
 
-  return { progress, pointer };
+  return { pointer, progress, targetPointer, targetProgress };
+}
+
+function JourneySmoother({
+  pointer: pointerRef,
+  progress: progressRef,
+  targetPointer: targetPointerRef,
+  targetProgress: targetProgressRef,
+}: JourneyState) {
+  useFrame((_, delta) => {
+    const nextProgress = THREE.MathUtils.damp(
+      progressRef.current,
+      targetProgressRef.current,
+      8,
+      delta,
+    );
+    const nextPointerX = THREE.MathUtils.damp(
+      pointerRef.current.x,
+      targetPointerRef.current.x,
+      6,
+      delta,
+    );
+    const nextPointerY = THREE.MathUtils.damp(
+      pointerRef.current.y,
+      targetPointerRef.current.y,
+      6,
+      delta,
+    );
+    const unsettled =
+      Math.abs(targetProgressRef.current - nextProgress) > 0.00004 ||
+      Math.abs(targetPointerRef.current.x - nextPointerX) > 0.0004 ||
+      Math.abs(targetPointerRef.current.y - nextPointerY) > 0.0004;
+
+    progressRef.current = unsettled ? nextProgress : targetProgressRef.current;
+    pointerRef.current.set(
+      unsettled ? nextPointerX : targetPointerRef.current.x,
+      unsettled ? nextPointerY : targetPointerRef.current.y,
+    );
+    if (unsettled) invalidate();
+  }, -100);
+
+  return null;
 }
 
 function PaperEnvelope({ progress, pointer }: JourneyState) {
@@ -156,28 +215,31 @@ function PaperEnvelope({ progress, pointer }: JourneyState) {
   return (
     <group ref={group}>
       <RoundedBox args={[4.25, 2.8, 0.14]} radius={0.065} smoothness={5}>
-        <meshStandardMaterial color="#e8ddce" roughness={0.82} />
+        <PaperMaterial color="#e8ddce" />
       </RoundedBox>
       <mesh position={[0, 0, 0.09]}>
         <shapeGeometry args={[folds.left]} />
-        <meshStandardMaterial color="#e8ddcf" roughness={0.88} />
+        <PaperMaterial color="#e8ddcf" />
       </mesh>
       <mesh position={[0, 0, 0.095]}>
         <shapeGeometry args={[folds.right]} />
-        <meshStandardMaterial color="#eee4d6" roughness={0.88} />
+        <PaperMaterial color="#eee4d6" />
       </mesh>
       <mesh position={[0, 0, 0.1]}>
         <shapeGeometry args={[folds.pocket]} />
-        <meshStandardMaterial color="#f2e8da" roughness={0.88} />
+        <PaperMaterial color="#f2e8da" />
       </mesh>
       <mesh ref={flap} position={[0, 1.38, 0.11]}>
         <shapeGeometry args={[folds.flap]} />
-        <meshStandardMaterial
-          color="#f4ebdf"
-          roughness={0.88}
-          side={THREE.DoubleSide}
-        />
+        <PaperMaterial color="#f4ebdf" side={THREE.DoubleSide} />
       </mesh>
+      <HairlineFrame
+        color="#b58e53"
+        height={2.67}
+        opacity={0.68}
+        position={[0, 0, 0.122]}
+        width={4.12}
+      />
       <group ref={seal} position={[0, 0.05, 0.32]}>
         <mesh>
           <circleGeometry args={[0.38, 48]} />
@@ -187,6 +249,7 @@ function PaperEnvelope({ progress, pointer }: JourneyState) {
           <ringGeometry args={[0.25, 0.275, 48]} />
           <meshStandardMaterial color="#d8b878" metalness={0.5} roughness={0.4} />
         </mesh>
+        <SealMark3D />
       </group>
     </group>
   );
@@ -243,49 +306,39 @@ function InvitationThreshold({ progress }: Pick<JourneyState, "progress">) {
           transparent
         />
       </mesh>
-      <mesh position={[-7.94, 0, -0.08]}>
-        <boxGeometry args={[0.08, 9.48, 0.04]} />
-        <meshStandardMaterial color="#c9a565" metalness={0.56} roughness={0.34} />
-      </mesh>
-      <mesh position={[7.94, 0, -0.08]}>
-        <boxGeometry args={[0.08, 9.48, 0.04]} />
-        <meshStandardMaterial color="#c9a565" metalness={0.56} roughness={0.34} />
-      </mesh>
-      <mesh position={[0, 4.74, -0.08]}>
-        <boxGeometry args={[15.96, 0.08, 0.04]} />
-        <meshStandardMaterial color="#c9a565" metalness={0.56} roughness={0.34} />
-      </mesh>
-      <mesh position={[0, -4.74, -0.08]}>
-        <boxGeometry args={[15.96, 0.08, 0.04]} />
-        <meshStandardMaterial color="#c9a565" metalness={0.56} roughness={0.34} />
-      </mesh>
+      <HairlineFrame
+        height={9.46}
+        opacity={0.88}
+        position={[0, 0, 0.16]}
+        width={15.88}
+      />
       <RoundedBox args={[5.8, 7.2, 0.12]} radius={0.04} position={[-5, 0, -0.04]}>
-        <meshStandardMaterial color="#f4ede3" roughness={0.82} />
+        <PaperMaterial />
       </RoundedBox>
       <RoundedBox args={[5.8, 7.2, 0.12]} radius={0.04} position={[5, 0, -0.04]}>
-        <meshStandardMaterial color="#f4ede3" roughness={0.82} />
+        <PaperMaterial />
       </RoundedBox>
       <RoundedBox args={[4.25, 2.3, 0.12]} radius={0.04} position={[0, 3.55, -0.04]}>
-        <meshStandardMaterial color="#f4ede3" roughness={0.82} />
+        <PaperMaterial />
       </RoundedBox>
       <RoundedBox args={[4.25, 2.3, 0.12]} radius={0.04} position={[0, -3.55, -0.04]}>
-        <meshStandardMaterial color="#f4ede3" roughness={0.82} />
+        <PaperMaterial />
       </RoundedBox>
       <RoundedBox args={[0.48, 5.25, 0.18]} radius={0.035} position={[-2.1, 0, 0]}>
-        <meshStandardMaterial color="#f4ede3" roughness={0.8} />
+        <PaperMaterial />
       </RoundedBox>
       <RoundedBox args={[0.48, 5.25, 0.18]} radius={0.035} position={[2.1, 0, 0]}>
-        <meshStandardMaterial color="#f4ede3" roughness={0.8} />
+        <PaperMaterial />
       </RoundedBox>
       <RoundedBox args={[4.7, 0.48, 0.18]} radius={0.035} position={[0, 2.38, 0]}>
-        <meshStandardMaterial color="#f4ede3" roughness={0.8} />
+        <PaperMaterial />
       </RoundedBox>
       <RoundedBox args={[4.7, 0.48, 0.18]} radius={0.035} position={[0, -2.38, 0]}>
-        <meshStandardMaterial color="#f4ede3" roughness={0.8} />
+        <PaperMaterial />
       </RoundedBox>
       <group ref={leftDoor} position={[-0.93, 0, 0.035]}>
         <RoundedBox args={[1.86, 4.28, 0.13]} radius={0.025} smoothness={4}>
-          <meshStandardMaterial color="#f4ede3" roughness={0.82} />
+          <PaperMaterial />
         </RoundedBox>
         <mesh position={[0.91, 0, 0.08]}>
           <planeGeometry args={[0.045, 4.18]} />
@@ -294,7 +347,7 @@ function InvitationThreshold({ progress }: Pick<JourneyState, "progress">) {
       </group>
       <group ref={rightDoor} position={[0.93, 0, 0.035]}>
         <RoundedBox args={[1.86, 4.28, 0.13]} radius={0.025} smoothness={4}>
-          <meshStandardMaterial color="#f4ede3" roughness={0.82} />
+          <PaperMaterial />
         </RoundedBox>
         <mesh position={[-0.91, 0, 0.08]}>
           <planeGeometry args={[0.045, 4.18]} />
@@ -351,6 +404,8 @@ function createPathGeometry(curve: THREE.CatmullRomCurve3) {
 function GardenFoliage() {
   const ivory = useRef<THREE.InstancedMesh>(null);
   const foliage = useRef<THREE.InstancedMesh>(null);
+  const flowerGeometry = useMemo(() => createFlowerGeometry(), []);
+  const leafGeometry = useMemo(() => createLeafGeometry(), []);
 
   useEffect(() => {
     const matrix = new THREE.Matrix4();
@@ -371,10 +426,14 @@ function GardenFoliage() {
         -1.24 + (index % 5) * 0.17,
         depth,
       );
-      euler.set(0, 0, side * (0.08 + (index % 4) * 0.08));
+      euler.set(
+        Math.sin(index * 0.8) * 0.1,
+        Math.cos(index * 1.1) * 0.16,
+        side * (0.08 + (index % 4) * 0.08),
+      );
       rotation.setFromEuler(euler);
       const size = 0.3 + (index % 5) * 0.075;
-      scale.set(size * 1.35, size, 1);
+      scale.set(size * 0.78, size * 0.92, 1);
       matrix.compose(position, rotation, scale);
       foliage.current?.setMatrixAt(index, matrix);
       foliage.current?.setColorAt(
@@ -407,15 +466,39 @@ function GardenFoliage() {
     invalidate();
   }, []);
 
+  useEffect(
+    () => () => {
+      flowerGeometry.dispose();
+      leafGeometry.dispose();
+    },
+    [flowerGeometry, leafGeometry],
+  );
+
   return (
     <group>
-      <instancedMesh ref={foliage} args={[undefined, undefined, 54]}>
-        <circleGeometry args={[1, 12]} />
-        <meshBasicMaterial color="#ffffff" vertexColors />
+      <instancedMesh
+        ref={foliage}
+        args={[leafGeometry, undefined, 54]}
+      >
+        <meshStandardMaterial
+          color="#ffffff"
+          emissive="#19261f"
+          emissiveIntensity={0.72}
+          roughness={0.92}
+          side={THREE.DoubleSide}
+          vertexColors
+        />
       </instancedMesh>
-      <instancedMesh ref={ivory} args={[undefined, undefined, 54]}>
-        <circleGeometry args={[1, 12]} />
-        <meshBasicMaterial color="#ffffff" vertexColors />
+      <instancedMesh
+        ref={ivory}
+        args={[flowerGeometry, undefined, 54]}
+      >
+        <meshStandardMaterial
+          color="#ffffff"
+          roughness={0.82}
+          side={THREE.DoubleSide}
+          vertexColors
+        />
       </instancedMesh>
     </group>
   );
@@ -467,7 +550,7 @@ function LivingGarden({
   );
 }
 
-function CameraRig({ progress, pointer }: JourneyState) {
+function CameraRig({ progress }: Pick<JourneyState, "progress">) {
   const { camera, size } = useThree();
   const curves = useMemo(() => {
     const make = (mode: "desktop" | "mobile", key: "position" | "target") =>
@@ -502,19 +585,13 @@ function CameraRig({ progress, pointer }: JourneyState) {
     const previous = journeyChapters[lower];
     const next = journeyChapters[Math.min(upper, journeyChapters.length - 1)];
     const segment = Math.max(0.001, next.progress - previous.progress);
-    const local =
-      lower === 0
-        ? ease(range(current, 0.08, 0.12))
-        : ease(clamp((current - previous.progress) / segment));
+    const local = clamp((current - previous.progress) / segment);
     const curveProgress = clamp((lower + local) / (journeyChapters.length - 1));
     const mobile = size.width <= 850;
     const positionCurve = mobile ? curves.mobilePosition : curves.desktopPosition;
     const targetCurve = mobile ? curves.mobileTarget : curves.desktopTarget;
     const position = positionCurve.getPoint(curveProgress);
     const target = targetCurve.getPoint(curveProgress);
-    const pointerStrength = current < 0.2 ? 0.055 : 0.09;
-    position.x += pointer.current.x * pointerStrength;
-    position.y -= pointer.current.y * pointerStrength * 0.6;
     camera.position.copy(position);
     camera.lookAt(target);
   });
@@ -585,6 +662,7 @@ export function SpatialInvitation({
       <ambientLight intensity={0.72} color="#d4c1d4" />
       <directionalLight position={[5, 8, 7]} intensity={2.8} color="#ffe3c2" />
       <pointLight position={[4, -0.4, 3]} intensity={24} distance={12} color="#c9a565" />
+      <JourneySmoother {...journey} />
       <Suspense fallback={null}>
         <LivingGarden
           palette={palette}
@@ -598,7 +676,7 @@ export function SpatialInvitation({
       </Suspense>
       <ContextGuard onUnavailable={onUnavailable} />
       <ReadySignal onReady={onReady} />
-      <CameraRig {...journey} />
+      <CameraRig progress={journey.progress} />
     </Canvas>
   );
 }

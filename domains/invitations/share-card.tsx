@@ -6,6 +6,7 @@ import { ImageResponse } from "next/og";
 
 import type { InvitationProjection } from "@/domains/invitations/invitation";
 import type { PublishedWedding } from "@/domains/weddings/published-wedding";
+import { CoupleSealMark } from "@/ui/brand/couple-seal-mark";
 
 const artPromise = readFile(
   path.join(process.cwd(), "public/og/modern-heirloom-card.jpg"),
@@ -101,8 +102,16 @@ async function createShareCard(
               borderRadius: "999px",
               display: "flex",
               height: "108px",
+              left: "16px",
+              position: "absolute",
+              top: "16px",
               width: "108px",
             }}
+          />
+          <CoupleSealMark
+            color="#5d391c"
+            height="56"
+            width="88"
           />
         </div>
         <div

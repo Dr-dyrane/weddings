@@ -36,7 +36,7 @@ The future Studio asks one meaningful question at a time in this order:
 | Couple portraits | Open | No generated faces; typographic frames |
 | Venue photography | Open | Generated architectural concepts with provenance |
 | Ring reference | Candidate exists | Use only after ownership and relevance are confirmed |
-| Final logo/monogram | Reference recovered; vector/meaning approval open | Preserve the mirrored-infinity concept; plain seal in production blockouts |
+| Final logo/monogram | Simple infinity confirmed; production master/provenance open | Use one clean infinity on the seal; add no initials or symbolism |
 | Sound | Open | Silent experience |
 
 ## Required media set
@@ -65,8 +65,8 @@ The future Studio asks one meaningful question at a time in this order:
 ### Brand mark
 
 - Original concept image — recovered at [`references/brand/alexander-chioma-mark-concept.jpeg`](references/brand/alexander-chioma-mark-concept.jpeg).
-- Meaning of each symbol.
-- Preferred initials and name order.
+- Production-master vector and optical small-size edition.
+- Confirmed provenance and commercial-use rights.
 - Whether it belongs to this wedding only or the Dyrane Weddings product.
 - Uses required: seal, card, favicon, loading mark, footer and social preview.
 

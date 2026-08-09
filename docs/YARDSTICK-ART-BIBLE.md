@@ -48,7 +48,7 @@ The experience is not futuristic because it contains chrome or neon. It is futur
 - Heavy warm ivory with a subtle fibre texture.
 - Black typographic ink and burnished champagne-gold accents.
 - Gilded edge expressed as a narrow travelling highlight.
-- Seal uses the final approved couple mark. Until then, a plain unbranded seal is safer than treating `A ∞ C` as final.
+- Seal uses the confirmed simple infinity. Do not add initials, a heart, centre ornament or other symbolism.
 
 ## Palette
 
@@ -76,7 +76,7 @@ The palette is a lighting system, not a set of equally loud swatches. Ivory and 
 
 Avoid liquid chrome, holographic gradients, generic purple neon, excessive bloom, plastic florals, glitter shaders and stock luxury emblems.
 
-The recovered mirrored-infinity mark may appear as a subtle foil, emboss or architectural emblem after vector refinement. The raster reference itself must not be composited into the experience as a finished logo.
+The confirmed simple infinity may appear as a subtle foil, emboss or architectural emblem. The clean optical runtime edition is active; the raster reference itself must not be composited into the experience as a finished logo.
 
 ## Light direction
 

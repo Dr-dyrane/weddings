@@ -1,8 +1,16 @@
 "use client";
 
+import { RoundedBox } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+
+import {
+  createFabricPanelGeometry,
+  createIrregularDiscGeometry,
+  HairlineFrame,
+  PaperMaterial,
+} from "@/features/invitation/spatial-craft";
 
 type ProgressRef = { current: number };
 
@@ -21,27 +29,38 @@ function PaperPanel({
 }) {
   return (
     <group position={position} rotation={rotation}>
-      <mesh>
-        <boxGeometry args={[1.28, 0.86, 0.055]} />
-        <meshStandardMaterial color="#f4ede3" roughness={0.86} />
-      </mesh>
-      <mesh position={[0, 0, -0.038]}>
-        <boxGeometry args={[1.34, 0.92, 0.018]} />
-        <meshStandardMaterial color="#c9a565" metalness={0.5} roughness={0.38} />
-      </mesh>
+      <RoundedBox args={[1.28, 0.86, 0.055]} radius={0.025} smoothness={4}>
+        <PaperMaterial />
+      </RoundedBox>
+      <HairlineFrame
+        height={0.72}
+        position={[0, 0, 0.032]}
+        width={1.14}
+      />
     </group>
   );
 }
 
 function ClearingBase() {
+  const geometries = useMemo(
+    () => [
+      createIrregularDiscGeometry(2.08, 2.2, 0.18, 1.4),
+      createIrregularDiscGeometry(1.78, 1.88, 0.08, 3.2),
+    ],
+    [],
+  );
+
+  useEffect(
+    () => () => geometries.forEach((geometry) => geometry.dispose()),
+    [geometries],
+  );
+
   return (
     <>
-      <mesh>
-        <cylinderGeometry args={[2.08, 2.2, 0.18, 48]} />
+      <mesh geometry={geometries[0]}>
         <meshStandardMaterial color="#b7aa9a" roughness={0.96} />
       </mesh>
-      <mesh position={[0, 0.11, 0]}>
-        <cylinderGeometry args={[1.78, 1.88, 0.08, 48]} />
+      <mesh geometry={geometries[1]} position={[0, 0.11, 0]}>
         <meshStandardMaterial color="#d5c9ba" roughness={0.94} />
       </mesh>
     </>
@@ -139,8 +158,31 @@ export function WeddingCircle({
   const group = useRef<THREE.Group>(null);
   const glow = useRef<THREE.PointLight>(null);
   const cards = useRef<Array<THREE.Group | null>>([]);
-  const placeAngles = Array.from({ length: peopleCount }, (_, index) =>
-    peopleCount <= 1 ? 0 : THREE.MathUtils.lerp(-0.92, 0.92, index / (peopleCount - 1)),
+  const placeAngles = useMemo(
+    () => Array.from({ length: peopleCount }, (_, index) =>
+      peopleCount <= 1
+        ? 0
+        : THREE.MathUtils.lerp(-0.92, 0.92, index / (peopleCount - 1)),
+    ),
+    [peopleCount],
+  );
+  const runnerGeometries = useMemo(
+    () => placeAngles.map((angle, index) =>
+      createFabricPanelGeometry(0.76, 2.5, angle + index * 0.5),
+    ),
+    [placeAngles],
+  );
+  const baseGeometry = useMemo(
+    () => createIrregularDiscGeometry(3.2, 3.28, 0.32, 2.1),
+    [],
+  );
+
+  useEffect(
+    () => () => {
+      baseGeometry.dispose();
+      runnerGeometries.forEach((geometry) => geometry.dispose());
+    },
+    [baseGeometry, runnerGeometries],
   );
 
   useFrame(() => {
@@ -168,8 +210,7 @@ export function WeddingCircle({
 
   return (
     <group ref={group} visible={false}>
-      <mesh>
-        <cylinderGeometry args={[3.2, 3.28, 0.32, 64]} />
+      <mesh geometry={baseGeometry}>
         <meshStandardMaterial color="#2a1830" roughness={0.9} />
       </mesh>
       <mesh position={[0, 0.19, 0]} rotation={[Math.PI / 2, 0, 0]}>
@@ -183,11 +224,17 @@ export function WeddingCircle({
         return (
           <group key={angle}>
             <mesh
+              geometry={runnerGeometries[index]}
               position={[Math.sin(angle) * 2.15, 0.2, Math.cos(angle) * 1.78]}
               rotation={[-Math.PI / 2, 0, -angle]}
             >
-              <planeGeometry args={[0.76, 2.5]} />
-              <meshStandardMaterial color="#e9dfd2" roughness={0.92} side={THREE.DoubleSide} />
+              <meshPhysicalMaterial
+                color="#e9dfd2"
+                roughness={0.88}
+                sheen={0.22}
+                sheenColor="#fff3df"
+                side={THREE.DoubleSide}
+              />
             </mesh>
             <group
               ref={(node) => {
@@ -196,14 +243,14 @@ export function WeddingCircle({
               position={[x, 0.62, z]}
               rotation={[0, angle, 0]}
             >
-              <mesh>
-                <boxGeometry args={[1.08, 0.7, 0.055]} />
-                <meshStandardMaterial color="#f4ede3" roughness={0.84} />
-              </mesh>
-              <mesh position={[0, 0, -0.038]}>
-                <boxGeometry args={[1.14, 0.76, 0.018]} />
-                <meshStandardMaterial color="#c9a565" metalness={0.5} roughness={0.38} />
-              </mesh>
+              <RoundedBox args={[1.08, 0.7, 0.055]} radius={0.022} smoothness={4}>
+                <PaperMaterial />
+              </RoundedBox>
+              <HairlineFrame
+                height={0.58}
+                position={[0, 0, 0.032]}
+                width={0.96}
+              />
             </group>
           </group>
         );

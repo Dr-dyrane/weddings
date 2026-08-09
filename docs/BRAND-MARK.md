@@ -1,6 +1,6 @@
 # Wedding Brand Mark and Seal
 
-Status: reference recovered — vector refinement and meaning approval open
+Status: simple infinity confirmed — production master and provenance approval open
 
 The original Alexander–Chioma mark direction is now preserved at
 [`references/brand/alexander-chioma-mark-concept.jpeg`](references/brand/alexander-chioma-mark-concept.jpeg).
@@ -18,36 +18,28 @@ Source record:
 
 Preserve these qualities through refinement:
 
-- a bilateral, mirrored construction;
-- one continuous infinity/union silhouette;
-- two distinct forms meeting at the centre without losing their individuality;
-- a strong central negative space rather than a dense crest;
+- one clean, continuous infinity silhouette;
+- bilateral balance with an open centre crossing;
 - champagne or burnished gold on warm ivory;
 - sculptural depth that can become a wax seal, emboss, card emblem or architectural detail;
 - restrained ceremonial presence rather than a generic wedding icon.
 
-The fine angular strokes near the centre appear to explore hidden or interlocking `A` and `C` geometry. Treat that as a design hypothesis until the user confirms the intended reading.
-
-Do not identify the mirrored forms as a specific animal, cultural symbol or family emblem without confirmation.
+The user confirmed on 8 August 2026 that the logo is simply an infinity. Do not add hidden letters, hearts, animals, centre diamonds, ornamental strokes or unconfirmed symbolism.
 
 ## Open decisions
 
-Before the vector is locked, confirm:
+Before the production master is locked, confirm:
 
-1. What the two mirrored forms represent.
-2. Whether `A` and `C` are intentionally hidden in the construction and how quickly they should be noticed.
-3. The correct orientation and which side belongs to each person, if any.
-4. Whether the mark belongs only to Alexander and Chioma or can influence the Dyrane Weddings product identity.
-5. Whether the current fine centre strokes are meaningful or exploratory.
-6. The preferred balance between organic curves and geometric precision.
-7. Ownership or provenance of the original concept rendering.
+1. Whether the mark belongs only to Alexander and Chioma or can influence the Dyrane Weddings product identity.
+2. Ownership or provenance of the original concept rendering.
+3. Final stroke weight and optical spacing for large, seal and small-size masters.
 
 ## Production development
 
 Rebuild the mark as an original, optically corrected vector. Do not auto-trace the raster image. Produce:
 
 - full ceremonial mark for stationery and large spatial use;
-- simplified seal for the envelope and share card;
+- small-format infinity for the envelope and share card;
 - small optical mark for 16, 24 and 32 px uses;
 - single-colour dark, light, foil, emboss and deboss variants;
 - couple-name lockup and share-card lockup;
@@ -58,18 +50,20 @@ The mark should survive without gradients. Foil, lighting and depth are applicat
 
 ## Motion behaviour
 
-The reveal may begin as two mirrored strokes or forms approaching from opposite sides and settling into one union. It should resolve once, respond to the guest's progress and remain still afterward. No perpetual logo loop, spin or elastic bounce.
+If animated, the single infinity stroke may draw on once with the guest's progress and remain still afterward. No extra forms, perpetual logo loop, spin or elastic bounce.
 
 Reduced motion uses a short opacity reveal of the completed mark.
 
 ## Current implementation rule
 
-The `A ∞ C` text glyph currently in code is a development placeholder. It must not be presented as the final logo, used to derive the final geometry or silently replace this recovered concept.
+The former `A ∞ C` text glyph was a development placeholder. It must not be presented as the final logo, used to derive the final geometry or silently replace this recovered concept.
 
-Until the vector is approved, environmental blockouts may use the recovered concept only as a clearly labelled reference or use a neutral plain seal in the rendered experience.
+On 8 August 2026 the user explicitly directed that the mark appear on the envelope seal and OG/share card, then confirmed that it is a simple infinity only. A clean, optically redrawn infinity is therefore active across the live 3D seal, static opening frame, header and share card. It is not yet the production master vector.
+
+Do not auto-trace the raster or extrapolate symbolism. Final commercial ownership, provenance and production-master construction remain open.
 
 ## Current share-card delivery
 
 Card edition `1` is implemented for both the public and personalized invitation routes. It renders the approved wedding snapshot into a deterministic 1200×630 card with the couple, recipient, date and location, and links into the same invitation experience.
 
-The underlying blockout art contains an exploratory stamped motif. Runtime delivery deliberately covers it with a neutral unmarked burnished-gold seal. The recovered Alexander–Chioma concept is not promoted into the share card until its meaning, vector, ownership and small-size form are approved.
+The underlying blockout art contains an exploratory stamped motif. Runtime delivery covers it with a controlled burnished-gold seal carrying the simple infinity described above. The production master still requires vector, ownership and provenance approval.

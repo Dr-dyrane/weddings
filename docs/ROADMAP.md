@@ -72,7 +72,7 @@ Execution follows `BUILD-RUNBOOK.md`:
 7. Atmosphere polish.
 8. Reference-device release.
 
-Research, art direction, storyboard and intake are now durable in `RESEARCH-DOSSIER.md`, `YARDSTICK-ART-BIBLE.md`, `SCENE-STORYBOARD.md` and `ASSET-INTAKE.md`. The couple-mark reference is recovered; its vector refinement, meaning and provenance approval remain explicit open items in `BRAND-MARK.md` and do not block environmental blockout.
+Research, art direction, storyboard and intake are now durable in `RESEARCH-DOSSIER.md`, `YARDSTICK-ART-BIBLE.md`, `SCENE-STORYBOARD.md` and `ASSET-INTAKE.md`. The couple mark is confirmed as one simple infinity and its optical runtime edition is active; production-master construction and provenance remain explicit open items in `BRAND-MARK.md`.
 
 Exit gate: approved storyboard and visual references; long-name and Unicode fixtures; 320–1440px layouts; 200% zoom; reverse-scroll; context loss; reference-device frame and Core Web Vitals budgets.
 

@@ -27,6 +27,7 @@ import {
   Share2,
   Sparkles as SparklesIcon,
 } from "@/ui/icons";
+import { CoupleSealMark } from "@/ui/brand/couple-seal-mark";
 
 const SpatialInvitation = dynamic(
   () =>
@@ -173,6 +174,11 @@ function StaticWeddingWorld({ scene }: { scene: StaticScene }) {
         {/* getImageProps preserves responsive Next image optimization in picture. */}
         <img {...desktop} className="static-world-image" alt="" />
       </picture>
+      {scene === 1 ? (
+        <div className="static-seal-mark">
+          <CoupleSealMark />
+        </div>
+      ) : null}
       <div className="static-world-wash" />
     </div>
   );
@@ -432,9 +438,7 @@ export function WeddingExperience({
 
       <header className="invitation-header">
         <a className="monogram" href="#invitation" aria-label="Back to invitation">
-          {wedding.couple.first.slice(0, 1)}
-          <span>∞</span>
-          {wedding.couple.second.slice(0, 1)}
+          <CoupleSealMark className="monogram-mark" />
         </a>
         <div className="journey-line" aria-hidden="true">
           <i />
@@ -577,7 +581,7 @@ export function WeddingExperience({
         data-journey-progress={journeyById.dress.progress}
         data-scene={journeyById.dress.scene}
       >
-        <div className="dress-copy">
+        <div className="dress-copy copy-surface copy-surface-night">
           <p className="kicker">{wedding.dress.eyebrow}</p>
           <h2>{wedding.dress.title}</h2>
           <p>{wedding.dress.guidance}</p>
@@ -626,7 +630,7 @@ export function WeddingExperience({
         <div className="sunset" aria-hidden="true"><i /><i /><i /></div>
         <RSVP invitation={invitation} wedding={wedding} />
         <footer>
-          <span>{wedding.couple.monogram}</span>
+          <CoupleSealMark className="footer-mark" />
           <p>{wedding.dateLabel} · {wedding.locationLabel}</p>
           <small>Created with Dyrane Weddings</small>
         </footer>

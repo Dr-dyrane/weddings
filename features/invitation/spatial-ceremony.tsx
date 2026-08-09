@@ -1,8 +1,16 @@
 "use client";
 
+import { RoundedBox } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+
+import {
+  createCanopyGeometry,
+  createFabricPanelGeometry,
+  HairlineFrame,
+  PaperMaterial,
+} from "@/features/invitation/spatial-craft";
 
 type ProgressRef = { current: number };
 
@@ -19,19 +27,22 @@ const ivory = "#eee4d6";
 function DoorPanel({ side }: { side: -1 | 1 }) {
   return (
     <group position={[side * 3.15, 1.02, 6.62]} rotation={[0, side * -0.56, 0]}>
-      <mesh position={[-1.14, 0, 0]}>
-        <boxGeometry args={[0.12, 5.2, 0.12]} />
+      <RoundedBox args={[0.12, 5.2, 0.12]} position={[-1.14, 0, 0]} radius={0.02} smoothness={3}>
         <meshStandardMaterial color={timber} metalness={0.24} roughness={0.62} />
-      </mesh>
-      <mesh position={[1.14, 0, 0]}>
-        <boxGeometry args={[0.12, 5.2, 0.12]} />
+      </RoundedBox>
+      <RoundedBox args={[0.12, 5.2, 0.12]} position={[1.14, 0, 0]} radius={0.02} smoothness={3}>
         <meshStandardMaterial color={timber} metalness={0.24} roughness={0.62} />
-      </mesh>
+      </RoundedBox>
       {[-2.54, 2.54].map((y) => (
-        <mesh key={y} position={[0, y, 0]}>
-          <boxGeometry args={[2.4, 0.12, 0.12]} />
+        <RoundedBox
+          args={[2.4, 0.12, 0.12]}
+          key={y}
+          position={[0, y, 0]}
+          radius={0.02}
+          smoothness={3}
+        >
           <meshStandardMaterial color={timber} metalness={0.24} roughness={0.62} />
-        </mesh>
+        </RoundedBox>
       ))}
       <mesh>
         <planeGeometry args={[2.28, 5.08]} />
@@ -50,6 +61,17 @@ function DoorPanel({ side }: { side: -1 | 1 }) {
 function PavilionArchitecture({ progress }: { progress: ProgressRef }) {
   const group = useRef<THREE.Group>(null);
   const arrivalLight = useRef<THREE.PointLight>(null);
+  const canopyGeometries = useMemo(
+    () => [-3.35, -1.12, 1.12, 3.35].map((_, index) =>
+      createCanopyGeometry(1.72, 12.6, index * 0.7),
+    ),
+    [],
+  );
+
+  useEffect(
+    () => () => canopyGeometries.forEach((geometry) => geometry.dispose()),
+    [canopyGeometries],
+  );
 
   useFrame(() => {
     if (!group.current || !arrivalLight.current) return;
@@ -74,23 +96,38 @@ function PavilionArchitecture({ progress }: { progress: ProgressRef }) {
 
       {[-6.5, 0, 6.5].flatMap((z) =>
         ([-4.58, 4.58] as const).map((x) => (
-          <mesh key={`${x}-${z}`} position={[x, 1.02, z]}>
-            <boxGeometry args={[0.16, 5.7, 0.16]} />
+          <RoundedBox
+            args={[0.16, 5.7, 0.16]}
+            key={`${x}-${z}`}
+            position={[x, 1.02, z]}
+            radius={0.025}
+            smoothness={3}
+          >
             <meshStandardMaterial color={timber} metalness={0.26} roughness={0.58} />
-          </mesh>
+          </RoundedBox>
         )),
       )}
       {[-6.5, 0, 6.5].map((z) => (
-        <mesh key={z} position={[0, 3.84, z]}>
-          <boxGeometry args={[9.35, 0.18, 0.22]} />
+        <RoundedBox
+          args={[9.35, 0.18, 0.22]}
+          key={z}
+          position={[0, 3.84, z]}
+          radius={0.025}
+          smoothness={3}
+        >
           <meshStandardMaterial color={timber} metalness={0.26} roughness={0.58} />
-        </mesh>
+        </RoundedBox>
       ))}
       {[-4.58, 4.58].map((x) => (
-        <mesh key={x} position={[x, 3.84, 0]}>
-          <boxGeometry args={[0.18, 0.18, 13.2]} />
+        <RoundedBox
+          args={[0.18, 0.18, 13.2]}
+          key={x}
+          position={[x, 3.84, 0]}
+          radius={0.025}
+          smoothness={3}
+        >
           <meshStandardMaterial color={timber} metalness={0.26} roughness={0.58} />
-        </mesh>
+        </RoundedBox>
       ))}
 
       {([-4.56, 4.56] as const).map((x) => (
@@ -116,13 +153,18 @@ function PavilionArchitecture({ progress }: { progress: ProgressRef }) {
         />
       </mesh>
 
-      {[-3.35, -1.12, 1.12, 3.35].map((x) => (
-        <mesh key={x} position={[x, 3.7, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[1.72, 12.6]} />
-          <meshStandardMaterial
+      {[-3.35, -1.12, 1.12, 3.35].map((x, index) => (
+        <mesh
+          geometry={canopyGeometries[index]}
+          key={x}
+          position={[x, 3.7, 0]}
+        >
+          <meshPhysicalMaterial
             color={ivory}
-            opacity={0.28}
-            roughness={0.96}
+            opacity={0.34}
+            roughness={0.72}
+            sheen={0.45}
+            sheenColor="#fff3e3"
             side={THREE.DoubleSide}
             transparent
           />
@@ -154,6 +196,31 @@ function DressTableau({
   const { size } = useThree();
   const group = useRef<THREE.Group>(null);
   const vendorCards = useRef<THREE.Group>(null);
+  const panelWidth = Math.max(0.72, 4.8 / Math.max(1, palette.length) * 0.82);
+  const panelSpecs = useMemo(
+    () => Array.from({ length: palette.length }, (_, index) => ({
+      height: 3.38 + (index % 3) * 0.24,
+      width: panelWidth * (0.88 + (index % 2) * 0.1),
+    })),
+    [palette.length, panelWidth],
+  );
+  const fabricPanels = useMemo(
+    () => panelSpecs.map((spec, index) =>
+      createFabricPanelGeometry(spec.width, spec.height, index * 0.82),
+    ),
+    [panelSpecs],
+  );
+  const fabricSamples = useMemo(
+    () => Array.from({ length: palette.length }, (_, index) =>
+      createFabricPanelGeometry(1.25, 0.72, index * 1.1),
+    ),
+    [palette.length],
+  );
+
+  useEffect(
+    () => () => [...fabricPanels, ...fabricSamples].forEach((geometry) => geometry.dispose()),
+    [fabricPanels, fabricSamples],
+  );
 
   useFrame(() => {
     if (!group.current || !vendorCards.current) return;
@@ -176,22 +243,33 @@ function DressTableau({
 
   return (
     <group ref={group} visible={false}>
-      <mesh position={[0, 4.05, 0]}>
-        <boxGeometry args={[5.9, 0.1, 0.1]} />
+      <mesh position={[0, 4.05, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.05, 0.05, 5.9, 16]} />
         <meshStandardMaterial color={brass} metalness={0.58} roughness={0.4} />
       </mesh>
       {palette.map((colour, index) => {
         const step = 4.8 / Math.max(1, palette.length);
         const x = -2.4 + step * (index + 0.5);
         return (
-          <group key={`${colour}-${index}`} position={[x, 2.16, 0]}>
-            <mesh rotation={[0, 0, (index % 2 === 0 ? -1 : 1) * 0.025]}>
-              <boxGeometry args={[Math.max(0.72, step * 0.82), 3.65, 0.055]} />
-              <meshStandardMaterial color={colour} roughness={0.88} />
-            </mesh>
-            <mesh position={[0, -1.77, 0.04]} rotation={[0, 0, 0.04]}>
-              <planeGeometry args={[Math.max(0.65, step * 0.7), 0.32]} />
-              <meshStandardMaterial color={colour} roughness={0.96} side={THREE.DoubleSide} />
+          <group
+            key={`${colour}-${index}`}
+            position={[x, 3.98 - panelSpecs[index].height / 2, 0]}
+          >
+            <mesh
+              geometry={fabricPanels[index]}
+              rotation={[
+                0,
+                (index % 2 === 0 ? -1 : 1) * 0.025,
+                (index % 2 === 0 ? -1 : 1) * 0.035,
+              ]}
+            >
+              <meshPhysicalMaterial
+                color={colour}
+                roughness={0.72}
+                sheen={0.48}
+                sheenColor="#fff0e8"
+                side={THREE.DoubleSide}
+              />
             </mesh>
           </group>
         );
@@ -202,9 +280,18 @@ function DressTableau({
         <meshStandardMaterial color="#35231f" roughness={0.9} />
       </mesh>
       {palette.map((colour, index) => (
-        <mesh key={`sample-${colour}`} position={[-2 + index * 0.48, 0.52 + index * 0.055, 0.35]}>
-          <boxGeometry args={[1.25, 0.12, 0.72]} />
-          <meshStandardMaterial color={colour} roughness={0.93} />
+        <mesh
+          geometry={fabricSamples[index]}
+          key={`sample-${colour}`}
+          position={[-2 + index * 0.48, 0.52 + index * 0.055, 0.35]}
+          rotation={[-Math.PI / 2, 0, 0.06 * index]}
+        >
+          <meshPhysicalMaterial
+            color={colour}
+            roughness={0.78}
+            sheen={0.38}
+            side={THREE.DoubleSide}
+          />
         </mesh>
       ))}
 
@@ -215,14 +302,14 @@ function DressTableau({
           const x = (index - (visibleCount - 1) / 2) * spacing;
           return (
             <group key={index} position={[x, 0, -0.72]} rotation={[-0.1, 0, 0]}>
-              <mesh>
-                <boxGeometry args={[1.15, 0.72, 0.045]} />
-                <meshStandardMaterial color="#f2e9de" roughness={0.9} />
-              </mesh>
-              <mesh position={[0, 0, -0.032]}>
-                <boxGeometry args={[1.2, 0.77, 0.015]} />
-                <meshStandardMaterial color={brass} metalness={0.48} roughness={0.4} />
-              </mesh>
+              <RoundedBox args={[1.15, 0.72, 0.045]} radius={0.022} smoothness={4}>
+                <PaperMaterial color="#f2e9de" />
+              </RoundedBox>
+              <HairlineFrame
+                height={0.6}
+                position={[0, 0, 0.027]}
+                width={1.03}
+              />
             </group>
           );
         })}
@@ -241,6 +328,12 @@ function RSVPPlace({
   const { size } = useThree();
   const group = useRef<THREE.Group>(null);
   const placeCard = useRef<THREE.Group>(null);
+  const napkinGeometry = useMemo(
+    () => createFabricPanelGeometry(0.72, 2.8, 0.9),
+    [],
+  );
+
+  useEffect(() => () => napkinGeometry.dispose(), [napkinGeometry]);
 
   useFrame(() => {
     if (!group.current || !placeCard.current) return;
@@ -272,24 +365,28 @@ function RSVPPlace({
         <cylinderGeometry args={[1.13, 1.18, 0.08, 48]} />
         <meshStandardMaterial color="#e5d9ca" roughness={0.92} />
       </mesh>
-      <mesh position={[0.2, 0.43, 0]} rotation={[-Math.PI / 2, 0, 0.28]}>
-        <planeGeometry args={[0.72, 2.8]} />
-        <meshStandardMaterial
+      <mesh
+        geometry={napkinGeometry}
+        position={[0.2, 0.43, 0]}
+        rotation={[-Math.PI / 2, 0, 0.28]}
+      >
+        <meshPhysicalMaterial
           color={palette[1] ?? "#a97ed1"}
-          roughness={0.9}
+          roughness={0.72}
+          sheen={0.48}
           side={THREE.DoubleSide}
         />
       </mesh>
 
       <group ref={placeCard} position={[0.95, 0.83, -0.52]} rotation={[-0.09, -0.14, 0]}>
-        <mesh>
-          <boxGeometry args={[1.7, 0.92, 0.05]} />
-          <meshStandardMaterial color="#f4ede3" roughness={0.9} />
-        </mesh>
-        <mesh position={[0, 0, -0.035]}>
-          <boxGeometry args={[1.76, 0.98, 0.016]} />
-          <meshStandardMaterial color={brass} metalness={0.48} roughness={0.4} />
-        </mesh>
+        <RoundedBox args={[1.7, 0.92, 0.05]} radius={0.026} smoothness={4}>
+          <PaperMaterial />
+        </RoundedBox>
+        <HairlineFrame
+          height={0.78}
+          position={[0, 0, 0.03]}
+          width={1.56}
+        />
       </group>
 
       <mesh position={[-1.78, 0.65, -0.55]}>

@@ -38,11 +38,8 @@ a{color:inherit}
   min-width:44px;
   text-decoration:none;
 }
-.invitation-header .monogram span{
-  color:var(--lilac);
-  font-size:.7em;
-  margin:0 .18em;
-}
+.invitation-header .monogram-mark{color:#d8b469;height:28px;width:52px}
+.footer-mark{color:#ded4df;height:28px;width:52px}
 .invitation-header .header-action{
   align-items:center;
   color:var(--ivory);
@@ -348,7 +345,19 @@ a{color:inherit}
     radial-gradient(ellipse at center,transparent 45%,rgba(8,5,10,.22));
   inset:0;
   position:absolute;
+  z-index:1;
 }
+.static-seal-mark{
+  color:#74502b;
+  filter:drop-shadow(0 1px 1px rgba(255,246,221,.28)) drop-shadow(0 2px 2px rgba(67,38,17,.3));
+  left:71.7%;
+  position:absolute;
+  top:46.7%;
+  transform:translate(-50%,-50%);
+  width:clamp(44px,5.2vw,72px);
+  z-index:2;
+}
+.static-seal-mark svg{display:block;width:100%}
 .vignette{
   background:radial-gradient(ellipse at 54% 44%,transparent 30%,rgba(7,4,9,.2) 72%,rgba(7,4,9,.5));
 }
@@ -359,21 +368,43 @@ a{color:inherit}
 .journey-line{color:#d4cbd5}
 .journey-line i{background:#d4cbd5}
 
+.experience{overflow-x:clip}
 .copy-surface{isolation:isolate}
 .copy-surface-night{
-  background:linear-gradient(135deg,rgba(14,9,17,.96),rgba(23,14,27,.93));
-  backdrop-filter:blur(18px) saturate(.82);
-  border-radius:28px;
-  box-shadow:0 28px 90px rgba(3,2,5,.24);
+  background:none;
+  backdrop-filter:none;
+  border-radius:0;
+  box-shadow:none;
   color:var(--ivory);
 }
+.copy-surface-night::before{
+  background:radial-gradient(ellipse at 38% 50%,rgba(12,8,15,.99) 0%,rgba(16,10,20,.96) 58%,rgba(16,10,20,.72) 74%,transparent 100%);
+  content:"";
+  inset:-14% -12%;
+  pointer-events:none;
+  position:absolute;
+  z-index:-1;
+}
+.story-label.right.copy-surface-night::before,.circle-heading.copy-surface-night::before{
+  background:radial-gradient(ellipse at 62% 50%,rgba(12,8,15,.99) 0%,rgba(16,10,20,.96) 58%,rgba(16,10,20,.72) 74%,transparent 100%);
+}
+.circle-people .copy-surface-night::before{
+  background:linear-gradient(90deg,rgba(14,9,17,.95),rgba(22,14,26,.84),transparent);
+  inset:0;
+}
+.glass-copy,.circle-people .copy-surface-night,.dress-copy{position:relative}
 .copy-surface-night :where(.kicker,p,time){text-shadow:0 1px 14px rgba(0,0,0,.28)}
 .copy-surface-paper{
-  background:linear-gradient(145deg,rgba(249,243,234,.97),rgba(232,220,205,.96));
-  backdrop-filter:blur(16px) saturate(.82);
-  border:1px solid rgba(203,163,90,.48);
-  border-radius:28px;
-  box-shadow:0 30px 90px rgba(3,2,5,.3);
+  background:
+    linear-gradient(90deg,rgba(165,122,54,.52),rgba(221,187,119,.76),rgba(165,122,54,.52)) 12px 12px/calc(100% - 24px) 1px no-repeat,
+    linear-gradient(90deg,rgba(165,122,54,.52),rgba(221,187,119,.76),rgba(165,122,54,.52)) 12px calc(100% - 12px)/calc(100% - 24px) 1px no-repeat,
+    linear-gradient(rgba(165,122,54,.52),rgba(221,187,119,.76),rgba(165,122,54,.52)) 12px 12px/1px calc(100% - 24px) no-repeat,
+    linear-gradient(rgba(165,122,54,.52),rgba(221,187,119,.76),rgba(165,122,54,.52)) calc(100% - 12px) 12px/1px calc(100% - 24px) no-repeat,
+    linear-gradient(145deg,#f9f3ea,#e8dccd);
+  backdrop-filter:none;
+  border:1px solid rgba(153,109,52,.38);
+  border-radius:4px;
+  box-shadow:0 26px 74px rgba(3,2,5,.28);
   color:#211a23;
 }
 .copy-surface-paper :where(.kicker,time){color:#6f5c70;text-shadow:none}
@@ -478,11 +509,12 @@ a{color:inherit}
 }
 .circle-copy .circle-people li{
   border:0;
+  border-top:1px solid rgba(228,200,145,.2);
   display:block;
   min-width:0;
   padding:14px 16px;
 }
-.circle-copy .circle-people li+li{border:0}
+.circle-copy .circle-people li+li{border-top:1px solid rgba(228,200,145,.2)}
 .circle-copy .circle-people li span{display:block;margin-bottom:5px}
 .circle-copy .circle-people li strong{display:block;font-size:clamp(18px,2vw,26px)}
 
@@ -498,7 +530,7 @@ a{color:inherit}
   height:54px;
   position:absolute;
   top:-54px;
-  width:3px;
+  width:1px;
 }
 .detail-copy::before{left:24%}
 .detail-copy::after{right:24%}
@@ -566,26 +598,43 @@ a{color:inherit}
 }
 
 .dress-copy{
-  background:linear-gradient(135deg,rgba(14,9,17,.96),rgba(23,14,27,.93));
-  backdrop-filter:blur(18px);
-  border-radius:28px;
-  box-shadow:0 28px 90px rgba(3,2,5,.24);
+  background:none;
+  backdrop-filter:none;
+  border-radius:0;
+  box-shadow:none;
   margin-left:5vw;
   padding:clamp(30px,5vw,64px);
   width:min(54vw,900px);
 }
 .dress-copy>p{color:#d0c5d2}
 
-@media(max-width:850px){.dress-copy{backdrop-filter:none}}
+@media(max-width:850px){
+  .dress-copy{
+    backdrop-filter:none;
+    margin:0 14px;
+    width:calc(100% - 28px);
+  }
+}
+
+.rsvp-card{
+  background:
+    linear-gradient(90deg,rgba(165,122,54,.48),rgba(221,187,119,.7),rgba(165,122,54,.48)) 12px 12px/calc(100% - 24px) 1px no-repeat,
+    linear-gradient(90deg,rgba(165,122,54,.48),rgba(221,187,119,.7),rgba(165,122,54,.48)) 12px calc(100% - 12px)/calc(100% - 24px) 1px no-repeat,
+    linear-gradient(rgba(165,122,54,.48),rgba(221,187,119,.7),rgba(165,122,54,.48)) 12px 12px/1px calc(100% - 24px) no-repeat,
+    linear-gradient(rgba(165,122,54,.48),rgba(221,187,119,.7),rgba(165,122,54,.48)) calc(100% - 12px) 12px/1px calc(100% - 24px) no-repeat,
+    #f8f1e9;
+  border-radius:4px 4px 2px 2px;
+}
 
 @keyframes static-world-reveal{from{opacity:.35;transform:scale(1.008)}to{opacity:1;transform:scale(1)}}
 
 @media(max-width:850px){
+  .static-seal-mark{left:51.2%;top:57.3%;width:62px}
   .static-world-image{object-position:center}
   .vignette{background:linear-gradient(180deg,rgba(8,5,10,.2),transparent 32%,transparent 70%,rgba(8,5,10,.42))}
   .beat-intro{height:128svh}
   .intro-copy{
-    border-radius:0 0 24px 24px;
+    border-radius:0;
     left:14px;
     max-width:none;
     padding:20px 20px 24px;
@@ -616,7 +665,7 @@ a{color:inherit}
 
   .beat-card{align-items:flex-start;padding:12vh 14px 0}
   .glass-copy{
-    border-radius:24px;
+    border-radius:0;
     padding:28px 24px;
     width:100%;
   }
@@ -674,7 +723,7 @@ a{color:inherit}
   .rsvp-card{width:100%}
 
   .dress-copy{
-    border-radius:24px;
+    border-radius:0;
     margin:0 14px;
     padding:32px 24px;
     width:calc(100% - 28px);

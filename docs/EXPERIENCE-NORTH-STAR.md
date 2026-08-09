@@ -95,8 +95,24 @@ The static progress bar becomes the experience's motion language:
 - reduced motion retains the same hierarchy and state without spatial travel.
 
 The opening begins from the exact black-card composition. It does not cut to a
-separate decorative invitation. The bar or date provides the first causal
-transition, after which wedding objects may emerge one at a time from darkness.
+separate decorative invitation. Its locked sequence is:
+
+1. hold the couple names and an initial `00 00` date on pitch black;
+2. count the month from `01` through `09`;
+3. count the day from `01` through `15`;
+4. grow the yellow threshold to the wedding's live calendar progress;
+5. reveal the couple contour in the same left-to-right direction as the light;
+6. turn that threshold into the sole `Open` action only after the frame settles.
+
+No header, monogram, RSVP action or other application chrome is visible before
+the threshold opens. Reduced motion skips the count and reveal, presenting the
+same finished date, progress, portrait and action immediately. The social share
+image remains a static daily snapshot because animation support is not reliable
+across link-preview consumers; the guest page supplies the live sequence.
+
+The first post-click welcome frame is a separate mobile-first approval boundary.
+It must transform or reuse the opening elements before it introduces any new
+one, and it must pass the implementation gate below before spatial scenes expand.
 
 ## Reduction rules
 

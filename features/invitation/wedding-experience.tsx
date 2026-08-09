@@ -18,6 +18,7 @@ import {
   journeyById,
   milestoneProgress,
 } from "@/features/invitation/journey";
+import { LiveInvitationOpening } from "@/features/invitation/live-invitation-opening";
 import { Button } from "@/ui/primitives/button";
 import { Choice, ChoiceGroup } from "@/ui/primitives/choice-group";
 import {
@@ -96,7 +97,7 @@ function useClientCapabilities() {
     () => true,
   );
   const webgl = hydrated && !reducedMotion ? supportsWebGL() : false;
-  return { reducedMotion, webgl };
+  return { hydrated, reducedMotion, webgl };
 }
 
 type StaticScene = 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -353,10 +354,10 @@ export function WeddingExperience({
   const [introDeparted, setIntroDeparted] = useState(false);
   const [spatialReady, setSpatialReady] = useState(false);
   const [spatialUnavailable, setSpatialUnavailable] = useState(false);
-  const { reducedMotion, webgl } = useClientCapabilities();
-  const spatialActive = webgl && !spatialUnavailable;
+  const { hydrated, reducedMotion, webgl } = useClientCapabilities();
+  const spatialActive = introDeparted && webgl && !spatialUnavailable;
   const activeStaticScene = useActiveStaticScene(
-    !spatialActive || !spatialReady,
+    introDeparted && (!spatialActive || !spatialReady),
   );
   const spatialInitials = useMemo(() => {
     const initials = getCoupleInitials(
@@ -365,7 +366,7 @@ export function WeddingExperience({
     );
     return [initials.first, initials.second] as const;
   }, [wedding.couple.first, wedding.couple.second]);
-  const introHidden = introDeparted && !reducedMotion;
+  const introHidden = introDeparted;
   const markSpatialUnavailable = useCallback(
     () => {
       setSpatialReady(false);
@@ -420,11 +421,6 @@ export function WeddingExperience({
       requestAnimationFrame(travel);
     }, reducedMotion ? 0 : 360);
   };
-
-  const guestEyebrow =
-    invitation.kind === "personalized"
-      ? `Reserved for ${invitation.salutation}`
-      : `${wedding.couple.first} & ${wedding.couple.second} — You’re invited`;
 
   return (
     <main
@@ -491,27 +487,13 @@ export function WeddingExperience({
         data-journey-progress={journeyById.invitation.progress}
         data-scene={journeyById.invitation.scene}
       >
-        <div
-          aria-hidden={introHidden}
-          className="intro-copy copy-surface copy-surface-night"
-          inert={introHidden ? true : undefined}
-        >
-          <p className="kicker">{guestEyebrow}</p>
-          <h1>{wedding.invitation.headline}</h1>
-          <p className="intro-date">
-            {wedding.dateLabel} <span aria-hidden="true">·</span>{" "}
-            {wedding.locationLabel}
-          </p>
-          <div className="intro-actions">
-            <Button className="enter" tone="light" onPress={begin}>
-              <span>Open your invitation</span>
-              <span className="enter-icon" aria-hidden="true">
-                <ArrowRight size={17} strokeWidth={1.75} />
-              </span>
-            </Button>
-            <a href="#details">View invitation details</a>
-          </div>
-        </div>
+        <LiveInvitationOpening
+          hidden={introHidden}
+          hydrated={hydrated}
+          onOpen={begin}
+          reducedMotion={reducedMotion}
+          wedding={wedding}
+        />
         <p className="gesture">Scroll to unfold the story</p>
       </section>
 

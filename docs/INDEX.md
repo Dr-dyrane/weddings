@@ -41,5 +41,10 @@ This directory is the durable memory for the product. A decision is not consider
   evidence. It is not approval to continue the old visual system.
 - Dynamic monogram routes remain technical identity infrastructure, but the
   mark is not visible on the approved OGB or guest chrome.
-- The next implementation step is a first-frame-to-first-transition vertical
-  slice, approved at desktop, mobile and reduced motion before scene expansion.
+- The first-frame-to-threshold vertical slice is implemented: `00 00` counts to
+  `09 15`, the live yellow progress grows, the couple contour resolves and the
+  sole `Open` action becomes available. Desktop, mobile and reduced-motion
+  resting states are verified.
+- The next approval boundary is the post-click mobile welcome composition. It
+  must reuse or transform the approved opening grammar before any spatial scene
+  expansion; the historical envelope world is not the approved destination.

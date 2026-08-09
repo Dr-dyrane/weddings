@@ -5,20 +5,13 @@ import path from "node:path";
 import { ImageResponse } from "next/og";
 
 import type { InvitationProjection } from "@/domains/invitations/invitation";
+import { getWeddingDayProgress } from "@/domains/invitations/wedding-progress";
+import { getWeddingOpeningPortrait } from "@/domains/weddings/opening-portrait";
 import type { PublishedWedding } from "@/domains/weddings/published-wedding";
 
 const spaceGroteskFontPromise = readFile(
   path.join(process.cwd(), "public/fonts/dyrane-space-grotesk.ttf"),
 );
-
-const couplePortraitPromises = {
-  "alexander-chioma-line-v5": readFile(
-    path.join(
-      process.cwd(),
-      "docs/references/visual/alexander-chioma-line-portrait-v5.png",
-    ),
-  ),
-} as const;
 
 function asArrayBuffer(font: Buffer) {
   return font.buffer.slice(
@@ -64,38 +57,6 @@ function fittedCoupleSize(value: string) {
   return "22px";
 }
 
-function zonedCalendarDay(now: Date, timeZone: string) {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "2-digit",
-    timeZone,
-    year: "numeric",
-  }).formatToParts(now);
-  const value = (type: Intl.DateTimeFormatPartTypes) =>
-    Number(parts.find((part) => part.type === type)?.value ?? 0);
-
-  return Date.UTC(value("year"), value("month") - 1, value("day"));
-}
-
-export function getWeddingDayProgress(
-  dateLabel: string,
-  timeZone: string,
-  now = new Date(),
-) {
-  const weddingDate = new Date(Date.parse(dateLabel));
-  if (Number.isNaN(weddingDate.getTime())) return 0;
-
-  const end = Date.UTC(
-    weddingDate.getUTCFullYear(),
-    weddingDate.getUTCMonth(),
-    weddingDate.getUTCDate(),
-  );
-  const start = Date.UTC(weddingDate.getUTCFullYear() - 1, 0, 1);
-  const today = zonedCalendarDay(now, timeZone);
-
-  return Math.min(1, Math.max(0, (today - start) / (end - start)));
-}
-
 export async function createInvitationShareCard(
   wedding: PublishedWedding,
   invitation: InvitationProjection,
@@ -110,9 +71,8 @@ export async function createDyraneShareCard() {
 
 async function createShareCard(wedding: PublishedWedding | null) {
   const spaceGroteskFont = await spaceGroteskFontPromise;
-  const portraitAsset = wedding?.shareCard?.portraitAsset;
-  const couplePortrait = portraitAsset
-    ? await couplePortraitPromises[portraitAsset]
+  const couplePortrait = wedding
+    ? await getWeddingOpeningPortrait(wedding)
     : null;
   const coupleLine = wedding
     ? `${wedding.couple.first} & ${wedding.couple.second}`
@@ -208,7 +168,6 @@ async function createShareCard(wedding: PublishedWedding | null) {
         >
           {date}
         </div>
-
       </div>
     ),
     {

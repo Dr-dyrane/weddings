@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import { getPublicInvitation } from "@/domains/invitations/invitation";
-import {
-  createInvitationShareCard,
-  getWeddingDayProgress,
-} from "@/domains/invitations/share-card";
+import { createInvitationShareCard } from "@/domains/invitations/share-card";
+import { getWeddingDayProgress } from "@/domains/invitations/wedding-progress";
 import { getYardstickWedding } from "@/domains/weddings/published-wedding";
 
 describe("invitation share card", () => {

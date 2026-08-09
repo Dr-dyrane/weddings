@@ -1,23 +1,20 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { getImageProps } from "next/image";
 import {
-  Component,
-  type ReactNode,
-  useCallback,
+  type CSSProperties,
   useEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
 } from "react";
 
 import type { InvitationProjection } from "@/domains/invitations/invitation";
-import type { PublishedWedding } from "@/domains/weddings/published-wedding";
 import {
-  journeyById,
-  milestoneProgress,
-} from "@/features/invitation/journey";
+  getWeddingDateParts,
+  getWeddingDayProgress,
+} from "@/domains/invitations/wedding-progress";
+import type { PublishedWedding } from "@/domains/weddings/published-wedding";
 import { LiveInvitationOpening } from "@/features/invitation/live-invitation-opening";
 import { Button } from "@/ui/primitives/button";
 import { Choice, ChoiceGroup } from "@/ui/primitives/choice-group";
@@ -27,57 +24,10 @@ import {
   Heart,
   MapPin,
   Share2,
-  Sparkles as SparklesIcon,
+  Sparkles,
 } from "@/ui/icons";
-import {
-  CoupleMonogram,
-  getCoupleInitials,
-} from "@/ui/brand/couple-monogram";
-
-const SpatialInvitation = dynamic(
-  () =>
-    import("@/features/invitation/spatial-invitation").then(
-      (module) => module.SpatialInvitation,
-    ),
-  { ssr: false },
-);
-
-class SpatialErrorBoundary extends Component<
-  { children: ReactNode; onUnavailable: () => void },
-  { failed: boolean }
-> {
-  state = { failed: false };
-
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-
-  componentDidCatch() {
-    this.props.onUnavailable();
-  }
-
-  render() {
-    return this.state.failed ? null : this.props.children;
-  }
-}
 
 const subscribeToHydration = () => () => undefined;
-let cachedWebGLSupport: boolean | undefined;
-
-function supportsWebGL() {
-  if (cachedWebGLSupport !== undefined) return cachedWebGLSupport;
-
-  try {
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("webgl2") || canvas.getContext("webgl");
-    cachedWebGLSupport = Boolean(context);
-    context?.getExtension("WEBGL_lose_context")?.loseContext();
-  } catch {
-    cachedWebGLSupport = false;
-  }
-
-  return cachedWebGLSupport;
-}
 
 const subscribeToReducedMotion = (notify: () => void) => {
   const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -85,7 +35,7 @@ const subscribeToReducedMotion = (notify: () => void) => {
   return () => query.removeEventListener("change", notify);
 };
 
-function useClientCapabilities() {
+function useClientPreferences() {
   const hydrated = useSyncExternalStore(
     subscribeToHydration,
     () => true,
@@ -96,108 +46,127 @@ function useClientCapabilities() {
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     () => true,
   );
-  const webgl = hydrated && !reducedMotion ? supportsWebGL() : false;
-  return { hydrated, reducedMotion, webgl };
+
+  return { hydrated, reducedMotion };
 }
 
-type StaticScene = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+type JourneyChapter =
+  | "welcome"
+  | "story-one"
+  | "story-two"
+  | "celebration"
+  | "dress"
+  | "rsvp";
 
-function useActiveStaticScene(enabled: boolean) {
-  const [scene, setScene] = useState<StaticScene>(1);
+const chapterLabels: Record<JourneyChapter, string> = {
+  welcome: "Welcome",
+  "story-one": "Our story · 01",
+  "story-two": "Our story · 02",
+  celebration: "The celebration",
+  dress: "Dress guidance",
+  rsvp: "Kindly reply",
+};
+
+function useJourneyPosition(
+  rootRef: React.RefObject<HTMLElement | null>,
+  enabled: boolean,
+) {
+  const [activeChapter, setActiveChapter] =
+    useState<JourneyChapter>("welcome");
+  const activeRef = useRef<JourneyChapter>("welcome");
 
   useEffect(() => {
     if (!enabled) return;
 
+    let frame = 0;
     const update = () => {
-      const point = window.scrollY + window.innerHeight * 0.52;
-      let closest: { distance: number; scene: StaticScene } | undefined;
+      frame = 0;
+      const root = rootRef.current;
+      if (!root) return;
 
-      document.querySelectorAll<HTMLElement>("[data-scene]").forEach((beat) => {
-        const nextScene = Number(beat.dataset.scene) as StaticScene;
-        if (nextScene < 1 || nextScene > 7) return;
-        const center = beat.offsetTop + Math.min(beat.offsetHeight, innerHeight) * 0.45;
-        const distance = Math.abs(center - point);
-        if (!closest || distance < closest.distance) {
-          closest = { distance, scene: nextScene };
-        }
-      });
+      const maxScroll = Math.max(1, root.scrollHeight - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+      root.style.setProperty("--journey-progress", String(progress));
 
-      if (closest) setScene((current) =>
-        current === closest?.scene ? current : closest!.scene,
-      );
+      const readingLine = window.innerHeight * 0.48;
+      let nearest: { chapter: JourneyChapter; distance: number } | null = null;
+      root
+        .querySelectorAll<HTMLElement>("[data-journey-chapter]")
+        .forEach((section) => {
+          const chapter = section.dataset.journeyChapter as JourneyChapter;
+          const bounds = section.getBoundingClientRect();
+          const center = bounds.top + Math.min(bounds.height, innerHeight) * 0.5;
+          const distance = Math.abs(center - readingLine);
+          if (!nearest || distance < nearest.distance) {
+            nearest = { chapter, distance };
+          }
+        });
+
+      const next = nearest as { chapter: JourneyChapter; distance: number } | null;
+      if (next && next.chapter !== activeRef.current) {
+        activeRef.current = next.chapter;
+        setActiveChapter(next.chapter);
+      }
+    };
+
+    const requestUpdate = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(update);
     };
 
     update();
-    addEventListener("scroll", update, { passive: true });
-    addEventListener("resize", update, { passive: true });
-    return () => {
-      removeEventListener("scroll", update);
-      removeEventListener("resize", update);
-    };
-  }, [enabled]);
+    addEventListener("scroll", requestUpdate, { passive: true });
+    addEventListener("resize", requestUpdate, { passive: true });
 
-  return scene;
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      removeEventListener("scroll", requestUpdate);
+      removeEventListener("resize", requestUpdate);
+    };
+  }, [enabled, rootRef]);
+
+  return activeChapter;
 }
 
-function StaticWeddingWorld({
-  firstName,
-  scene,
-  secondName,
+function ShareInvitation({
+  invitation,
+  wedding,
 }: {
-  firstName: string;
-  scene: StaticScene;
-  secondName: string;
+  invitation: InvitationProjection;
+  wedding: PublishedWedding;
 }) {
-  const basename = `/concepts/scene-${scene}-${
-    scene === 1
-      ? "envelope"
-      : scene === 2
-        ? "threshold"
-        : scene === 3
-          ? "story-garden"
-          : scene === 4
-            ? "wedding-circle"
-            : scene === 5
-              ? "pavilion"
-              : scene === 6
-                ? "dress-atmosphere"
-                : "rsvp"
-  }`;
-  const desktop = getImageProps({
-    alt: "",
-    fetchPriority: scene === 1 ? "high" : "auto",
-    height: 960,
-    loading: scene === 1 ? "eager" : "lazy",
-    quality: 82,
-    sizes: "100vw",
-    src: `${basename}-desktop.webp`,
-    width: 1440,
-  }).props;
-  const mobile = getImageProps({
-    alt: "",
-    height: 1600,
-    quality: 82,
-    sizes: "100vw",
-    src: `${basename}-mobile.webp`,
-    width: 900,
-  }).props;
+  const [feedback, setFeedback] = useState("");
+
+  const share = async () => {
+    const publicUrl = new URL(`/${wedding.slug}`, window.location.origin);
+    publicUrl.searchParams.set("edition", String(invitation.cardEdition));
+    const data = {
+      title: `${wedding.couple.first} & ${wedding.couple.second} — You’re invited`,
+      text: `${wedding.dateLabel} · ${wedding.locationLabel}`,
+      url: publicUrl.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(data);
+        setFeedback("Invitation shared");
+      } else {
+        await navigator.clipboard.writeText(data.url);
+        setFeedback("Invitation link copied");
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      setFeedback("Use your browser’s share menu to send this invitation");
+    }
+  };
 
   return (
-    <div className="static-world" data-static-scene={scene} aria-hidden="true">
-      <picture key={scene}>
-        <source media="(max-width: 850px)" srcSet={mobile.srcSet} />
-        {/* getImageProps preserves responsive Next image optimization in picture. */}
-        <img {...desktop} className="static-world-image" alt="" />
-      </picture>
-      {scene === 1 ? (
-        <div className="static-seal-mark">
-          <CoupleMonogram
-            firstName={firstName}
-            secondName={secondName}
-          />
-        </div>
-      ) : null}
-      <div className="static-world-wash" />
+    <div className="journey-share">
+      <Button tone="quiet" onPress={share}>
+        Share invitation
+        <Share2 aria-hidden="true" size={16} strokeWidth={1.7} />
+      </Button>
+      <span aria-live="polite">{feedback}</span>
     </div>
   );
 }
@@ -213,36 +182,36 @@ function RSVP({
   const [meal, setMeal] = useState("Celebration menu");
 
   return (
-    <form className="rsvp-card" onSubmit={(event) => event.preventDefault()}>
-      <p className="kicker">Kindly reply</p>
-      <h2>Will you join us?</h2>
+    <form className="journey-rsvp-form" onSubmit={(event) => event.preventDefault()}>
       <ChoiceGroup
         aria-label="Will you join us?"
-        className="rsvp-choices"
+        className="journey-rsvp-choices"
+        isDisabled={!invitation.canRespond}
         value={answer}
         onChange={(value) => setAnswer(value as "yes" | "no")}
       >
         <Choice value="yes">
-          <SparklesIcon aria-hidden="true" size={18} strokeWidth={1.75} />
+          <Sparkles aria-hidden="true" size={18} strokeWidth={1.7} />
           Joyfully, yes
         </Choice>
         <Choice value="no">
-          <Heart aria-hidden="true" size={18} strokeWidth={1.75} />
+          <Heart aria-hidden="true" size={18} strokeWidth={1.7} />
           With love, no
         </Choice>
       </ChoiceGroup>
-      {answer === "yes" && (
-        <div className="form-reveal">
+
+      {answer === "yes" ? (
+        <div className="journey-form-fields">
           <label>
-            How should we welcome you?
+            <span>Your name</span>
             <input
-              required
               defaultValue={invitation.guestDisplayName ?? ""}
-              placeholder="Your name"
+              placeholder="How should we welcome you?"
+              required
             />
           </label>
           <label>
-            Your table preference
+            <span>Table preference</span>
             <select value={meal} onChange={(event) => setMeal(event.target.value)}>
               <option>Celebration menu</option>
               <option>Vegetarian menu</option>
@@ -250,92 +219,33 @@ function RSVP({
             </select>
           </label>
         </div>
-      )}
-      {answer && (
-        <label className="form-reveal">
-          Leave a little love
+      ) : null}
+
+      {answer ? (
+        <label className="journey-note-field">
+          <span>Leave a little love</span>
           <textarea
             placeholder={`A note for ${wedding.couple.first} & ${wedding.couple.second}`}
           />
         </label>
-      )}
+      ) : null}
+
       <Button
-        className="send-response"
-        type="submit"
+        className="journey-submit"
         isDisabled={!answer || !invitation.canRespond}
+        type="submit"
       >
         {invitation.canRespond ? "Send my response" : "Replies open soon"}
-        <ArrowRight aria-hidden="true" size={17} strokeWidth={1.75} />
+        <ArrowRight aria-hidden="true" size={17} strokeWidth={1.7} />
       </Button>
-      {!invitation.canRespond && (
-        <p className="rsvp-availability">
-          Your invitation is reserved. Personal replies will open after the
+
+      {!invitation.canRespond ? (
+        <p className="journey-rsvp-status">
+          Your invitation is reserved. Personal replies open when the final
           celebration details are confirmed.
         </p>
-      )}
+      ) : null}
     </form>
-  );
-}
-
-function ShareInvitation({
-  invitation,
-  wedding,
-}: {
-  invitation: InvitationProjection;
-  wedding: PublishedWedding;
-}) {
-  const [feedback, setFeedback] = useState("");
-
-  const share = async (personalized = false) => {
-    const publicUrl = new URL(`/${wedding.slug}`, window.location.origin);
-    publicUrl.searchParams.set("edition", String(invitation.cardEdition));
-    const personalizedUrl = new URL(window.location.href);
-    personalizedUrl.searchParams.set("edition", String(invitation.cardEdition));
-    personalizedUrl.hash = "";
-    const shareData = {
-      title: `${wedding.couple.first} & ${wedding.couple.second} — You’re invited`,
-      text: `${wedding.dateLabel} · ${wedding.locationLabel}`,
-      url: personalized ? personalizedUrl.href : publicUrl.href,
-    };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-        setFeedback("Invitation shared");
-        return;
-      }
-
-      await navigator.clipboard.writeText(shareData.url);
-      setFeedback("Invitation link copied");
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") return;
-      setFeedback("Use your browser’s share menu to send this invitation");
-    }
-  };
-
-  return (
-    <div className="share-action">
-      <Button tone="light" onPress={() => share(false)}>
-        {invitation.kind === "personalized"
-          ? "Share public card"
-          : "Share invitation"}
-        <Share2 aria-hidden="true" size={16} strokeWidth={1.75} />
-      </Button>
-      {invitation.kind === "personalized" && (
-        <details className="named-share">
-          <summary>Share my named card</summary>
-          <p>
-            Anyone with this link can open your named invitation. Social apps
-            may keep its preview after it is shared.
-          </p>
-          <Button tone="quiet" onPress={() => share(true)}>
-            Share named card
-            <Share2 aria-hidden="true" size={16} strokeWidth={1.75} />
-          </Button>
-        </details>
-      )}
-      <span aria-live="polite">{feedback}</span>
-    </div>
   );
 }
 
@@ -350,246 +260,164 @@ export function WeddingExperience({
   invitation,
   calendarHref,
 }: WeddingExperienceProps) {
-  const [begun, setBegun] = useState(false);
-  const [introDeparted, setIntroDeparted] = useState(false);
-  const [spatialReady, setSpatialReady] = useState(false);
-  const [spatialUnavailable, setSpatialUnavailable] = useState(false);
-  const { hydrated, reducedMotion, webgl } = useClientCapabilities();
-  const spatialActive = introDeparted && webgl && !spatialUnavailable;
-  const activeStaticScene = useActiveStaticScene(
-    introDeparted && (!spatialActive || !spatialReady),
+  const [opened, setOpened] = useState(false);
+  const rootRef = useRef<HTMLElement>(null);
+  const { hydrated, reducedMotion } = useClientPreferences();
+  const activeChapter = useJourneyPosition(rootRef, opened);
+  const date = useMemo(
+    () => getWeddingDateParts(wedding.dateLabel),
+    [wedding.dateLabel],
   );
-  const spatialInitials = useMemo(() => {
-    const initials = getCoupleInitials(
-      wedding.couple.first,
-      wedding.couple.second,
-    );
-    return [initials.first, initials.second] as const;
-  }, [wedding.couple.first, wedding.couple.second]);
-  const introHidden = introDeparted;
-  const markSpatialUnavailable = useCallback(
-    () => {
-      setSpatialReady(false);
-      setSpatialUnavailable(true);
-    },
-    [],
+  const progress = useMemo(
+    () => getWeddingDayProgress(wedding.dateLabel, wedding.timezone),
+    [wedding.dateLabel, wedding.timezone],
   );
-  const markSpatialPending = useCallback(() => setSpatialReady(false), []);
-  const markSpatialReady = useCallback(() => setSpatialReady(true), []);
+  const dateParts = `${String(date.month).padStart(2, "0")} ${String(
+    date.day,
+  ).padStart(2, "0")}`;
+  const portraitUrl = `/${wedding.slug}/opening-portrait?v=${encodeURIComponent(
+    wedding.shareCard?.portraitAsset ?? String(wedding.revision),
+  )}`;
 
-  useEffect(() => {
-    const markOpened = () => {
-      const story = document.querySelector<HTMLElement>("#story");
-      const departAt = Math.min(
-        420,
-        Math.max(220, (story?.offsetTop ?? window.innerHeight) * 0.34),
-      );
-      if (window.scrollY > 24) setBegun(true);
-      if (window.scrollY > departAt) setIntroDeparted(true);
-    };
-    markOpened();
-    addEventListener("scroll", markOpened, { passive: true });
-    return () => removeEventListener("scroll", markOpened);
-  }, []);
-
-  const begin = () => {
-    setBegun(true);
-    setIntroDeparted(true);
-    window.setTimeout(() => {
-      const story = document.querySelector<HTMLElement>("#story");
-      story?.focus({ preventScroll: true });
-      if (!story) return;
-      if (reducedMotion) {
-        story.scrollIntoView({ behavior: "auto" });
-        return;
-      }
-
-      const start = window.scrollY;
-      const target = story.offsetTop;
-      const duration = 1_800;
-      let startedAt: number | undefined;
-      const travel = (now: number) => {
-        startedAt ??= now;
-        const elapsed = Math.min(1, (now - startedAt) / duration);
-        const eased = elapsed * elapsed * (3 - 2 * elapsed);
-        window.scrollTo({
-          behavior: "instant",
-          top: start + (target - start) * eased,
-        });
-        if (elapsed < 1) requestAnimationFrame(travel);
-      };
-      requestAnimationFrame(travel);
-    }, reducedMotion ? 0 : 360);
+  const openExperience = () => {
+    setOpened(true);
+    requestAnimationFrame(() => {
+      document.querySelector<HTMLElement>("#welcome-copy")?.focus({
+        preventScroll: true,
+      });
+    });
   };
 
   return (
     <main
-      className={[
-        "experience",
-        begun ? "begun" : "",
-        introDeparted ? "intro-departed" : "",
-        spatialActive ? "spatial-active" : "static-active",
-        spatialActive
-          ? spatialReady
-            ? "spatial-ready"
-            : "spatial-loading"
-          : "",
-      ].filter(Boolean).join(" ")}
+      className={`editorial-experience${opened ? " is-open" : ""}`}
+      data-active-chapter={activeChapter}
+      ref={rootRef}
+      style={{
+        "--opening-progress": progress,
+        "--journey-progress": 0,
+      } as CSSProperties}
     >
-      <a
-        className="skip-link"
-        href="#details"
-        onClick={() => {
-          requestAnimationFrame(() =>
-            document.querySelector<HTMLElement>("#details")?.focus({
-              preventScroll: true,
-            }),
-          );
-        }}
-      >
+      <a className="journey-skip" href="#details">
         Skip to celebration details
       </a>
-      <StaticWeddingWorld
-        firstName={wedding.couple.first}
-        scene={activeStaticScene}
-        secondName={wedding.couple.second}
-      />
-      {spatialActive && (
-        <SpatialErrorBoundary onUnavailable={markSpatialUnavailable}>
-          <SpatialInvitation
-            initials={spatialInitials}
-            onPending={markSpatialPending}
-            onReady={markSpatialReady}
-            onUnavailable={markSpatialUnavailable}
-          />
-        </SpatialErrorBoundary>
-      )}
-      <div className="vignette" />
 
-      <header className="invitation-header">
-        <a className="monogram" href="#invitation" aria-label="Back to invitation">
-          <CoupleMonogram
-            className="monogram-mark"
-            firstName={wedding.couple.first}
-            secondName={wedding.couple.second}
-          />
+      <div className="journey-chrome" aria-hidden={!opened}>
+        <a href="#invitation">
+          {wedding.couple.first} &amp; {wedding.couple.second}
         </a>
-        <div className="journey-line" aria-hidden="true">
-          <span>{wedding.couple.first} & {wedding.couple.second}</span>
-        </div>
-        <a className="header-action" href="#rsvp">Kindly reply</a>
-      </header>
+        <span>{chapterLabels[activeChapter]}</span>
+      </div>
+
+      <div className="journey-progress" aria-hidden="true">
+        <i />
+      </div>
 
       <section
+        className="journey-welcome"
+        data-journey-chapter="welcome"
         id="invitation"
-        className="beat beat-intro"
-        data-chapter={journeyById.invitation.id}
-        data-journey-progress={journeyById.invitation.progress}
-        data-scene={journeyById.invitation.scene}
       >
+        <div className="journey-welcome-stage">
+          <p className="journey-welcome-couple">
+            {wedding.couple.first} &amp; {wedding.couple.second}
+          </p>
+
+          {/* Generated portrait is decorative; semantic identity remains text. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            alt=""
+            aria-hidden="true"
+            className="journey-welcome-portrait"
+            height="1536"
+            src={portraitUrl}
+            width="1024"
+          />
+
+          <p className="journey-welcome-date" aria-hidden="true">
+            {dateParts}
+          </p>
+
+          <span className="journey-welcome-threshold" aria-hidden="true">
+            <i />
+          </span>
+
+          <div className="journey-welcome-copy" id="welcome-copy" tabIndex={-1}>
+            <p>
+              {invitation.kind === "personalized"
+                ? `For ${invitation.salutation}`
+                : wedding.invitation.eyebrow}
+            </p>
+            <h2>{wedding.invitation.headline}</h2>
+            <time dateTime={`${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`}>
+              {wedding.dateLabel} · {wedding.locationLabel}
+            </time>
+          </div>
+
+          <p className="journey-scroll-cue">Scroll to enter</p>
+        </div>
+
         <LiveInvitationOpening
-          hidden={introHidden}
+          hidden={opened}
           hydrated={hydrated}
-          onOpen={begin}
+          onOpen={openExperience}
           reducedMotion={reducedMotion}
           wedding={wedding}
         />
-        <p className="gesture">Scroll to unfold the story</p>
-      </section>
-
-      <section
-        id="story"
-        className="beat beat-card"
-        data-chapter={journeyById.threshold.id}
-        data-journey-progress={journeyById.threshold.progress}
-        data-scene={journeyById.threshold.scene}
-        tabIndex={-1}
-      >
-        <div className="glass-copy copy-surface copy-surface-night">
-          <p className="kicker">{wedding.invitation.eyebrow}</p>
-          <h2>
-            {wedding.couple.first}
-            <br />
-            <i>&</i> {wedding.couple.second}
-          </h2>
-          <p>{wedding.invitation.introduction}</p>
-        </div>
       </section>
 
       {wedding.story.map((milestone, index) => (
         <section
-          className={`beat ${index === 0 ? "beat-begin" : "beat-yes"}`}
-          data-chapter={journeyById.story.id}
-          data-journey-progress={milestoneProgress(index, wedding.story.length)}
-          data-scene={journeyById.story.scene}
+          className={`journey-chapter journey-story journey-story-${index + 1}`}
+          data-journey-chapter={index === 0 ? "story-one" : "story-two"}
+          id={index === 0 ? "story" : undefined}
           key={milestone.id}
         >
-          <div className={`story-label copy-surface copy-surface-night ${index % 2 === 0 ? "left" : "right"}`}>
-            <span>{milestone.sequence}</span>
-            <p>{milestone.eyebrow}</p>
-            <h3>{milestone.title}</h3>
+          <div className="journey-chapter-copy">
+            <p className="journey-index">{milestone.sequence}</p>
+            <p className="journey-eyebrow">{milestone.eyebrow}</p>
+            <h2>{milestone.title}</h2>
             <time>{milestone.dateLabel}</time>
           </div>
+          {index === 1 ? <span className="journey-ring" aria-hidden="true" /> : null}
         </section>
       ))}
 
       <section
-        className="beat beat-circle"
-        data-chapter={journeyById.circle.id}
-        data-journey-progress={journeyById.circle.progress}
-        data-scene={journeyById.circle.scene}
-      >
-        <div className="circle-copy">
-          <div className="circle-heading copy-surface copy-surface-night">
-            <p className="kicker">The wedding circle</p>
-            <h2>The people beside us.</h2>
-          </div>
-          <ul className="circle-people" aria-label="The wedding circle">
-            {wedding.people.map((person) => (
-              <li className="copy-surface copy-surface-night" key={person.id}>
-                <span>{person.role}</span>
-                <strong>{person.displayName}</strong>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section
+        className="journey-chapter journey-celebration"
+        data-journey-chapter="celebration"
         id="details"
-        className="beat beat-venue"
-        data-chapter={journeyById.pavilion.id}
-        data-journey-progress={journeyById.pavilion.progress}
-        data-scene={journeyById.pavilion.scene}
         tabIndex={-1}
       >
-        <div className="detail-copy copy-surface copy-surface-paper">
-          <p className="kicker">Celebration details</p>
-          <h2>
-            {wedding.dateLabel}
-            <br />
-            <i>{wedding.locationLabel}</i>
-          </h2>
-          <div className="details">
+        <div className="journey-date-art" aria-hidden="true">
+          {String(date.day).padStart(2, "0")}
+        </div>
+        <div className="journey-chapter-copy">
+          <p className="journey-index">03</p>
+          <p className="journey-eyebrow">The celebration</p>
+          <h2>{wedding.dateLabel}</h2>
+          <p className="journey-location">{wedding.locationLabel}</p>
+
+          <div className="journey-events">
             {wedding.events.map((event) => (
-              <div key={event.id}>
-                <span>{event.eyebrow}</span>
-                <p>
-                  {event.title}
-                  <br />
-                  {event.venue}, {event.address}
-                </p>
-                <a href={event.map.href} target="_blank" rel="noreferrer">
-                  <MapPin aria-hidden="true" size={15} strokeWidth={1.75} />
-                  {event.map.label}
-                </a>
-              </div>
+              <article key={event.id}>
+                <time>{event.eyebrow}</time>
+                <div>
+                  <h3>{event.title}</h3>
+                  <p>{event.venue} · {event.address}</p>
+                  <a href={event.map.href} rel="noreferrer" target="_blank">
+                    <MapPin aria-hidden="true" size={15} strokeWidth={1.7} />
+                    Directions
+                  </a>
+                </div>
+              </article>
             ))}
           </div>
-          <div className="detail-actions">
-            <a className="calendar-action" href={calendarHref}>
+
+          <div className="journey-actions">
+            <a className="journey-action" href={calendarHref}>
               Add to calendar
-              <CalendarPlus aria-hidden="true" size={16} strokeWidth={1.75} />
+              <CalendarPlus aria-hidden="true" size={16} strokeWidth={1.7} />
             </a>
             <ShareInvitation invitation={invitation} wedding={wedding} />
           </div>
@@ -597,23 +425,18 @@ export function WeddingExperience({
       </section>
 
       <section
-        className="beat beat-dress"
-        data-chapter={journeyById.dress.id}
-        data-journey-progress={journeyById.dress.progress}
-        data-scene={journeyById.dress.scene}
+        className="journey-chapter journey-dress"
+        data-journey-chapter="dress"
       >
-        <div className="dress-copy copy-surface copy-surface-night">
-          <p className="kicker">{wedding.dress.eyebrow}</p>
+        <div className="journey-chapter-copy">
+          <p className="journey-index">04</p>
+          <p className="journey-eyebrow">{wedding.dress.eyebrow}</p>
           <h2>{wedding.dress.title}</h2>
-          <p>{wedding.dress.guidance}</p>
-          <ul className="dress-palette" aria-label="Suggested colours">
+          <p className="journey-dress-guidance">{wedding.dress.guidance}</p>
+          <ul className="journey-palette" aria-label="Suggested colours">
             {wedding.dress.palette.map((colour) => (
               <li key={colour.name}>
-                <span
-                  aria-hidden="true"
-                  className="colour-swatch"
-                  style={{ background: colour.hex }}
-                />
+                <i aria-hidden="true" style={{ background: colour.hex }} />
                 <span>{colour.name}</span>
               </li>
             ))}
@@ -622,41 +445,19 @@ export function WeddingExperience({
       </section>
 
       <section
-        className="beat beat-vendors"
-        data-chapter={journeyById.vendors.id}
-        data-journey-progress={journeyById.vendors.progress}
-        data-scene={journeyById.vendors.scene}
-      >
-        <div className="vendors-copy copy-surface copy-surface-paper">
-          <p className="kicker">Made possible by</p>
-          <h2>Hands behind the celebration.</h2>
-          <ul>
-            {wedding.vendors.map((vendor) => (
-              <li key={vendor.id}>
-                <span>{vendor.category}</span>
-                <strong>{vendor.displayName}</strong>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section
+        className="journey-chapter journey-rsvp"
+        data-journey-chapter="rsvp"
         id="rsvp"
-        className="beat beat-rsvp"
-        data-chapter={journeyById.rsvp.id}
-        data-journey-progress={journeyById.rsvp.progress}
-        data-scene={journeyById.rsvp.scene}
       >
-        <div className="sunset" aria-hidden="true"><i /><i /><i /></div>
-        <RSVP invitation={invitation} wedding={wedding} />
+        <div className="journey-chapter-copy">
+          <p className="journey-index">05</p>
+          <p className="journey-eyebrow">Kindly reply</p>
+          <h2>Will you join us?</h2>
+          <RSVP invitation={invitation} wedding={wedding} />
+        </div>
         <footer>
-          <CoupleMonogram
-            className="footer-mark"
-            firstName={wedding.couple.first}
-            secondName={wedding.couple.second}
-          />
-          <p>{wedding.dateLabel} · {wedding.locationLabel}</p>
+          <p>{wedding.couple.first} &amp; {wedding.couple.second}</p>
+          <time>{wedding.dateLabel} · {wedding.locationLabel}</time>
           <small>Created with Dyrane Weddings</small>
         </footer>
       </section>

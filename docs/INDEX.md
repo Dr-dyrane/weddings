@@ -45,6 +45,11 @@ This directory is the durable memory for the product. A decision is not consider
   `09 15`, the live yellow progress grows, the couple contour resolves and the
   sole `Open` action becomes available. Desktop, mobile and reduced-motion
   resting states are verified.
-- The next approval boundary is the post-click mobile welcome composition. It
-  must reuse or transform the approved opening grammar before any spatial scene
-  expansion; the historical envelope world is not the approved destination.
+- The post-click mobile welcome and semantic journey are implemented from the
+  approved opening grammar. The portrait, date and yellow threshold transform
+  into the welcome; the primary path is welcome, two story beats, celebration,
+  dress guidance and RSVP. The historical envelope world, ornamental content
+  grids and old application chrome are disconnected from the guest path.
+- The next implementation boundary is the restrained spatial layer behind this
+  semantic journey. It must add depth without changing the approved resting
+  frames, obscuring text or introducing another interface colour.

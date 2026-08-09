@@ -110,9 +110,22 @@ same finished date, progress, portrait and action immediately. The social share
 image remains a static daily snapshot because animation support is not reliable
 across link-preview consumers; the guest page supplies the live sequence.
 
-The first post-click welcome frame is a separate mobile-first approval boundary.
-It must transform or reuse the opening elements before it introduces any new
-one, and it must pass the implementation gate below before spatial scenes expand.
+The post-click welcome transforms the opening rather than replacing it: the
+portrait recedes, the numeric date remains as atmosphere, the yellow threshold
+completes and moves to the invitation copy, and the couple names retain their
+top-left anchor. The first new statement is the literal invitation. No second
+button is added; native scroll is the continuation.
+
+The guest journey is intentionally limited to six resting chapters: welcome,
+two truthful story beats, celebration details, dress guidance and RSVP. Wedding
+party grids, vendor showcases and decorative stationery are omitted from the
+primary path because they dilute the invitation hierarchy. Calendar, directions,
+sharing and response controls appear only where their actions become relevant.
+
+After welcome, the threshold becomes the sole journey-progress signal. The
+inactive grey track remains invisible. Chapter identity uses only the couple
+name and the current chapter label; the monogram and permanent RSVP shortcut do
+not return as application chrome.
 
 ## Reduction rules
 

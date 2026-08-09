@@ -16,7 +16,7 @@ No release may mark a row complete without retained evidence in CI, preview revi
 | Responsive | 320, 375, 390, 430, 768, 1024, and 1440 CSS pixels |
 | Browsers | iOS Safari, Android Chrome, desktop Safari, Chrome, Firefox, and Edge |
 | Metadata | Generic, personalized, invalid, and revoked cards; long-name and Unicode fixtures; live crawler checks |
-| Visual identity | Approved OGB grammar preserved: black dominant field, Space Grotesk hierarchy, yellow only for progress/interaction/state, no unapproved hue, monogram, ornament, border, haze or extra panel |
+| Visual identity | Approved OGB grammar preserved: black dominant field, Space Grotesk hierarchy, yellow only for progress/interaction/state or physically justified threshold light; couple contour is source-derived, full-height, subordinate and not stock; no unapproved hue, monogram, ornament, border, haze or extra panel |
 | Privacy | No PII in URL, analytics, logs, or referrers; noindex personalized route; revocation and tenant tests |
 | Release | Preview E2E, production smoke, monitoring, rollback, and data-backup checks |
 

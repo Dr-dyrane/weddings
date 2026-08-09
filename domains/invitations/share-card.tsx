@@ -11,6 +11,15 @@ const spaceGroteskFontPromise = readFile(
   path.join(process.cwd(), "public/fonts/dyrane-space-grotesk.ttf"),
 );
 
+const couplePortraitPromises = {
+  "alexander-chioma-line-v3": readFile(
+    path.join(
+      process.cwd(),
+      "docs/references/visual/alexander-chioma-line-portrait-v3.png",
+    ),
+  ),
+} as const;
+
 function asArrayBuffer(font: Buffer) {
   return font.buffer.slice(
     font.byteOffset,
@@ -101,6 +110,10 @@ export async function createDyraneShareCard() {
 
 async function createShareCard(wedding: PublishedWedding | null) {
   const spaceGroteskFont = await spaceGroteskFontPromise;
+  const portraitAsset = wedding?.shareCard?.portraitAsset;
+  const couplePortrait = portraitAsset
+    ? await couplePortraitPromises[portraitAsset]
+    : null;
   const coupleLine = wedding
     ? `${wedding.couple.first} & ${wedding.couple.second}`
     : "Dyrane Weddings";
@@ -126,6 +139,23 @@ async function createShareCard(wedding: PublishedWedding | null) {
           width: "100%",
         }}
       >
+        {couplePortrait ? (
+          // ImageResponse renders a plain image element from the embedded asset.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            alt=""
+            src={`data:image/png;base64,${couplePortrait.toString("base64")}`}
+            style={{
+              height: "690px",
+              opacity: wedding?.shareCard?.portraitOpacity ?? 0,
+              position: "absolute",
+              right: "-15px",
+              top: "-30px",
+              width: "460px",
+            }}
+          />
+        ) : null}
+
         <div
           style={{
             display: "flex",

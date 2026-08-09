@@ -63,6 +63,12 @@ export const publishedWeddingSchema = z.object({
     first: z.string().min(1).max(40),
     second: z.string().min(1).max(40),
   }),
+  shareCard: z
+    .object({
+      portraitAsset: z.enum(["alexander-chioma-line-v3"]),
+      portraitOpacity: z.number().min(0).max(1),
+    })
+    .optional(),
   invitation: z.object({
     eyebrow: z.string().min(1).max(80),
     headline: z.string().min(1).max(120),
@@ -127,6 +133,10 @@ const alexanderAndChioma = publishedWeddingSchema.parse({
   couple: {
     first: "Alexander",
     second: "Chioma",
+  },
+  shareCard: {
+    portraitAsset: "alexander-chioma-line-v3",
+    portraitOpacity: 0.68,
   },
   invitation: {
     eyebrow: "Together with their families",

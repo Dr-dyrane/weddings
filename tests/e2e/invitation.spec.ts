@@ -146,7 +146,7 @@ test("invalid share-card routes degrade without exposing a recipient", async ({
   const invalidCard = await request.get(
     "/the_ogranyas/invite/not-valid/card/1",
   );
-  const publicCard = await request.get("/the_ogranyas/card/2");
+  const publicCard = await request.get("/the_ogranyas/card/3");
 
   expect(invalidCard.ok()).toBeTruthy();
   expect(invalidCard.headers()["content-type"]).toContain("image/png");

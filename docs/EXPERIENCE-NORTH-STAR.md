@@ -20,7 +20,7 @@ this frame, it does not belong in the experience.
 
 The canonical renderer is
 [`domains/invitations/share-card.tsx`](../domains/invitations/share-card.tsx)
-at public edition `2`. It generates a 1200 × 630 PNG from published wedding
+at public edition `3`. It generates a 1200 × 630 PNG from published wedding
 data. The renderer, rather than a duplicated static export, is authoritative
 because the progress fill advances every calendar day.
 
@@ -35,9 +35,19 @@ Locked composition:
 - numeric month and day at bottom left;
 - four-digit year at bottom right;
 - a centered 170 × 34 progress track;
+- one slim, full-height contour portrait of the actual couple, entering from
+  the right edge behind the year;
+- directional line weight on that portrait: contours facing the progress
+  light are thicker and champagne-yellow; receding contours are hairline
+  smoke-grey;
 - 28 px horizontal safe margins and 18 px bottom clearance;
-- no logo, monogram, border, gradient, texture, photograph, ornament,
+- no logo, monogram, border, gradient, texture, photographic image, ornament,
   salutation, venue, subtitle or wedding cliché.
+
+The contour portrait is the sole approved representational exception. It is
+derived from approved photographs of the actual couple, abstracts identity
+into posture rather than facial detail, and must remain subordinate to the
+date. A stock wedding silhouette is never an acceptable substitute.
 
 The progress fill represents elapsed calendar days from January 1 of the year
 before the wedding through the wedding date, calculated in the wedding's
@@ -55,10 +65,12 @@ The invitation must preserve the same hierarchy as the first frame:
 4. **Action:** a single obvious next step when action is required.
 
 Guest-facing UI uses only black, white, yellow and neutral opacity steps.
-Yellow is reserved for active progress, direct interaction, focus and committed
-state. It is never general decoration and never carries meaning without shape,
-position or text. No additional UI hue is introduced without explicit user
-approval.
+Yellow is reserved for active progress, direct interaction, focus, committed
+state, and physically justified light emitted by the progress threshold. On
+the contour portrait it appears only on surfaces facing that source; it is
+never a uniform outline or general decoration. Yellow never carries meaning
+without shape, position or text. No additional UI hue is introduced without
+explicit user approval.
 
 Space Grotesk is the sole guest-interface family. Hierarchy comes from scale,
 position, spacing, weight and motion—not from switching to a ceremonial serif
@@ -113,7 +125,8 @@ The reviewer must be able to answer yes to all of the following:
 - Does black remain the dominant field?
 - Is the information understandable within three seconds?
 - Is Space Grotesk carrying the complete guest-facing hierarchy?
-- Is yellow communicating progress, interaction or state?
+- Is yellow communicating progress, interaction, state or directional light
+  from the progress threshold?
 - Is there only one expressive movement or visual subject?
 - Can any visible element be removed without reducing meaning?
 - Does text remain readable throughout the full transition?

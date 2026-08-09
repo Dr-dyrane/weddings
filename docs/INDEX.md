@@ -32,9 +32,9 @@ This directory is the durable memory for the product. A decision is not consider
 
 - Phase 0 foundation: complete.
 - Phase 1 research package: complete.
-- OG/share-card edition `2`: approved as the new first-frame authority. It uses
-  pitch black, white Space Grotesk, Chioma yellow, numeric date anchors and a
-  live daily progress signal.
+- OG/share-card edition `3`: approved as the new first-frame authority. It uses
+  pitch black, white Space Grotesk, Chioma yellow, numeric date anchors, a live
+  daily progress signal and the couple-derived directional-light contour.
 - Guest-experience visual direction: reset and locked in
   `EXPERIENCE-NORTH-STAR.md`; the approved OGB now governs the rebuild.
 - Previous garden, pavilion, stationery and monogram work remains historical

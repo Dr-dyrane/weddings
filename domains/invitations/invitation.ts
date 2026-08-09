@@ -23,7 +23,7 @@ const publicProjection = invitationProjectionSchema.parse({
   kind: "public",
   salutation: "Honoured Guest",
   guestDisplayName: null,
-  cardEdition: 2,
+  cardEdition: 3,
   canRespond: false,
   allowedEventIds: null,
 });
@@ -32,7 +32,7 @@ const previewInvitation = invitationProjectionSchema.parse({
   kind: "personalized",
   salutation: "Dr. Dyrane",
   guestDisplayName: "Dr. Dyrane",
-  cardEdition: 2,
+  cardEdition: 3,
   canRespond: false,
   allowedEventIds: ["vow", "gathering"],
 });

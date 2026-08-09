@@ -24,7 +24,7 @@ describe("share-card editions", () => {
     expect(personalized).not.toBeNull();
 
     expect(getPublicCardPath(wedding, publicInvitation, now)).toBe(
-      "/the_ogranyas/card/2?day=2026-08-09",
+      "/the_ogranyas/card/3?day=2026-08-09",
     );
     expect(
       getPersonalizedCardPath(
@@ -34,7 +34,7 @@ describe("share-card editions", () => {
         now,
       ),
     ).toContain(
-      `/invite/${DEMO_INVITATION_TOKEN}/card/2?day=2026-08-09`,
+      `/invite/${DEMO_INVITATION_TOKEN}/card/3?day=2026-08-09`,
     );
   });
 

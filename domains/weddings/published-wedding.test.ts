@@ -15,6 +15,11 @@ describe("published wedding snapshot", () => {
     expect(wedding.vendors).toHaveLength(3);
     expect(wedding.events).toHaveLength(2);
     expect(wedding.couple).not.toHaveProperty("monogram");
+    expect(wedding.dress.palette).toEqual([
+      { name: "Pitch black", hex: "#000000" },
+      { name: "Pure white", hex: "#ffffff" },
+      { name: "Celebration yellow", hex: "#FFD21E" },
+    ]);
   });
 
   it("returns null for an unknown wedding", () => {

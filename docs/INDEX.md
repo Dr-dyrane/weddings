@@ -21,6 +21,16 @@ This directory is the durable memory for the product. A decision is not consider
 11. `VERIFICATION-MATRIX.md` — release evidence.
 12. `CONCEPT-ASSET-MANIFEST.md` — generated blockout stills, prompts,
     provenance, responsive crops and delivery derivatives.
+13. `COUPLE-LINE-PORTRAIT-WORKFLOW.md` — reusable private-intake,
+    identity-derived contour, directional-light, approval, versioning and
+    cross-wedding isolation workflow.
+
+## Separate product lanes
+
+- `EVENT-COLLABORATION-LANE.md` — future people, roles, vendor credits and
+  QR-accessible guest-media collection. It is deliberately outside the current
+  six-chapter invitation and carries its own access, consent and moderation
+  decisions.
 
 ## Status language
 

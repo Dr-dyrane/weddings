@@ -89,7 +89,8 @@ export const publishedWeddingSchema = z.object({
           hex: z.string().regex(/^#[0-9a-f]{6}$/i),
         }),
       )
-      .length(4),
+      .min(1)
+      .max(4),
   }),
   people: z.array(personSchema),
   vendors: z.array(vendorSchema),
@@ -194,10 +195,9 @@ const alexanderAndChioma = publishedWeddingSchema.parse({
     title: "Dusk, devotion & a little magic.",
     guidance: "Formal · expressive · unmistakably you",
     palette: [
-      { name: "Warm ivory", hex: "#efe7db" },
-      { name: "Orchid lilac", hex: "#a97ed1" },
-      { name: "Midnight plum", hex: "#37293c" },
-      { name: "Antique gold", hex: "#c7a05a" },
+      { name: "Pitch black", hex: "#000000" },
+      { name: "Pure white", hex: "#ffffff" },
+      { name: "Celebration yellow", hex: "#FFD21E" },
     ],
   },
   people: [

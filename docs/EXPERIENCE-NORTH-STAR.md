@@ -127,16 +127,45 @@ inactive grey track remains invisible. Chapter identity uses only the couple
 name and the current chapter label; the monogram and permanent RSVP shortcut do
 not return as application chrome.
 
-The WebGL layer is atmospheric, never a second interface. Each chapter may own
-one restrained spatial subject: a conversation thread, a wedding band, a
-pavilion threshold, a fabric edge or a horizon. A subject may use authored
-2.5D imagery, depth-aware planes or simple real-time geometry when material,
-scale and occlusion are essential to its meaning. It must still preserve black
-negative space and use yellow only as physically justified directional light.
-Subjects render only while scroll or pointer state is settling, remain behind
-semantic DOM content, fade before the next chapter takes over and are omitted
-entirely for reduced motion or unavailable WebGL. A static DOM journey remains
-the complete experience.
+The WebGL layer is atmospheric, never a second interface. All chapters occupy
+one continuous world arranged along a curved camera spline rather than a stack
+of isolated scenes. The route bends laterally, vertically and into depth; its
+look-ahead and restrained banking make scroll feel like locomotion. Each
+chapter may own one primary spatial subject: a story garden, the distant
+celebration circle, a pavilion threshold, suspended fabric or the final RSVP
+table. Subjects use independently composed desktop and mobile 2.5D plates with
+depth-aware parallax; simple real-time geometry is reserved for genuine
+foreground occlusion or a physical threshold, never as a substitute for
+material craft.
+
+Neighbouring subjects overlap at the edges of their ranges so the next place
+can be seen before the current one disappears. Foreground objects may pass the
+viewer while the next middle-ground or distant object approaches, but only one
+subject may carry primary visual weight at any instant. Semantic typography
+rests at readable points along the journey and remains governed by the same
+spatial beat without being rendered into WebGL. The required proof passage is:
+**She said yes → curve through darkness → pavilion appears in the distance →
+approach and pass its threshold → fabric emerges beyond it.**
+
+The pavilion plate is a composed destination, not a surface to skew around the
+camera. Its plane remains perpendicular to the approach and uses only internal
+depth parallax. The camera curves before and after the pavilion, straightens
+for the approach, and suppresses banking and pointer drift while the plate is
+hero. The plate fades before the near crossing; restrained foreground jamb,
+overhead and floor geometry carry the physical threshold, with fabric already
+visible beyond it.
+
+The world must preserve black negative space and use yellow only as physically
+justified directional light. It renders only while scroll or pointer state is
+settling and is omitted entirely for reduced motion or unavailable WebGL. A
+static DOM journey remains the complete experience.
+
+Historical concept plates may supply architecture, fabric and foliage, but a
+shared material shader remaps them into pitch black, pure white and exact
+`#FFD21E`. Original plum, lilac or antique-gold colour does not return as UI or
+ambient wash. Bright paper remains white; yellow is confined to progress,
+acknowledged state and selective light. Plates feather into black and recede or
+move aside anywhere semantic copy or a decision control occupies the frame.
 
 The locked reference implementation and fallback point for this technique is
 documented in `PAVILION-2_5D-CHECKPOINT.md`.

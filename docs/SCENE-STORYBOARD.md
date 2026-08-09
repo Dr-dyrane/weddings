@@ -1,6 +1,10 @@
 # Yardstick Scene Storyboard
 
-Status: locked for Phase 1 blockout
+Status: **historical; superseded for implementation by `EXPERIENCE-NORTH-STAR.md`**
+
+Do not continue this sequence as written. Its verified content and accessibility
+requirements may inform a new storyboard, but its stationery, palette,
+architecture and opening choreography are no longer approved UI direction.
 
 The storyboard uses chapter-local progress derived from semantic sections. Percentages describe each chapter, not the entire document.
 
@@ -8,11 +12,12 @@ The storyboard uses chapter-local progress derived from semantic sections. Perce
 
 **Job:** make the shared preview feel like a formal object issued to a specific guest.
 
-- 1200×630 composition with warm ivory, black ink and burnished champagne.
-- Final couple mark at the top; personalized salutation beneath the host line.
-- Couple, date and place remain legible at messaging-feed size.
-- No environmental photography competes with the card.
-- Public edition omits guest identity; private edition names the recipient.
+- 1200×630 pitch-black composition with white Space Grotesk and one Chioma-yellow
+  live progress signal.
+- Couple first names sit top left; numeric month/day and year anchor the bottom.
+- Public and personalized links use the same privacy-safe first frame; guest
+  identity does not enter social preview imagery.
+- No logo, monogram, venue, salutation, ornament or environmental photography.
 
 ## Scene 1 — The waiting envelope
 

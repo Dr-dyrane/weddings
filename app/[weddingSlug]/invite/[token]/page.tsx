@@ -17,6 +17,8 @@ type InvitationPageProps = {
   params: Promise<{ weddingSlug: string; token: string }>;
 };
 
+export const revalidate = 3600;
+
 export async function generateMetadata({
   params,
 }: InvitationPageProps): Promise<Metadata> {

@@ -55,26 +55,30 @@ Deliver the route, snapshot, privacy, design, motion, icon, and verification con
 
 Exit gate: clean build, schema tests, generic/private/invalid routes, deterministic cards, calendar projection, noindex and no-store privacy checks, semantic DOM, reduced-motion and no-WebGL fallback.
 
-## Phase 1 — Yardstick art direction
+## Phase 1 — Approved OGB into experience
 
-Replace placeholder spatial geometry with commissioned/generated scene assets for the modern fairytale pop-up-book direction: envelope, story path, proposal object, architectural reveal, details card, and celebration close. Build mobile compositions separately from desktop and tune chapter boundaries from DOM section positions.
+Build outward from the approved share card instead of continuing the former
+envelope, garden and pavilion visual system. The locked direction is documented
+in `EXPERIENCE-NORTH-STAR.md`: pitch black, white Space Grotesk, Chioma yellow,
+large numeric time, disciplined negative space and one controlled spatial idea
+at a time.
 
-Locked yardstick direction: **Twilight Garden → Glass Pavilion**. The experience must feel like crossing into a wedding venue, not viewing a series of decorated sections.
+Execution order:
 
-Execution follows `BUILD-RUNBOOK.md`:
+1. Preserve the approved dynamic OGB and daily progress contract.
+2. Build one first-frame-to-first-transition vertical slice.
+3. Approve its desktop, mobile and reduced-motion resting compositions.
+4. Re-author subsequent chapters through the same visual grammar.
+5. Add factual wedding artifacts only when they strengthen the narrative.
+6. Complete reference-device and accessibility verification before expansion.
 
-1. Reference lock and atmospheric stills.
-2. Envelope-to-garden threshold vertical slice.
-3. Story garden.
-4. Wedding circle.
-5. Pavilion and details.
-6. RSVP place setting.
-7. Atmosphere polish.
-8. Reference-device release.
+The former research, art bible, storyboard and concept assets remain provenance,
+not implementation authority. Dynamic monogram routes remain technical identity
+infrastructure but do not mandate a visible mark in guest surfaces.
 
-Research, art direction, storyboard and intake are now durable in `RESEARCH-DOSSIER.md`, `YARDSTICK-ART-BIBLE.md`, `SCENE-STORYBOARD.md` and `ASSET-INTAKE.md`. The identity contract is a dynamic frame-free italic couple monogram used consistently at every optical size; its renderer, metadata routes and asset matrix are specified in `BRAND-MARK.md`.
-
-Exit gate: approved storyboard and visual references; long-name and Unicode fixtures; 320–1440px layouts; 200% zoom; reverse-scroll; context loss; reference-device frame and Core Web Vitals budgets.
+Exit gate: approved transition and visual references; long-name and Unicode
+fixtures; 320–1440px layouts; 200% zoom; reverse-scroll; context loss;
+reference-device frame and Core Web Vitals budgets.
 
 ## Phase 2 — Publishing core
 

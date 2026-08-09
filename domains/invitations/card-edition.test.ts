@@ -13,25 +13,29 @@ import {
 import { getYardstickWedding } from "@/domains/weddings/published-wedding";
 
 describe("share-card editions", () => {
-  it("produces stable public and personalized card paths", () => {
+  it("produces daily-versioned public and personalized card paths", () => {
     const wedding = getYardstickWedding();
     const publicInvitation = getPublicInvitation();
+    const now = new Date("2026-08-09T12:00:00.000Z");
     const personalized = resolveInvitation(
       wedding.slug,
       DEMO_INVITATION_TOKEN,
     );
     expect(personalized).not.toBeNull();
 
-    expect(getPublicCardPath(wedding, publicInvitation)).toBe(
-      "/the_ogranyas/card/2",
+    expect(getPublicCardPath(wedding, publicInvitation, now)).toBe(
+      "/the_ogranyas/card/2?day=2026-08-09",
     );
     expect(
       getPersonalizedCardPath(
         wedding,
         DEMO_INVITATION_TOKEN,
         personalized!,
+        now,
       ),
-    ).toContain(`/invite/${DEMO_INVITATION_TOKEN}/card/2`);
+    ).toContain(
+      `/invite/${DEMO_INVITATION_TOKEN}/card/2?day=2026-08-09`,
+    );
   });
 
   it("matches only canonical numeric editions", () => {

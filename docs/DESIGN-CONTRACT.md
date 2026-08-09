@@ -11,11 +11,17 @@
 
 ## Visual rules
 
+- `EXPERIENCE-NORTH-STAR.md` is the guest-facing visual authority. Its approved
+  OGB is the first frame of the invitation, not a separate marketing template.
 - App chrome has no decorative borders. Hairlines are permitted only when they communicate grouping, input affordance, or state.
 - Color, spacing, type, radii, elevation, and motion use semantic tokens.
-- The display face carries ceremony; the sans face carries instructions and controls.
+- Space Grotesk carries all guest-facing display, information and control type.
+- Guest-facing UI uses pitch black, white, Chioma yellow and neutral opacity
+  steps. Yellow is reserved for progress, interaction, focus and committed state.
 - Functional icons come only from the Dyrane icon registry. Wedding motifs belong to narrative art, not control chrome.
 - Every chapter has at most one defining expressive moment.
+- No visible monogram, additional UI hue, ornamental surface or new font may be
+  introduced without explicit approval.
 
 ## Interaction gates
 

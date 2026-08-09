@@ -1,6 +1,11 @@
 # Alexander and Chioma Yardstick Art Bible
 
-Status: locked for blockout; real details remain provisional
+Status: **historical research; superseded for implementation by
+`EXPERIENCE-NORTH-STAR.md`**
+
+The garden, pavilion, stationery, palette and typography below are retained as
+provenance. They are not current guest-interface authority and must not be
+continued without re-derivation through the approved OGB.
 
 Direction: **Twilight Garden → Glass Pavilion**
 

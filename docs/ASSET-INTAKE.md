@@ -28,15 +28,15 @@ The future Studio asks one meaningful question at a time in this order:
 | Couple names | Known | Alexander and Chioma |
 | Wedding identity | Provisional | `the_ogranyas` |
 | Final date and venues | Simulation | Clearly marked simulated details |
-| Palette | Known direction | Lilac, ivory, night plum, champagne |
-| Atmosphere | Locked for blockout | Twilight garden into glass pavilion |
+| Palette | Locked | Pitch black, white, Chioma yellow `#FFD21E`, neutral track `#303030` |
+| Atmosphere | Locked | The approved OGB unfolds into a restrained spatial world |
 | Story milestones | Open | Neutral unlabeled object blockouts |
 | People and roles | Simulation | Existing consent-tagged seed only |
 | Vendors | Simulation | Existing consent-tagged seed only |
 | Couple portraits | Open | No generated faces; typographic frames |
 | Venue photography | Open | Generated architectural concepts with provenance |
 | Ring reference | Candidate exists | Use only after ownership and relevance are confirmed |
-| Final logo/monogram | Dynamic couple monogram locked | Derive the partners’ first-name initials; use the single frame-free italic mark |
+| Final logo/monogram | Technical generator retained | Omit from OGB and guest chrome unless separately approved |
 | Sound | Open | Silent experience |
 
 ## Required media set
@@ -64,12 +64,11 @@ The future Studio asks one meaningful question at a time in this order:
 
 ### Couple identity
 
-- First names are the authoritative source; a culturally preferred grapheme may
-  be supplied as an explicit initial override.
-- The renderer owns the single frame-free italic production mark; arbitrary
-  uploaded SVG or HTML is never accepted.
-- Uses required: envelope seal, card, header, footer, favicon, manifest icon,
-  spatial mark and social preview.
+- First names are the authoritative guest-facing identity.
+- The dynamic monogram generator remains available for technical icons and a
+  future couple-approved application; it is not required in the invitation UI.
+- Guest share cards, headers, footers and opening chrome omit the monogram under
+  the current `EXPERIENCE-NORTH-STAR.md` contract.
 - The original Alexander–Chioma concept remains a historical reference at
   [`references/brand/alexander-chioma-mark-concept.jpeg`](references/brand/alexander-chioma-mark-concept.jpeg),
   not a production logo source.

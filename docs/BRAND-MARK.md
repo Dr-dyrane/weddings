@@ -1,6 +1,13 @@
 # Dynamic Couple Monogram System
 
-Status: direction corrected and implemented as a data-derived identity system.
+Status: technical identity subsystem implemented; **visible guest use
+superseded by `EXPERIENCE-NORTH-STAR.md`**.
+
+The approved OGB and guest chrome do not display a monogram. Keep the dynamic
+routes for favicon, manifest and future couple-approved identity needs, but do
+not place the mark on share cards, headers, footers, opening controls or spatial
+objects without new explicit approval. The remaining document records how the
+technical generator works; it is not a placement mandate.
 
 The wedding mark is not a fixed infinity and is not a Dyrane product logo. Each
 couple receives a custom monogram derived from the first letter of each partner’s
@@ -28,13 +35,15 @@ the slanted `INITIAL & INITIAL` lockup.
 
 ## Dynamic surfaces
 
-For each wedding slug, the same source names drive:
+For each wedding slug, the same source names may continue to drive the technical
+identity routes:
 
-- header, footer, opening seal and spatial ceremony applications;
-- public and personalized 1200 × 630 share cards;
 - `/{weddingSlug}/logo.svg` using the frame-free italic mark;
-- favicon, Apple touch icon, 192 px and 512 px PNG app icons using the same mark;
-- `/{weddingSlug}/manifest.webmanifest` and its app identity.
+- favicon, Apple touch icon, 192 px and 512 px PNG app icons;
+- `/{weddingSlug}/manifest.webmanifest` and its installed-app identity.
+
+The guest-facing share card, header, footer and opening do not consume the mark
+under the current north-star contract.
 
 Changing the published first names changes every surface automatically. There is
 no manually authored `monogram` field in the published wedding snapshot.

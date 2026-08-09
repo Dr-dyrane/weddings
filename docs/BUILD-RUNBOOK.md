@@ -1,6 +1,12 @@
 # Phase 1 Autonomous Build Runbook
 
-Status: active
+Status: **historical; do not execute this visual sequence**
+
+`EXPERIENCE-NORTH-STAR.md` supersedes the envelope, garden and pavilion build
+order below. The next authorized build begins with a bounded
+first-frame-to-first-transition vertical slice and must pass desktop, mobile and
+reduced-motion review before expansion. The operational and accessibility gates
+remain useful; the old visual deliverables do not.
 
 Objective: continue from research to a state-of-the-art Alexander–Chioma arrival experience without restarting discovery between increments.
 

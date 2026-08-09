@@ -1,6 +1,11 @@
 # Immersive Wedding Experience Research Dossier
 
-Status: locked for Phase 1
+Status: retained research evidence; guest-facing visual decisions are
+superseded by `EXPERIENCE-NORTH-STAR.md`
+
+Behavioural findings on restraint, native scroll, accessibility and performance
+remain applicable. Earlier palette, stationery, monogram and envelope decisions
+are historical and must not override the approved OGB.
 
 Research date: 2026-08-08
 

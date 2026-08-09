@@ -4,7 +4,12 @@ Status: accepted
 
 ## Decision
 
-Next.js `ImageResponse` generates deterministic 1200×630 share cards from a governed raster art base plus validated text. Generic and personalized routes own separate metadata. A published card revision receives an editioned share URL.
+Next.js `ImageResponse` generates deterministic 1200×630 share cards from
+published couple and wedding-date data plus an embedded, licensed Space Grotesk
+font. Public and personalized routes use the same privacy-safe visual. A
+published card revision receives an editioned share URL, and the image URL gains
+a wedding-timezone calendar-day key so the live progress frame can advance
+without relying on third-party cache invalidation.
 
 ## Consequences
 

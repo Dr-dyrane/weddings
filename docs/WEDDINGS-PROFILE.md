@@ -2,11 +2,14 @@
 
 Status: authoritative for the Alexander and Chioma yardstick build
 
-Version: 0.2.0
+Version: 0.3.0
 
-Frozen: 2026-08-08
+Frozen: 2026-08-09
 
-This profile turns the wider Dyrane design canon into product rules for wedding invitations. The share card, guest invitation, details, RSVP, and couple Studio are different surfaces with different jobs; they share content truth and quality gates, not one visual template.
+This profile turns the wider Dyrane design canon into product rules for wedding
+invitations. The share card, guest invitation, details and RSVP have different
+jobs but share one guest-facing visual grammar. Couple Studio remains a
+functional authoring surface with the same content truth and quality gates.
 
 ## Product promise
 
@@ -14,9 +17,15 @@ A shared link first feels like a formal invitation worthy of keeping. Opening it
 
 ## Experiential north star
 
-The guest does not browse a wedding-themed page. The guest crosses a threshold and arrives at a living ceremonial place. For the Alexander and Chioma yardstick, that place is a twilight garden leading into a luminous glass pavilion.
+The guest does not browse a wedding-themed page. The approved share card begins
+the invitation and unfolds into one continuous spatial experience. For the
+Alexander and Chioma yardstick, pitch black, white Space Grotesk, Chioma yellow,
+large numeric time and disciplined negative space form the governing language.
 
-The environment follows the arc `Receive → Open → Cross → Wander → Gather → Arrive → Reply → Anticipate`. This direction is locked in `YARDSTICK-ART-BIBLE.md` and decomposed in `SCENE-STORYBOARD.md`.
+The experience follows the arc `Receive → Progress → Reveal → Explore → Decide
+→ Anticipate`. Its current visual authority is locked in
+`EXPERIENCE-NORTH-STAR.md`. Older garden, pavilion and envelope documents are
+historical research until re-authored through this direction.
 
 ## Surface grammar
 

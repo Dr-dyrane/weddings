@@ -1,6 +1,9 @@
 # Phase 1 Concept Asset Manifest
 
-Status: generated blockout references; not couple-approved final media
+Status: historical concept provenance; not current implementation authority
+
+`EXPERIENCE-NORTH-STAR.md` supersedes the palette, composition and scene
+direction represented by these assets. Retain them for provenance only.
 
 Wedding: Alexander and Chioma (`the_ogranyas` preview)
 

@@ -2,6 +2,7 @@ import type { InvitationProjection } from "@/domains/invitations/invitation";
 import type { PublishedWedding } from "@/domains/weddings/published-wedding";
 
 export const SHARE_CARD_SIZE = { height: 630, width: 1200 } as const;
+export const SHARE_CARD_ASSET_VERSION = "approved-ogb-20260809";
 
 export function getShareCardDayKey(
   wedding: PublishedWedding,
@@ -24,7 +25,7 @@ export function getPublicCardPath(
   invitation: InvitationProjection,
   now = new Date(),
 ) {
-  return `/${wedding.slug}/card/${invitation.cardEdition}?day=${getShareCardDayKey(wedding, now)}`;
+  return `/${wedding.slug}/card/${invitation.cardEdition}?day=${getShareCardDayKey(wedding, now)}&v=${SHARE_CARD_ASSET_VERSION}`;
 }
 
 export function getPersonalizedCardPath(
@@ -33,7 +34,7 @@ export function getPersonalizedCardPath(
   invitation: InvitationProjection,
   now = new Date(),
 ) {
-  return `/${wedding.slug}/invite/${opaqueToken}/card/${invitation.cardEdition}?day=${getShareCardDayKey(wedding, now)}`;
+  return `/${wedding.slug}/invite/${opaqueToken}/card/${invitation.cardEdition}?day=${getShareCardDayKey(wedding, now)}&v=${SHARE_CARD_ASSET_VERSION}`;
 }
 
 export function cardEditionMatches(value: string, expected: number) {

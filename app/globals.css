@@ -1004,7 +1004,7 @@ body.live-opening-locked{overflow:hidden}
   --ogb-yellow:#ffd21e;
   background:#000;
   color:#fff;
-  font-family:"Dyrane Space Grotesk",var(--font-interface);
+  font-family:"Dyrane Space Grotesk","Space Grotesk",Arial,sans-serif;
   inset:0;
   opacity:1;
   overflow:hidden;
@@ -1020,7 +1020,7 @@ body.live-opening-locked{overflow:hidden}
   visibility:hidden;
 }
 .live-ogb-couple{
-  font:500 22px/1 "Dyrane Space Grotesk",var(--font-interface);
+  font:500 22px/1 "Dyrane Space Grotesk","Space Grotesk",Arial,sans-serif;
   left:28px;
   letter-spacing:-1px;
   margin:0;

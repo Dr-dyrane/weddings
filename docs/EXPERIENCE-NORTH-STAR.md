@@ -127,6 +127,14 @@ inactive grey track remains invisible. Chapter identity uses only the couple
 name and the current chapter label; the monogram and permanent RSVP shortcut do
 not return as application chrome.
 
+The WebGL layer is atmospheric, never a second interface. Each chapter may own
+one restrained spatial artifact: a conversation thread, a wedding band, a
+pavilion trace, a fabric edge or a horizon. These forms use thin directional
+light and negative space rather than filled geometry. They render only while
+scroll or pointer state is settling, remain behind semantic DOM content, fade
+before the next chapter takes over and are omitted entirely for reduced motion
+or unavailable WebGL. A static DOM journey remains the complete experience.
+
 ## Reduction rules
 
 Nothing enters the guest experience unless removing it makes the concept

@@ -1227,6 +1227,16 @@ body.live-opening-locked{overflow:hidden}
 }
 .editorial-experience[data-active-chapter="welcome"] .journey-progress{opacity:0}
 
+.journey-spatial{
+  inset:0;
+  opacity:1;
+  pointer-events:none;
+  position:fixed!important;
+  transition:opacity .45s var(--ease);
+  z-index:0;
+}
+.editorial-experience[data-active-chapter="welcome"] .journey-spatial{opacity:0}
+
 .journey-welcome{
   background:#000;
   height:160svh;
@@ -1373,10 +1383,11 @@ body.live-opening-locked{overflow:hidden}
 .editorial-experience.is-open .journey-scroll-cue{opacity:1}
 
 .journey-chapter{
-  background:#000;
+  background:transparent;
   min-height:130svh;
   padding:20svh clamp(28px,8vw,124px) 26svh;
   position:relative;
+  z-index:2;
 }
 .journey-chapter-copy{
   max-width:920px;
@@ -1390,7 +1401,7 @@ body.live-opening-locked{overflow:hidden}
 .journey-index{color:var(--journey-yellow);margin-bottom:32px}
 .journey-eyebrow{color:var(--journey-muted);margin-bottom:20px}
 .journey-chapter h2{
-  font-size:clamp(58px,8.2vw,128px);
+  font-size:clamp(58px,7vw,112px);
   letter-spacing:-.07em;
   line-height:.86;
   text-wrap:balance;
@@ -1406,19 +1417,6 @@ body.live-opening-locked{overflow:hidden}
 .journey-story-2 .journey-chapter-copy{
   margin-left:auto;
   text-align:right;
-}
-.journey-ring{
-  aspect-ratio:1;
-  border:2px solid var(--journey-yellow);
-  border-radius:50%;
-  box-shadow:0 0 42px rgba(255,210,30,.14),inset 0 0 30px rgba(255,210,30,.08);
-  opacity:.34;
-  position:absolute;
-  right:10vw;
-  top:29svh;
-  transform:rotateX(68deg) rotateZ(-18deg);
-  width:min(31vw,480px);
-  z-index:1;
 }
 
 .journey-celebration{
@@ -1659,8 +1657,6 @@ body.live-opening-locked{overflow:hidden}
   .journey-chapter h2{font-size:clamp(54px,16vw,82px);line-height:.88}
   .journey-story .journey-chapter-copy{top:20svh}
   .journey-story-2 .journey-chapter-copy{margin-left:0;text-align:left}
-  .journey-ring{opacity:.2;right:-18vw;top:34svh;width:88vw}
-
   .journey-celebration{min-height:190svh;padding-bottom:18svh}
   .journey-celebration h2{font-size:clamp(52px,15vw,76px)}
   .journey-date-art{font-size:78vw;right:-.08em;top:9svh}
@@ -1691,5 +1687,6 @@ body.live-opening-locked{overflow:hidden}
   .journey-scroll-cue,
   .journey-chrome,
   .journey-progress{transition:none}
+  .journey-spatial{display:none}
   .journey-story .journey-chapter-copy{position:relative;top:auto}
 }

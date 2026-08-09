@@ -50,6 +50,11 @@ This directory is the durable memory for the product. A decision is not consider
   into the welcome; the primary path is welcome, two story beats, celebration,
   dress guidance and RSVP. The historical envelope world, ornamental content
   grids and old application chrome are disconnected from the guest path.
-- The next implementation boundary is the restrained spatial layer behind this
-  semantic journey. It must add depth without changing the approved resting
-  frames, obscuring text or introducing another interface colour.
+- The restrained spatial layer is implemented behind the semantic journey. It
+  uses one thin, chapter-specific light artifact at a time, demand rendering,
+  native-scroll progress and eased camera knots. It introduces no additional
+  interface colour, preserves full DOM parity and does not mount for reduced
+  motion or unavailable WebGL.
+- The next boundary is release evidence: focused accessibility checks, the
+  final integration gate and production smoke after the semantic journey is
+  promoted.

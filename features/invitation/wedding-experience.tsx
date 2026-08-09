@@ -1,7 +1,10 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import {
+  Component,
   type CSSProperties,
+  type ReactNode,
   useEffect,
   useMemo,
   useRef,
@@ -27,7 +30,50 @@ import {
   Sparkles,
 } from "@/ui/icons";
 
+const JourneySpatialWorld = dynamic(
+  () =>
+    import("@/features/invitation/journey-spatial-world").then(
+      (module) => module.JourneySpatialWorld,
+    ),
+  { ssr: false },
+);
+
+class JourneySpatialBoundary extends Component<
+  { children: ReactNode; onUnavailable: () => void },
+  { failed: boolean }
+> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch() {
+    this.props.onUnavailable();
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
+
 const subscribeToHydration = () => () => undefined;
+let cachedWebGLSupport: boolean | undefined;
+
+function supportsWebGL() {
+  if (cachedWebGLSupport !== undefined) return cachedWebGLSupport;
+
+  try {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("webgl2") || canvas.getContext("webgl");
+    cachedWebGLSupport = Boolean(context);
+    context?.getExtension("WEBGL_lose_context")?.loseContext();
+  } catch {
+    cachedWebGLSupport = false;
+  }
+
+  return cachedWebGLSupport;
+}
 
 const subscribeToReducedMotion = (notify: () => void) => {
   const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -47,7 +93,8 @@ function useClientPreferences() {
     () => true,
   );
 
-  return { hydrated, reducedMotion };
+  const webgl = hydrated && !reducedMotion ? supportsWebGL() : false;
+  return { hydrated, reducedMotion, webgl };
 }
 
 type JourneyChapter =
@@ -261,8 +308,9 @@ export function WeddingExperience({
   calendarHref,
 }: WeddingExperienceProps) {
   const [opened, setOpened] = useState(false);
+  const [spatialUnavailable, setSpatialUnavailable] = useState(false);
   const rootRef = useRef<HTMLElement>(null);
-  const { hydrated, reducedMotion } = useClientPreferences();
+  const { hydrated, reducedMotion, webgl } = useClientPreferences();
   const activeChapter = useJourneyPosition(rootRef, opened);
   const date = useMemo(
     () => getWeddingDateParts(wedding.dateLabel),
@@ -301,6 +349,12 @@ export function WeddingExperience({
       <a className="journey-skip" href="#details">
         Skip to celebration details
       </a>
+
+      {opened && webgl && !spatialUnavailable ? (
+        <JourneySpatialBoundary onUnavailable={() => setSpatialUnavailable(true)}>
+          <JourneySpatialWorld />
+        </JourneySpatialBoundary>
+      ) : null}
 
       <div className="journey-chrome" aria-hidden={!opened}>
         <a href="#invitation">
@@ -379,7 +433,6 @@ export function WeddingExperience({
             <h2>{milestone.title}</h2>
             <time>{milestone.dateLabel}</time>
           </div>
-          {index === 1 ? <span className="journey-ring" aria-hidden="true" /> : null}
         </section>
       ))}
 

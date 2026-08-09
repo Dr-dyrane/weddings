@@ -36,7 +36,7 @@ The future Studio asks one meaningful question at a time in this order:
 | Couple portraits | Open | No generated faces; typographic frames |
 | Venue photography | Open | Generated architectural concepts with provenance |
 | Ring reference | Candidate exists | Use only after ownership and relevance are confirmed |
-| Final logo/monogram | Technical generator retained | Omit from OGB and guest chrome unless separately approved |
+| Final logo/monogram | Approved | Dynamic `A & C` system: Space Grotesk, white initials, yellow circle, black disc |
 | Sound | Open | Silent experience |
 
 ## Required media set
@@ -65,13 +65,12 @@ The future Studio asks one meaningful question at a time in this order:
 ### Couple identity
 
 - First names are the authoritative guest-facing identity.
-- The dynamic monogram generator remains available for technical icons and a
-  future couple-approved application; it is not required in the invitation UI.
+- The approved dynamic monogram generator drives the wedding logo, favicon,
+  Apple touch icons, PWA icons and manifest identity.
 - Guest share cards, headers, footers and opening chrome omit the monogram under
   the current `EXPERIENCE-NORTH-STAR.md` contract.
-- The original Alexander–Chioma concept remains a historical reference at
-  [`references/brand/alexander-chioma-mark-concept.jpeg`](references/brand/alexander-chioma-mark-concept.jpeg),
-  not a production logo source.
+- No alternate infinity, Cinzel, plum/gold or crest asset remains in the
+  production brand pipeline.
 
 ## File and provenance record
 

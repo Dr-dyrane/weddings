@@ -6,13 +6,6 @@
   font-weight:400;
   src:url("/fonts/dyrane-invitation-serif.ttf") format("truetype");
 }
-@font-face{
-  font-display:swap;
-  font-family:"Dyrane Monogram";
-  font-style:normal;
-  font-weight:400;
-  src:url("/fonts/dyrane-monogram-cinzel.ttf") format("truetype");
-}
 .fallback-world{position:fixed;inset:0;z-index:0;display:grid;place-items:center;perspective:1200px;background:radial-gradient(circle at 50% 40%,#34253c 0,#17101c 38%,#0d0a10 72%)}
 .fallback-glow{position:absolute;width:min(78vw,780px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(190,143,230,.22),rgba(205,166,90,.08) 38%,transparent 68%);filter:blur(28px);animation:breathe 5s ease-in-out infinite}
 .fallback-envelope{position:relative;width:min(62vw,430px);aspect-ratio:1.45;background:linear-gradient(145deg,#e8ded0,#f7efe5 55%,#d5c7b8);box-shadow:0 45px 100px rgba(0,0,0,.55);transform:rotateX(5deg) rotateY(-4deg);transform-style:preserve-3d;animation:float 5s ease-in-out infinite}

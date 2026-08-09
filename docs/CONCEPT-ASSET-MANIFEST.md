@@ -87,10 +87,11 @@ the retained prompt for each corresponding asset.
 
 All checksums are SHA-256. Approval is `blockout-provisional`; generated media
 cannot be promoted into a real published wedding without explicit review.
+The superseded raster share card was removed from `public/`; the approved OGB
+is generated dynamically from the published wedding snapshot.
 
 | Asset ID | Chapter / viewport | File | Dimensions | SHA-256 | Copy-safe composition |
 | --- | --- | --- | ---: | --- | --- |
-| `concept-00-card` | Scene 0 / social | `public/og/modern-heirloom-card.jpg` | 1200×630 | `cae646abbc97725cb06c2e016de182c8de7321a50b3fa3bf037b7bc799f13465` | Central ivory card; existing repository art, original generation record open |
 | `concept-01-d` | Scene 1 / desktop | `public/concepts/scene-1-envelope-desktop.png` | 1672×941 | `1ca521c918f1d5679d04f319da16717201d4632f9e1d980af80770967d8173a6` | Dark left field |
 | `concept-01-m` | Scene 1 / mobile | `public/concepts/scene-1-envelope-mobile.png` | 941×1672 | `550fd7d4040451b4d63100ae5d2a5cbae4eac2cb02060f806af1871af444cc88` | Dark upper field |
 | `concept-02-d` | Scene 2 / desktop | `public/concepts/scene-2-threshold-desktop.png` | 1672×941 | `5243a834a154e6ab39f6a5d26b6e1817c7db7631c8bee4471230bca0912244c0` | Dark left field |

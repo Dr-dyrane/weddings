@@ -68,15 +68,6 @@ export function FoilMaterial({ color = "#c9a565" }: { color?: string }) {
   );
 }
 
-const coupleMonogramShear = new THREE.Matrix4().makeShear(
-  0.16,
-  0,
-  0,
-  0,
-  0,
-  0,
-);
-
 export function CoupleMonogram3D({
   initials,
 }: {
@@ -84,18 +75,25 @@ export function CoupleMonogram3D({
 }) {
   return (
     <group position={[0, 0, 0.028]}>
-      <group matrix={coupleMonogramShear} matrixAutoUpdate={false}>
-        <Text
-          anchorX="center"
-          anchorY="middle"
-          color="#573417"
-          font="/fonts/dyrane-monogram-cinzel.ttf"
-          fontSize={0.22}
-          position={[0, -0.01, 0.032]}
-        >
-          {initials[0]} &amp; {initials[1]}
-        </Text>
-      </group>
+      <mesh>
+        <circleGeometry args={[0.39, 64]} />
+        <meshBasicMaterial color="#000000" side={THREE.DoubleSide} />
+      </mesh>
+      <mesh position={[0, 0, 0.006]}>
+        <ringGeometry args={[0.294, 0.306, 64]} />
+        <meshBasicMaterial color="#ffd21e" side={THREE.DoubleSide} />
+      </mesh>
+      <Text
+        anchorX="center"
+        anchorY="middle"
+        color="#ffffff"
+        font="/fonts/dyrane-space-grotesk.ttf"
+        fontSize={0.13}
+        fontWeight={500}
+        position={[0, 0, 0.012]}
+      >
+        {`${initials[0]} & ${initials[1]}`}
+      </Text>
     </group>
   );
 }

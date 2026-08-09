@@ -1,3 +1,6 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import { GET as getWeddingIcon } from "@/app/[weddingSlug]/icon/[size]/route";
@@ -18,6 +21,19 @@ import {
 const yardstickParams = Promise.resolve({ weddingSlug: "the_ogranyas" });
 
 describe("dynamic couple brand", () => {
+  it("keeps the checked-in root favicon on the approved mark", async () => {
+    const favicon = await readFile(
+      path.join(process.cwd(), "public/favicon.svg"),
+      "utf8",
+    );
+
+    expect(favicon).toContain("Dyrane Space Grotesk");
+    expect(favicon).toContain('stroke="#ffd21e"');
+    expect(favicon).toContain(">A &amp; C</text>");
+    expect(favicon).not.toContain("Cinzel");
+    expect(favicon).not.toContain("∞");
+  });
+
   it("derives Unicode-safe first-name initials with a product fallback", () => {
     expect(getCoupleInitials(" Alexander ", "Chioma")).toEqual({
       first: "A",

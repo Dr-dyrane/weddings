@@ -23,7 +23,7 @@ export async function GET(
     wedding.couple.second,
   );
   const manifest: MetadataRoute.Manifest = {
-    background_color: "#130817",
+    background_color: "#000000",
     description: `${wedding.couple.first} and ${wedding.couple.second} — ${wedding.dateLabel}, ${wedding.locationLabel}`,
     display: "standalone",
     icons: [
@@ -50,7 +50,7 @@ export async function GET(
     scope: `/${wedding.slug}/`,
     short_name: `${initials.first}${initials.second} Wedding`,
     start_url: `/${wedding.slug}/`,
-    theme_color: "#130817",
+    theme_color: "#000000",
   };
 
   return new Response(JSON.stringify(manifest), {

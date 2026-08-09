@@ -8,7 +8,7 @@ import { renderCoupleMonogramSvg } from "@/ui/brand/couple-monogram";
 export const runtime = "nodejs";
 
 const monogramFontPromise = readFile(
-  path.join(process.cwd(), "public/fonts/dyrane-monogram-cinzel.ttf"),
+  path.join(process.cwd(), "public/fonts/dyrane-space-grotesk.ttf"),
 );
 
 export async function GET(

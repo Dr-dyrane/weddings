@@ -1,9 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none" color="#ddb66d" role="img" aria-labelledby="dyrane-weddings-title" shape-rendering="geometricPrecision">
-  <title id="dyrane-weddings-title">Dyrane Weddings</title>
-  <rect width="160" height="160" rx="36" fill="#180a1c"/>
-  <path d="M80 11L137 34V80C137 113 115 137 80 149C45 137 23 113 23 80V34L80 11Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round" opacity=".86"/>
-  <g fill="currentColor" font-family="Georgia,Times New Roman,serif" font-size="70" font-weight="400" text-anchor="middle">
-    <text x="63" y="108" transform="rotate(-4 63 86)">D</text>
-    <text x="97" y="108" transform="rotate(4 97 86)" opacity=".82">W</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none" role="img" aria-labelledby="dyrane-weddings-title" shape-rendering="geometricPrecision">
+  <title id="dyrane-weddings-title">Alexander and Chioma</title>
+  <style>
+    @font-face{font-family:Dyrane Space Grotesk;src:url('/fonts/dyrane-space-grotesk.ttf') format('truetype');font-style:normal;font-weight:500}
+    .initials{font-family:Dyrane Space Grotesk,Space Grotesk,Arial,sans-serif;font-size:32px;font-weight:500;letter-spacing:-1.2px}
+  </style>
+  <circle cx="80" cy="80" r="78" fill="#000000"/>
+  <circle cx="80" cy="80" r="60" stroke="#ffd21e" stroke-width="3"/>
+  <text class="initials" x="80" y="80" fill="#ffffff" dominant-baseline="middle" text-anchor="middle">A &amp; C</text>
 </svg>

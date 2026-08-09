@@ -34,7 +34,7 @@ describe("dynamic couple brand", () => {
     expect(getCoupleMonogramText("alexander", "chioma")).toBe("A & C");
   });
 
-  it("serializes an accessible, escaped frame-free italic SVG", () => {
+  it("serializes an accessible Space Grotesk circle mark", () => {
     const svg = renderCoupleMonogramSvg({
       firstName: "Ada",
       secondName: "Chidi",
@@ -43,9 +43,10 @@ describe("dynamic couple brand", () => {
 
     expect(svg).toContain("Ada &amp; Chidi &lt;wedding&gt;");
     expect(svg).toContain(">A &amp; C</text>");
-    expect(svg).toContain("Dyrane Monogram");
-    expect(svg).toContain("skewX(-9)");
-    expect(svg).not.toContain("<path");
+    expect(svg).toContain("Dyrane Space Grotesk");
+    expect(svg).toContain('<circle cx="80" cy="80" r="60"');
+    expect(svg).toContain('stroke="#ffd21e"');
+    expect(svg).not.toContain("skewX");
     expect(svg).not.toContain("∞");
     expect(getCoupleMonogramDataUri({ firstName: "Ada", secondName: "Chidi" })).toMatch(
       /^data:image\/svg\+xml/,
@@ -58,13 +59,13 @@ describe("dynamic couple brand", () => {
     const metadata = getWeddingBrandMetadata(source);
 
     expect(assets).toEqual({
-      appleIcon: "/the_ogranyas/icon/180?v=monogram-2-revision-1",
-      favicon: "/the_ogranyas/icon/32?v=monogram-2-revision-1",
-      icon192: "/the_ogranyas/icon/192?v=monogram-2-revision-1",
-      icon512: "/the_ogranyas/icon/512?v=monogram-2-revision-1",
-      logo: "/the_ogranyas/logo.svg?v=monogram-2-revision-1",
+      appleIcon: "/the_ogranyas/icon/180?v=monogram-3-revision-1",
+      favicon: "/the_ogranyas/icon/32?v=monogram-3-revision-1",
+      icon192: "/the_ogranyas/icon/192?v=monogram-3-revision-1",
+      icon512: "/the_ogranyas/icon/512?v=monogram-3-revision-1",
+      logo: "/the_ogranyas/logo.svg?v=monogram-3-revision-1",
       manifest:
-        "/the_ogranyas/manifest.webmanifest?v=monogram-2-revision-1",
+        "/the_ogranyas/manifest.webmanifest?v=monogram-3-revision-1",
     });
     expect(metadata.manifest).toBe(assets.manifest);
     expect(metadata.icons).toBeTruthy();
@@ -86,11 +87,14 @@ describe("dynamic couple brand", () => {
     expect(logoResponse.headers.get("content-type")).toContain("image/svg+xml");
     const logo = await logoResponse.text();
     expect(logo).toContain(">A &amp; C</text>");
+    expect(logo).toContain('stroke="#ffd21e"');
     expect(logo).toContain("data:font/ttf;base64,");
     expect(manifestResponse.headers.get("content-type")).toContain(
       "application/manifest+json",
     );
     expect(manifest.short_name).toBe("AC Wedding");
+    expect(manifest.background_color).toBe("#000000");
+    expect(manifest.theme_color).toBe("#000000");
     expect(manifest.icons).toHaveLength(3);
     expect(manifest.start_url).toBe("/the_ogranyas/");
     expect(JSON.stringify(manifest)).not.toContain("invite/");

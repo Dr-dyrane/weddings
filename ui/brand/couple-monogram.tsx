@@ -1,9 +1,12 @@
 import type { SVGProps } from "react";
 
-export const COUPLE_MONOGRAM_VIEWBOX = "0 30 160 100";
-export const COUPLE_MONOGRAM_VERSION = 2;
+export const COUPLE_MONOGRAM_VIEWBOX = "0 0 160 160";
+export const COUPLE_MONOGRAM_VERSION = 3;
 export const COUPLE_MONOGRAM_FONT_URL =
-  "/fonts/dyrane-monogram-cinzel.ttf";
+  "/fonts/dyrane-space-grotesk.ttf";
+export const COUPLE_MONOGRAM_BACKGROUND = "#000000";
+export const COUPLE_MONOGRAM_INK = "#ffffff";
+export const COUPLE_MONOGRAM_RING = "#ffd21e";
 
 export type CoupleInitials = {
   first: string;
@@ -16,6 +19,7 @@ export type CoupleMonogramProps = Omit<
 > & {
   firstName: string;
   ink?: string;
+  ring?: string;
   secondName: string;
   title?: string;
 };
@@ -25,6 +29,7 @@ export type RenderCoupleMonogramSvgOptions = {
   color?: string;
   firstName: string;
   fontDataUri?: string;
+  ringColor?: string;
   secondName: string;
   title?: string;
 };
@@ -77,36 +82,51 @@ function accessibleTitle(firstName: string, secondName: string) {
   return `${first} and ${second} monogram`;
 }
 
-function InitialLockup({
+function MonogramLockup({
   first,
   ink,
+  ring,
   second,
-}: CoupleInitials & { ink: string }) {
+}: CoupleInitials & { ink: string; ring: string }) {
   const textStyle = {
     fontFamily:
-      "Dyrane Monogram, Cinzel, 'Times New Roman', serif",
-    fontSize: 50,
+      "Dyrane Space Grotesk, Space Grotesk, Arial, sans-serif",
+    fontSize: 32,
     fontStyle: "normal",
-    fontWeight: 400,
+    fontWeight: 500,
+    letterSpacing: -1.2,
   } as const;
 
   return (
-    <g
-      aria-hidden="true"
-      fill={ink}
-      transform="translate(17 0) skewX(-9)"
-    >
-      <text style={textStyle} textAnchor="middle" x="80" y="109">
+    <g aria-hidden="true">
+      <circle cx="80" cy="80" fill={COUPLE_MONOGRAM_BACKGROUND} r="78" />
+      <circle
+        cx="80"
+        cy="80"
+        fill="none"
+        r="60"
+        stroke={ring}
+        strokeWidth="3"
+      />
+      <text
+        dominantBaseline="middle"
+        fill={ink}
+        style={textStyle}
+        textAnchor="middle"
+        x="80"
+        y="80"
+      >
         {first} &amp; {second}
       </text>
     </g>
   );
 }
 
-/** A single frame-free italic mark shared by every couple-branded surface. */
+/** A single circular A & C mark shared by every couple-branded surface. */
 export function CoupleMonogram({
   firstName,
-  ink = "currentColor",
+  ink = COUPLE_MONOGRAM_INK,
+  ring = COUPLE_MONOGRAM_RING,
   secondName,
   title,
   ...props
@@ -125,28 +145,27 @@ export function CoupleMonogram({
       {...props}
     >
       {title ? <title>{title}</title> : null}
-      <InitialLockup {...initials} ink={ink} />
+      <MonogramLockup {...initials} ink={ink} ring={ring} />
     </svg>
   );
 }
 
 /** Pure SVG serializer for dynamic logo routes and data-URI consumers. */
 export function renderCoupleMonogramSvg({
-  background,
-  color = "#b98a43",
+  background = COUPLE_MONOGRAM_BACKGROUND,
+  color = COUPLE_MONOGRAM_INK,
   firstName,
   fontDataUri,
+  ringColor = COUPLE_MONOGRAM_RING,
   secondName,
   title,
 }: RenderCoupleMonogramSvgOptions) {
   const { first, second } = getCoupleInitials(firstName, secondName);
   const resolvedTitle = title ?? accessibleTitle(firstName, secondName);
-  const backgroundElement = background
-    ? `<rect width="160" height="160" rx="36" fill="${escapeSvgText(background)}"/>`
-    : "";
+  const backgroundElement = `<circle cx="80" cy="80" r="78" fill="${escapeSvgText(background)}"/>`;
   const fontSource = fontDataUri ?? COUPLE_MONOGRAM_FONT_URL;
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="100" viewBox="${COUPLE_MONOGRAM_VIEWBOX}" fill="none" color="${escapeSvgText(color)}" role="img" aria-labelledby="couple-monogram-title" shape-rendering="geometricPrecision"><title id="couple-monogram-title">${escapeSvgText(resolvedTitle)}</title><style>@font-face{font-family:Dyrane Monogram;src:url(&quot;${escapeSvgText(fontSource)}&quot;) format(&quot;truetype&quot;);font-style:normal;font-weight:400}.couple-initials{font-family:Dyrane Monogram,Cinzel,Times New Roman,serif;font-size:50px;font-style:normal;font-weight:400}</style>${backgroundElement}<g class="couple-initials" aria-hidden="true" fill="currentColor" transform="translate(17 0) skewX(-9)"><text x="80" y="109" text-anchor="middle">${escapeSvgText(first)} &amp; ${escapeSvgText(second)}</text></g></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="${COUPLE_MONOGRAM_VIEWBOX}" fill="none" role="img" aria-labelledby="couple-monogram-title" shape-rendering="geometricPrecision"><title id="couple-monogram-title">${escapeSvgText(resolvedTitle)}</title><style>@font-face{font-family:Dyrane Space Grotesk;src:url(&quot;${escapeSvgText(fontSource)}&quot;) format(&quot;truetype&quot;);font-style:normal;font-weight:500}.couple-initials{font-family:Dyrane Space Grotesk,Space Grotesk,Arial,sans-serif;font-size:32px;font-style:normal;font-weight:500;letter-spacing:-1.2px}</style>${backgroundElement}<circle cx="80" cy="80" r="60" fill="none" stroke="${escapeSvgText(ringColor)}" stroke-width="3"/><text class="couple-initials" aria-hidden="true" x="80" y="80" fill="${escapeSvgText(color)}" dominant-baseline="middle" text-anchor="middle">${escapeSvgText(first)} &amp; ${escapeSvgText(second)}</text></svg>`;
 }
 
 export function getCoupleMonogramDataUri(

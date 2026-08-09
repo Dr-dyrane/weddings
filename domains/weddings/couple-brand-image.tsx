@@ -6,10 +6,15 @@ import { ImageResponse } from "next/og";
 
 import type { WeddingIconSize } from "@/domains/weddings/couple-brand";
 import type { PublishedWedding } from "@/domains/weddings/published-wedding";
-import { getCoupleInitials } from "@/ui/brand/couple-monogram";
+import {
+  COUPLE_MONOGRAM_BACKGROUND,
+  COUPLE_MONOGRAM_INK,
+  COUPLE_MONOGRAM_RING,
+  getCoupleMonogramText,
+} from "@/ui/brand/couple-monogram";
 
 const monogramFontPromise = readFile(
-  path.join(process.cwd(), "public/fonts/dyrane-monogram-cinzel.ttf"),
+  path.join(process.cwd(), "public/fonts/dyrane-space-grotesk.ttf"),
 );
 
 export async function createWeddingAppIcon(
@@ -21,19 +26,14 @@ export async function createWeddingAppIcon(
     monogramFont.byteOffset,
     monogramFont.byteOffset + monogramFont.byteLength,
   ) as ArrayBuffer;
-  const initials = getCoupleInitials(
-    wedding.couple.first,
-    wedding.couple.second,
-  );
-  const markSize = size * 0.9;
+  const ringSize = size * 0.75;
 
   return new ImageResponse(
     (
       <div
         style={{
           alignItems: "center",
-          background:
-            "radial-gradient(circle at 34% 26%, #56305a 0%, #29122d 48%, #130817 100%)",
+          background: COUPLE_MONOGRAM_BACKGROUND,
           display: "flex",
           height: "100%",
           justifyContent: "center",
@@ -43,21 +43,24 @@ export async function createWeddingAppIcon(
         <div
           style={{
             alignItems: "center",
-            color: "#ddb66d",
+            border: `${Math.max(2, size * 0.01875)}px solid ${COUPLE_MONOGRAM_RING}`,
+            borderRadius: "9999px",
+            color: COUPLE_MONOGRAM_INK,
             display: "flex",
-            fontFamily: "Dyrane Monogram",
-            fontSize: `${markSize * 0.3125}px`,
-            fontStyle: "normal",
-            fontWeight: 400,
-            height: `${markSize}px`,
+            fontFamily: "Dyrane Space Grotesk",
+            fontSize: `${size * 0.2}px`,
+            fontWeight: 500,
+            height: `${ringSize}px`,
             justifyContent: "center",
+            letterSpacing: `${size * -0.0075}px`,
             lineHeight: 1,
-            transform: "skewX(-9deg)",
-            whiteSpace: "nowrap",
-            width: `${markSize}px`,
+            width: `${ringSize}px`,
           }}
         >
-          {initials.first} &amp; {initials.second}
+          {getCoupleMonogramText(
+            wedding.couple.first,
+            wedding.couple.second,
+          )}
         </div>
       </div>
     ),
@@ -65,9 +68,9 @@ export async function createWeddingAppIcon(
       fonts: [
         {
           data: monogramFontData,
-          name: "Dyrane Monogram",
+          name: "Dyrane Space Grotesk",
           style: "normal",
-          weight: 400,
+          weight: 500,
         },
       ],
       height: size,

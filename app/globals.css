@@ -1273,6 +1273,7 @@ body.live-opening-locked{overflow:hidden}
   z-index:0;
 }
 .editorial-experience[data-active-chapter="welcome"] .journey-spatial{opacity:0}
+.editorial-experience.is-open[data-active-chapter="welcome"] .journey-spatial{opacity:1}
 
 .journey-static-world{
   background:#000;
@@ -1326,6 +1327,8 @@ body.live-opening-locked{overflow:hidden}
   position:sticky;
   top:0;
 }
+.editorial-experience.is-open .journey-welcome,
+.editorial-experience.is-open .journey-welcome-stage{background:transparent}
 .journey-welcome-couple{
   font-size:22px;
   font-weight:500;

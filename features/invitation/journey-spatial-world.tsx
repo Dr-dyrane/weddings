@@ -134,6 +134,41 @@ const JOURNEY_PLATE_FRAGMENT_SHADER = /* glsl */ `
   }
 `;
 
+const GOLDEN_THREAD_VERTEX_SHADER = /* glsl */ `
+  varying vec2 vUv;
+
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const GOLDEN_THREAD_FRAGMENT_SHADER = /* glsl */ `
+  uniform float uOpacity;
+  uniform float uReveal;
+  uniform float uStart;
+  uniform float uSpan;
+  varying vec2 vUv;
+
+  void main() {
+    float positionOnThread = uStart + vUv.x * uSpan;
+    float reveal = 1.0 - smoothstep(
+      uReveal,
+      uReveal + 0.045,
+      positionOnThread
+    );
+    float lightFalloff = exp(
+      -pow((positionOnThread - 0.48) / 0.22, 2.0)
+    );
+    float intensity = mix(0.42, 1.0, lightFalloff);
+    gl_FragColor = vec4(
+      vec3(1.0, 0.8235, 0.1176),
+      uOpacity * reveal * intensity
+    );
+    #include <colorspace_fragment>
+  }
+`;
+
 type JourneyMotion = {
   pointer: RefObject<THREE.Vector2>;
   progress: RefObject<number>;
@@ -175,12 +210,153 @@ const MOBILE_WORLD_PATH: readonly WorldPoint[] = [
   [0, -0.15, -43],
 ] as const;
 
+const DESKTOP_GOLDEN_THREAD_PATH: readonly WorldPoint[] = [
+  [1.35, -0.35, 4],
+  [1.5, -1.45, 2.2],
+  [0.8, -2.4, -0.4],
+  [-1.4, -2.8, -3.4],
+  [-2.3, -2.1, -6.5],
+  [-0.5, -0.6, -9.4],
+  [1.6, 0.4, -12.4],
+] as const;
+
+const MOBILE_GOLDEN_THREAD_PATH: readonly WorldPoint[] = [
+  [0.3, -0.4, 4],
+  [0.5, -1.45, 2],
+  [0.35, -2.35, -0.8],
+  [-0.35, -2.5, -4],
+  [-0.55, -1.1, -7],
+  [0.25, 0.35, -10],
+] as const;
+
 function createWorldCurve(points: readonly WorldPoint[]) {
   return new THREE.CatmullRomCurve3(
     points.map(([x, y, z]) => new THREE.Vector3(x, y, z)),
     false,
     "catmullrom",
     0.42,
+  );
+}
+
+type GoldenThreadSegmentProps = {
+  additive?: boolean;
+  curve: THREE.CatmullRomCurve3;
+  end: number;
+  motion: JourneyMotion;
+  opacity: number;
+  radius: number;
+  start: number;
+};
+
+function GoldenThreadSegment({
+  additive = false,
+  curve,
+  end,
+  motion,
+  opacity: peakOpacity,
+  radius,
+  start,
+}: GoldenThreadSegmentProps) {
+  const mesh = useRef<THREE.Mesh>(null);
+  const material = useRef<THREE.ShaderMaterial>(null);
+  const segmentCurve = useMemo(() => {
+    const points = Array.from({ length: 13 }, (_, index) =>
+      curve.getPoint(start + (end - start) * (index / 12)),
+    );
+    return new THREE.CatmullRomCurve3(points, false, "catmullrom", 0.42);
+  }, [curve, end, start]);
+  const uniforms = useMemo(
+    () => ({
+      uOpacity: { value: 0 },
+      uReveal: { value: 0 },
+      uSpan: { value: end - start },
+      uStart: { value: start },
+    }),
+    [end, start],
+  );
+
+  useFrame(() => {
+    if (!material.current || !mesh.current) return;
+    const threadOpacity = windowOpacity(
+      motion.progress.current,
+      -0.015,
+      0.022,
+      0.27,
+      0.35,
+    );
+    mesh.current.visible = threadOpacity > 0.003;
+    material.current.uniforms.uOpacity.value = threadOpacity * peakOpacity;
+    material.current.uniforms.uReveal.value = range(
+      motion.progress.current,
+      -0.005,
+      0.12,
+    );
+  });
+
+  return (
+    <mesh ref={mesh}>
+      <tubeGeometry args={[segmentCurve, 72, radius, 8, false]} />
+      <shaderMaterial
+        blending={additive ? THREE.AdditiveBlending : THREE.NormalBlending}
+        depthWrite={false}
+        fragmentShader={GOLDEN_THREAD_FRAGMENT_SHADER}
+        ref={material}
+        toneMapped={false}
+        transparent
+        uniforms={uniforms}
+        vertexShader={GOLDEN_THREAD_VERTEX_SHADER}
+      />
+    </mesh>
+  );
+}
+
+function GoldenThread({ motion }: { motion: JourneyMotion }) {
+  const { size } = useThree();
+  const mobile = size.width <= 700;
+  const curve = useMemo(
+    () =>
+      createWorldCurve(
+        mobile ? MOBILE_GOLDEN_THREAD_PATH : DESKTOP_GOLDEN_THREAD_PATH,
+      ),
+    [mobile],
+  );
+
+  return (
+    <group>
+      <GoldenThreadSegment
+        curve={curve}
+        end={0.36}
+        motion={motion}
+        opacity={0.46}
+        radius={mobile ? 0.004 : 0.006}
+        start={0}
+      />
+      <GoldenThreadSegment
+        curve={curve}
+        end={0.67}
+        motion={motion}
+        opacity={0.92}
+        radius={mobile ? 0.011 : 0.016}
+        start={0.32}
+      />
+      <GoldenThreadSegment
+        additive
+        curve={curve}
+        end={0.67}
+        motion={motion}
+        opacity={0.08}
+        radius={mobile ? 0.03 : 0.045}
+        start={0.32}
+      />
+      <GoldenThreadSegment
+        curve={curve}
+        end={1}
+        motion={motion}
+        opacity={0.54}
+        radius={mobile ? 0.006 : 0.009}
+        start={0.62}
+      />
+    </group>
   );
 }
 
@@ -597,6 +773,7 @@ function SpatialJourney() {
     <>
       <ambientLight intensity={0.8} />
       <pointLight color="#ffd21e" intensity={7} position={[3, 2, 4]} />
+      <GoldenThread motion={motion} />
       <JourneyDepthPlate
         desktopPosition={[2.35, -0.55, -7.5]}
         desktopSize={[8.5, 5.67]}

@@ -151,6 +151,15 @@ depth-aware parallax; simple real-time geometry is reserved for genuine
 foreground occlusion or a physical threshold, never as a substitute for
 material craft.
 
+A single golden thread provides the opening world's spatial reference. It
+visually continues from the contour portrait after `Play`, skims negative space
+without crossing semantic copy, then curves laterally and into depth through
+the first story passage. Its thickness and brightness vary only where the
+approved yellow threshold can physically light it. It fades once that handoff
+is complete; it is not permanent navigation, neon ornament or a second progress
+indicator. Desktop uses a low receding sweep, mobile uses one restrained tall
+S-curve, and reduced motion does not render the WebGL thread.
+
 Neighbouring subjects overlap at the edges of their ranges so the next place
 can be seen before the current one disappears. Foreground objects may pass the
 viewer while the next middle-ground or distant object approaches, but only one

@@ -82,6 +82,8 @@ export const publishedWeddingSchema = z.object({
     eyebrow: z.string().min(1),
     title: z.string().min(1),
     guidance: z.string().min(1),
+    paletteLabel: z.string().min(1).max(80),
+    reservation: z.string().min(1).max(180),
     palette: z
       .array(
         z.object({
@@ -193,11 +195,15 @@ const alexanderAndChioma = publishedWeddingSchema.parse({
   dress: {
     eyebrow: "Dress the part",
     title: "Dusk, devotion & a little magic.",
-    guidance: "Formal · expressive · unmistakably you",
+    guidance:
+      "Formal or traditional elegance. Deep jewel tones and warm neutrals are encouraged, never required.",
+    paletteLabel: "Optional guest palette",
+    reservation:
+      "Please reserve white, ivory, champagne and celebration yellow for the wedding party.",
     palette: [
-      { name: "Pitch black", hex: "#000000" },
-      { name: "Pure white", hex: "#ffffff" },
-      { name: "Celebration yellow", hex: "#FFD21E" },
+      { name: "Deep emerald", hex: "#0D3B2E" },
+      { name: "Oxblood", hex: "#5B1728" },
+      { name: "Warm cocoa", hex: "#6B4B3E" },
     ],
   },
   people: [],

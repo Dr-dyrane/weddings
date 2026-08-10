@@ -71,6 +71,12 @@ never a uniform outline or general decoration. Yellow never carries meaning
 without shape, position or text. No additional UI hue is introduced without
 explicit user approval.
 
+The Dress the Part chapter is the single chromatic exception approved for the
+guest palette. It may show deep emerald, oxblood and warm cocoa as textile
+swatches and restrained passing fabric only. These colours never enter
+navigation, controls, progress, focus or the opening identity. White, ivory,
+champagne and celebration yellow remain reserved for the wedding party.
+
 Space Grotesk is the sole guest-interface family. Hierarchy comes from scale,
 position, spacing, weight and motion—not from switching to a ceremonial serif
 or script. Essential text remains semantic DOM content even when the spatial

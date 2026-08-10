@@ -910,7 +910,8 @@ export function WeddingExperience({
           <p className="journey-eyebrow">{wedding.dress.eyebrow}</p>
           <h2>{wedding.dress.title}</h2>
           <p className="journey-dress-guidance">{wedding.dress.guidance}</p>
-          <ul className="journey-palette" aria-label="Suggested colours">
+          <p className="journey-palette-label">{wedding.dress.paletteLabel}</p>
+          <ul className="journey-palette" aria-label={wedding.dress.paletteLabel}>
             {wedding.dress.palette.map((colour) => (
               <li key={colour.name}>
                 <i aria-hidden="true" style={{ background: colour.hex }} />
@@ -918,6 +919,7 @@ export function WeddingExperience({
               </li>
             ))}
           </ul>
+          <p className="journey-dress-reservation">{wedding.dress.reservation}</p>
         </div>
       </section>
 

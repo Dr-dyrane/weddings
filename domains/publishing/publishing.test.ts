@@ -75,6 +75,8 @@ function createApprovedDraft(
       eyebrow: "Dress the part",
       title: "Dusk, devotion & a little magic.",
       guidance: "Formal",
+      paletteLabel: "Optional guest palette",
+      reservation: "Please reserve white for the wedding party.",
       palette: [{ name: "Pitch black", hex: "#000000" }],
     },
     people: [

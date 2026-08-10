@@ -15,10 +15,12 @@ describe("published wedding snapshot", () => {
     expect(wedding.vendors).toEqual([]);
     expect(wedding.events).toHaveLength(2);
     expect(wedding.couple).not.toHaveProperty("monogram");
+    expect(wedding.dress.paletteLabel).toBe("Optional guest palette");
+    expect(wedding.dress.reservation).toContain("wedding party");
     expect(wedding.dress.palette).toEqual([
-      { name: "Pitch black", hex: "#000000" },
-      { name: "Pure white", hex: "#ffffff" },
-      { name: "Celebration yellow", hex: "#FFD21E" },
+      { name: "Deep emerald", hex: "#0D3B2E" },
+      { name: "Oxblood", hex: "#5B1728" },
+      { name: "Warm cocoa", hex: "#6B4B3E" },
     ]);
   });
 

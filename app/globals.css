@@ -1567,6 +1567,9 @@ body.live-opening-locked{overflow:hidden}
 }
 
 .journey-dress{
+  --guest-emerald:#0d3b2e;
+  --guest-oxblood:#5b1728;
+  --guest-cocoa:#6b4b3e;
   align-items:center;
   display:flex;
   min-height:145svh;
@@ -1575,14 +1578,23 @@ body.live-opening-locked{overflow:hidden}
 .journey-dress-guidance{
   color:var(--journey-muted);
   font-size:clamp(17px,2vw,26px);
+  line-height:1.45;
+  max-width:780px;
   margin-top:32px;
+}
+.journey-palette-label{
+  color:#fff;
+  font-size:10px;
+  letter-spacing:.16em;
+  margin-top:58px;
+  text-transform:uppercase;
 }
 .journey-palette{
   display:flex;
   flex-wrap:wrap;
   gap:28px;
   list-style:none;
-  margin:60px 0 0;
+  margin:22px 0 0;
   padding:0;
 }
 .journey-palette li{align-items:center;display:flex;gap:12px}
@@ -1595,6 +1607,14 @@ body.live-opening-locked{overflow:hidden}
 }
 .journey-palette li:nth-child(even) i{transform:rotate(-7deg)}
 .journey-palette span{color:var(--journey-muted);font-size:11px}
+.journey-palette li:first-child span{color:rgba(255,255,255,.76)}
+.journey-dress-reservation{
+  color:rgba(255,255,255,.44);
+  font-size:11px;
+  line-height:1.55;
+  margin-top:30px;
+  max-width:540px;
+}
 
 .journey-rsvp{
   min-height:125svh;
@@ -1783,7 +1803,9 @@ body.live-opening-locked{overflow:hidden}
 
   .journey-dress{align-items:flex-start;min-height:150svh}
   .journey-dress-guidance{font-size:17px;line-height:1.5}
-  .journey-palette{display:grid;gap:20px;grid-template-columns:1fr 1fr;margin-top:48px}
+  .journey-palette-label{margin-top:44px}
+  .journey-palette{display:grid;gap:20px;grid-template-columns:1fr 1fr;margin-top:22px}
+  .journey-dress-reservation{max-width:320px}
 
   .journey-rsvp{min-height:135svh}
   .journey-rsvp h2{font-size:clamp(56px,16vw,80px)}

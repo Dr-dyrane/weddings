@@ -132,6 +132,8 @@ export const authoringWeddingSchema = z.object({
     eyebrow: z.string().min(1),
     title: z.string().min(1),
     guidance: z.string().min(1),
+    paletteLabel: z.string().min(1).max(80),
+    reservation: z.string().min(1).max(180),
     palette: z
       .array(
         z.object({

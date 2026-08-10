@@ -240,6 +240,11 @@ test("Chromium lab vitals and the WebGL demand loop stay within Phase 1 budgets"
       cls: number;
       drawCalls: number;
       eventDurations: number[];
+      interactionEvents: Array<{
+        duration: number;
+        name: string;
+        target: string | null;
+      }>;
       lcp: number;
       longAnimationFrames: number[];
     };
@@ -247,6 +252,7 @@ test("Chromium lab vitals and the WebGL demand loop stay within Phase 1 budgets"
       cls: 0,
       drawCalls: 0,
       eventDurations: [],
+      interactionEvents: [],
       lcp: 0,
       longAnimationFrames: [],
     };
@@ -293,8 +299,26 @@ test("Chromium lab vitals and the WebGL demand loop stay within Phase 1 budgets"
     try {
       new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
-          const event = entry as PerformanceEntry & { interactionId?: number };
-          if (event.interactionId) probe.eventDurations.push(event.duration);
+          const event = entry as PerformanceEntry & {
+            interactionId?: number;
+            target?: EventTarget | null;
+          };
+          if (!event.interactionId) continue;
+
+          probe.eventDurations.push(event.duration);
+          const target = event.target;
+          probe.interactionEvents.push({
+            duration: event.duration,
+            name: event.name,
+            target:
+              target instanceof Element
+                ? `${target.tagName.toLowerCase()}${target.id ? `#${target.id}` : ""}${
+                    typeof target.className === "string" && target.className
+                      ? `.${target.className.trim().replace(/\s+/g, ".")}`
+                      : ""
+                  }`
+                : null,
+          });
         }
       }).observe(
         {
@@ -369,6 +393,11 @@ test("Chromium lab vitals and the WebGL demand loop stay within Phase 1 budgets"
           cls: number;
           drawCalls: number;
           eventDurations: number[];
+          interactionEvents: Array<{
+            duration: number;
+            name: string;
+            target: string | null;
+          }>;
           lcp: number;
           longAnimationFrames: number[];
         };
@@ -379,6 +408,9 @@ test("Chromium lab vitals and the WebGL demand loop stay within Phase 1 budgets"
       cls: probe.cls,
       idleDrawCalls: probe.drawCalls - start,
       inpCandidate: sortedEvents.at(-1) ?? null,
+      interactionEvents: [...probe.interactionEvents].sort(
+        (a, b) => b.duration - a.duration,
+      ),
       lcpMs: probe.lcp,
       longAnimationFrameCount: probe.longAnimationFrames.length,
       maxLongAnimationFrameMs:
@@ -406,6 +438,9 @@ test("Chromium lab vitals and the WebGL demand loop stay within Phase 1 budgets"
   expect(evidence.lcpMs).toBeLessThanOrEqual(2_500);
   expect(evidence.cls).toBeLessThanOrEqual(0.1);
   expect(evidence.inpCandidate).not.toBeNull();
-  expect(evidence.inpCandidate!).toBeLessThanOrEqual(200);
+  expect(
+    evidence.inpCandidate!,
+    `Interaction timings: ${JSON.stringify(evidence.interactionEvents)}`,
+  ).toBeLessThanOrEqual(200);
   expect(evidence.idleDrawCalls).toBeLessThanOrEqual(1);
 });

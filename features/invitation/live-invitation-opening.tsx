@@ -4,6 +4,7 @@ import {
   type CSSProperties,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -51,6 +52,7 @@ export function LiveInvitationOpening({
   const [day, setDay] = useState(0);
   const [phase, setPhase] = useState<OpeningPhase>("month");
   const [leaving, setLeaving] = useState(false);
+  const openingFrame = useRef<number | null>(null);
 
   useEffect(() => {
     if (!hydrated || reducedMotion) return;
@@ -91,6 +93,15 @@ export function LiveInvitationOpening({
     return () => document.body.classList.remove("live-opening-locked");
   }, [hidden]);
 
+  useEffect(
+    () => () => {
+      if (openingFrame.current !== null) {
+        window.cancelAnimationFrame(openingFrame.current);
+      }
+    },
+    [],
+  );
+
   // Keep the server and first client frame at 00 00. Reduced-motion clients
   // resolve directly to the finished frame as soon as their preference is known.
   const finalFrame = hydrated && reducedMotion;
@@ -109,7 +120,16 @@ export function LiveInvitationOpening({
   const open = () => {
     if (!ready || leaving) return;
     setLeaving(true);
-    onOpen();
+
+    // Commit the button response before revealing and animating the WebGL
+    // journey. Two frames guarantee that the immediate press feedback paints
+    // before the heavier scene transition begins.
+    openingFrame.current = window.requestAnimationFrame(() => {
+      openingFrame.current = window.requestAnimationFrame(() => {
+        openingFrame.current = null;
+        onOpen();
+      });
+    });
   };
 
   return (
@@ -157,7 +177,11 @@ export function LiveInvitationOpening({
       </button>
 
       <span className="sr-only" aria-live="polite">
-        {ready ? "Invitation ready. Play invitation." : "Preparing invitation."}
+        {leaving
+          ? "Opening invitation."
+          : ready
+            ? "Invitation ready. Play invitation."
+            : "Preparing invitation."}
       </span>
     </div>
   );

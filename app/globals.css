@@ -1055,54 +1055,64 @@ body.live-opening-locked{overflow:hidden}
   opacity:1;
 }
 .live-ogb-threshold{
+  --ogb-threshold-width:170px;
   background:transparent;
   border:0;
   color:#000;
   cursor:default;
-  height:44px;
+  height:64px;
   left:50%;
   margin:0;
   padding:0;
   position:absolute;
   top:50%;
   transform:translate(-50%,-50%);
-  width:170px;
+  width:64px;
   z-index:4;
 }
 .live-ogb-threshold:disabled{opacity:1}
 .live-ogb-threshold-fill{
   background:var(--ogb-yellow);
   height:34px;
-  left:0;
+  left:calc((64px - var(--ogb-threshold-width))/2);
+  opacity:1;
   position:absolute;
-  top:5px;
+  top:15px;
   transform:scaleX(0);
   transform-origin:left center;
-  width:100%;
+  transition:opacity .22s linear;
+  width:var(--ogb-threshold-width);
 }
 .live-ogb-opening:is([data-phase="fill"],[data-phase="portrait"],[data-phase="ready"],[data-phase="leaving"]) .live-ogb-threshold-fill{
   transform:scaleX(var(--opening-progress));
-  transition:transform .78s cubic-bezier(.22,1,.36,1);
+  transition:transform .78s cubic-bezier(.22,1,.36,1),opacity .22s linear;
 }
 .live-ogb-threshold-label{
   align-items:center;
+  background:var(--ogb-yellow);
+  border-radius:999px;
+  box-shadow:0 16px 44px rgba(255,210,30,.18);
   display:flex;
-  font-size:10px;
-  font-weight:650;
-  height:34px;
+  height:64px;
   justify-content:center;
   left:0;
-  letter-spacing:.08em;
   opacity:0;
   position:absolute;
-  text-transform:uppercase;
-  top:5px;
-  transition:opacity .18s linear;
+  top:0;
+  transform:scale(.84);
+  transition:opacity .2s linear,transform .5s cubic-bezier(.22,1,.36,1);
+  width:64px;
 }
 .live-ogb-opening[data-phase="ready"] .live-ogb-threshold{cursor:pointer}
-.live-ogb-opening[data-phase="ready"] .live-ogb-threshold-label{opacity:1}
-.live-ogb-opening[data-phase="ready"] .live-ogb-threshold:hover .live-ogb-threshold-fill{
-  filter:brightness(1.08);
+.live-ogb-opening[data-phase="ready"] .live-ogb-threshold-fill,
+.live-ogb-opening[data-phase="leaving"] .live-ogb-threshold-fill{opacity:0}
+.live-ogb-opening[data-phase="ready"] .live-ogb-threshold-label{
+  opacity:1;
+  transform:scale(1);
+}
+.live-ogb-opening[data-phase="ready"] .live-ogb-threshold:hover .live-ogb-threshold-label{
+  filter:brightness(1.06);
+  transform:scale(1.035);
 }
 .live-ogb-threshold:focus-visible{
   outline:2px solid #fff;
@@ -1124,7 +1134,7 @@ body.live-opening-locked{overflow:hidden}
     letter-spacing:-4px;
   }
   .live-ogb-portrait{height:108svh;right:-6vw;top:-4svh}
-  .live-ogb-threshold{width:150px}
+  .live-ogb-threshold{--ogb-threshold-width:150px}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -1219,6 +1229,40 @@ body.live-opening-locked{overflow:hidden}
   width:100%;
 }
 .editorial-experience[data-active-chapter="welcome"] .journey-progress{opacity:0}
+
+.journey-director{
+  align-items:center;
+  bottom:18px;
+  display:flex;
+  gap:12px;
+  position:fixed;
+  right:24px;
+  z-index:30;
+}
+.journey-director>span{
+  color:var(--journey-muted);
+  font-size:9px;
+  letter-spacing:.12em;
+  min-width:0;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.journey-director-control{
+  align-items:center;
+  background:var(--journey-yellow);
+  border:0;
+  border-radius:999px;
+  color:#000;
+  cursor:pointer;
+  display:flex;
+  height:56px;
+  justify-content:center;
+  padding:0;
+  transition:filter .2s var(--ease),transform .16s var(--ease);
+  width:56px;
+}
+.journey-director-control:hover{filter:brightness(1.06);transform:scale(1.035)}
+.journey-director-control:active{transform:scale(.96)}
 
 .journey-spatial{
   inset:0;
@@ -1377,18 +1421,6 @@ body.live-opening-locked{overflow:hidden}
   margin-top:34px;
   text-transform:uppercase;
 }
-.journey-scroll-cue{
-  bottom:30px;
-  color:var(--journey-muted);
-  font-size:10px;
-  letter-spacing:.14em;
-  opacity:0;
-  position:absolute;
-  right:28px;
-  text-transform:uppercase;
-  transition:opacity .5s linear 1.1s;
-  z-index:4;
-}
 .editorial-experience.is-open .journey-welcome-portrait{
   opacity:.25;
   transform:translateX(10%) scale(.94);
@@ -1413,7 +1445,6 @@ body.live-opening-locked{overflow:hidden}
   opacity:1;
   transform:translateY(0);
 }
-.editorial-experience.is-open .journey-scroll-cue{opacity:1}
 
 .journey-chapter{
   background:transparent;
@@ -1527,10 +1558,9 @@ body.live-opening-locked{overflow:hidden}
 .journey-share-choices p{
   color:var(--journey-muted);
   flex-basis:100%;
-  font-size:11px;
-  line-height:1.55;
+  font-size:10px;
+  line-height:1.45;
   margin:2px 0 0;
-  max-width:470px;
 }
 
 .journey-dress{
@@ -1679,11 +1709,22 @@ body.live-opening-locked{overflow:hidden}
 .journey-rsvp footer p{color:#fff;font-size:14px;letter-spacing:-.02em;text-transform:none}
 .journey-rsvp footer time{text-align:center}
 .journey-rsvp footer small{text-align:right}
+.journey-music-credit{
+  color:var(--journey-muted);
+  font-size:9px;
+  grid-column:1/-1;
+  justify-self:end;
+  line-height:1.4;
+  min-height:44px;
+  padding-top:14px;
+}
 
 @media(max-width:700px){
   .journey-chrome{padding:20px;font-size:10px}
   .journey-chrome span{font-size:9px}
   .journey-progress{bottom:20px;width:150px}
+  .journey-director{bottom:14px;right:20px}
+  .journey-director-control{height:52px;width:52px}
   .journey-static-world{--journey-static-position:center}
   .journey-static-world::after,
   .journey-static-world[data-static-chapter="story-two"]::after{
@@ -1714,7 +1755,6 @@ body.live-opening-locked{overflow:hidden}
     line-height:.88;
   }
   .journey-welcome-copy time{font-size:10px;line-height:1.5;margin-top:24px;max-width:250px}
-  .journey-scroll-cue{bottom:24px;right:20px}
   .editorial-experience.is-open .journey-welcome-portrait{
     opacity:.2;
     transform:translateX(22%) scale(.92);
@@ -1749,6 +1789,7 @@ body.live-opening-locked{overflow:hidden}
   .journey-rsvp footer{grid-template-columns:1fr;margin-top:18svh}
   .journey-rsvp footer p{display:block}
   .journey-rsvp footer time,.journey-rsvp footer small{text-align:left}
+  .journey-music-credit{justify-self:start}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -1757,7 +1798,6 @@ body.live-opening-locked{overflow:hidden}
   .journey-welcome-threshold,
   .journey-welcome-threshold i,
   .journey-welcome-copy,
-  .journey-scroll-cue,
   .journey-chrome,
   .journey-progress{transition:none}
   .journey-spatial{display:none}

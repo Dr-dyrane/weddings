@@ -9,7 +9,7 @@ test("the public invitation remains useful before the optional presentation", as
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/the_ogranyas");
 
-  const open = page.getByRole("button", { name: "Open invitation" });
+  const open = page.getByRole("button", { name: "Play invitation" });
   await expect(open).toBeEnabled();
   await open.click();
   await expect(
@@ -40,7 +40,7 @@ test("the public RSVP exposes a real guest response form", async ({
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/the_ogranyas");
-  await page.getByRole("button", { name: "Open invitation" }).click();
+  await page.getByRole("button", { name: "Play invitation" }).click();
   await page.locator("#rsvp").scrollIntoViewIfNeeded();
 
   const attending = page.getByRole("radio", { name: "Joyfully, yes" });
@@ -60,7 +60,7 @@ test("opening and bypass actions move focus to meaningful content", async ({
   await page.goto("/the_ogranyas");
 
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-  await page.getByRole("button", { name: "Open invitation" }).click();
+  await page.getByRole("button", { name: "Play invitation" }).click();
   await expect(page.locator("#welcome-copy")).toBeFocused();
   await expect(page.locator("main")).toHaveAttribute(
     "data-active-chapter",
@@ -99,7 +99,7 @@ test("the no-JavaScript bypass exposes the semantic journey", async ({
   await context.close();
 });
 
-test("a personalized invitation is private and makes sharing consequences explicit", async ({
+test("a personalized invitation is private and offers deliberate share choices", async ({
   page,
   request,
 }) => {
@@ -108,7 +108,7 @@ test("a personalized invitation is private and makes sharing consequences explic
     `/the_ogranyas/invite/${DEMO_INVITATION_TOKEN}`,
   );
 
-  await page.getByRole("button", { name: "Open invitation" }).click();
+  await page.getByRole("button", { name: "Play invitation" }).click();
   await expect(page.getByText("For Dr. Dyrane")).toBeVisible();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     "content",
@@ -121,7 +121,7 @@ test("a personalized invitation is private and makes sharing consequences explic
   await page.getByRole("button", { name: "Share invitation" }).click();
   await expect(page.getByRole("button", { name: "Share public card" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Share my named card" })).toBeVisible();
-  await expect(page.getByText(/Social apps may keep its preview/)).toBeVisible();
+  await expect(page.getByText("Named links may be cached by social apps.")).toBeVisible();
 
   const personalizedCardUrl = await page
     .locator('meta[property="og:image"]')
@@ -135,13 +135,31 @@ test("a personalized invitation is private and makes sharing consequences explic
   expect(personalizedCard.headers()["x-robots-tag"]).toContain("noindex");
 });
 
+test("play directs the journey and guest input pauses it", async ({ page }) => {
+  await page.goto("/the_ogranyas");
+  const play = page.getByRole("button", { name: "Play invitation" });
+  await expect(play).toBeEnabled({ timeout: 10_000 });
+  await play.click();
+
+  await expect(page.locator("main")).toHaveAttribute("data-playback", "playing");
+  await expect(page.getByRole("button", { name: "Pause invitation" })).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY), { timeout: 8_000 })
+    .toBeGreaterThan(12);
+
+  await page.mouse.wheel(0, 30);
+  await expect(page.locator("main")).toHaveAttribute("data-playback", "paused");
+  await expect(page.getByRole("button", { name: "Play invitation" })).toBeVisible();
+  await expect(page.getByText("Scroll to enter")).toBeVisible();
+});
+
 test("reduced motion keeps authored chapter art and removes the spatial canvas", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/the_ogranyas");
 
-  await page.getByRole("button", { name: "Open invitation" }).click();
+  await page.getByRole("button", { name: "Play invitation" }).click();
   await expect(page.locator("main")).toHaveAttribute("data-spatial-mode", "static");
   await expect(page.locator("canvas")).toHaveCount(0);
   await page.locator("#story").scrollIntoViewIfNeeded();
@@ -167,7 +185,7 @@ test("WebGL context loss swaps the live world for its authored static equivalent
   );
 
   await page.goto("/the_ogranyas");
-  const open = page.getByRole("button", { name: "Open invitation" });
+  const open = page.getByRole("button", { name: "Play invitation" });
   await expect(open).toBeEnabled({ timeout: 10_000 });
   await open.click();
   await expect(page.locator("main")).toHaveAttribute("data-spatial-mode", "webgl");

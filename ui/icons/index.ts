@@ -6,6 +6,8 @@ export {
   ExternalLink,
   Heart,
   MapPin,
+  Pause,
+  Play,
   Share2,
   Sparkles,
 } from "lucide-react";

@@ -58,7 +58,7 @@ test("320px and 200%-equivalent reflow preserve the complete semantic journey", 
       await page.setViewportSize({ height: 800, width });
       await page.emulateMedia({ reducedMotion: "reduce" });
       await page.goto(invitationPath);
-      await page.getByRole("button", { name: "Open invitation" }).click();
+      await page.getByRole("button", { name: "Play invitation" }).click();
 
       const chapters = [
         { anchor: "#welcome-copy", audit: ["#welcome-copy", "#welcome-copy h2"] },
@@ -171,7 +171,7 @@ test("rapid forward input interrupted by reverse scroll settles coherently", asy
 
   await page.setViewportSize({ height: 900, width: 1440 });
   await page.goto(invitationPath);
-  await page.getByRole("button", { name: "Open invitation" }).click();
+  await page.getByRole("button", { name: "Play invitation" }).click();
   await expect(page.locator("main")).toHaveAttribute("data-spatial-mode", "webgl");
 
   const positions = await page.evaluate(() => {
@@ -315,7 +315,7 @@ test("Chromium lab vitals and the WebGL demand loop stay within Phase 1 budgets"
 
   await page.setViewportSize({ height: 900, width: 1440 });
   await page.goto(invitationPath, { waitUntil: "networkidle" });
-  const open = page.getByRole("button", { name: "Open invitation" });
+  const open = page.getByRole("button", { name: "Play invitation" });
   await expect(open).toBeEnabled();
   await open.click();
   await expect(page.locator("main")).toHaveAttribute("data-spatial-mode", "webgl");

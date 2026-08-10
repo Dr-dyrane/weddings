@@ -4,7 +4,6 @@ import {
   type CSSProperties,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 
@@ -13,6 +12,7 @@ import {
   getWeddingDayProgress,
 } from "@/domains/invitations/wedding-progress";
 import type { PublishedWedding } from "@/domains/weddings/published-wedding";
+import { Play } from "@/ui/icons";
 
 type OpeningPhase = "month" | "day" | "fill" | "portrait" | "ready";
 
@@ -45,7 +45,6 @@ export function LiveInvitationOpening({
   const [day, setDay] = useState(0);
   const [phase, setPhase] = useState<OpeningPhase>("month");
   const [leaving, setLeaving] = useState(false);
-  const openTimer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     if (!hydrated || reducedMotion) return;
@@ -84,15 +83,6 @@ export function LiveInvitationOpening({
     return () => document.body.classList.remove("live-opening-locked");
   }, [hidden]);
 
-  useEffect(
-    () => () => {
-      if (openTimer.current !== undefined) {
-        window.clearTimeout(openTimer.current);
-      }
-    },
-    [],
-  );
-
   // Keep the server and first client frame at 00 00. Reduced-motion clients
   // resolve directly to the finished frame as soon as their preference is known.
   const finalFrame = hydrated && reducedMotion;
@@ -111,7 +101,7 @@ export function LiveInvitationOpening({
   const open = () => {
     if (!ready || leaving) return;
     setLeaving(true);
-    openTimer.current = window.setTimeout(onOpen, reducedMotion ? 0 : 520);
+    onOpen();
   };
 
   return (
@@ -146,24 +136,20 @@ export function LiveInvitationOpening({
       />
 
       <button
-        aria-label="Open invitation"
+        aria-label="Play invitation"
         className="live-ogb-threshold"
         disabled={!ready}
         onClick={open}
         type="button"
       >
         <span className="live-ogb-threshold-fill" aria-hidden="true" />
-        <span
-          className="live-ogb-threshold-label"
-          aria-hidden="true"
-          style={{ width: `${progress * 100}%` }}
-        >
-          {ready ? "Open" : ""}
+        <span className="live-ogb-threshold-label" aria-hidden="true">
+          <Play fill="currentColor" size={21} strokeWidth={1.5} />
         </span>
       </button>
 
       <span className="sr-only" aria-live="polite">
-        {ready ? "Invitation ready. Open invitation." : "Preparing invitation."}
+        {ready ? "Invitation ready. Play invitation." : "Preparing invitation."}
       </span>
     </div>
   );

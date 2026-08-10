@@ -85,9 +85,11 @@ and recede whenever text or a decision appears.
 
 The static progress bar becomes the experience's motion language:
 
-- loading progress, scroll progress and chapter position share its geometry;
+- loading progress, directed travel and chapter position share its geometry;
 - input response is immediate and yellow marks the acknowledged change;
-- native scroll remains the journey clock;
+- the explicit `Play` action starts a timed director path through the world;
+- `Pause`, wheel, touch, keyboard or a form interaction immediately returns
+  control to the guest; `Play` resumes from that world position;
 - movement is continuous, reversible and interruptible;
 - only one hero movement is active at a time;
 - each movement settles into a clean resting composition;
@@ -102,19 +104,30 @@ separate decorative invitation. Its locked sequence is:
 3. count the day from `01` through `15`;
 4. grow the yellow threshold to the wedding's live calendar progress;
 5. reveal the couple contour in the same left-to-right direction as the light;
-6. turn that threshold into the sole `Open` action only after the frame settles.
+6. let the progress slit resolve into the sole round `Play` action only after
+   the frame settles.
 
 No header, monogram, RSVP action or other application chrome is visible before
-the threshold opens. Reduced motion skips the count and reveal, presenting the
-same finished date, progress, portrait and action immediately. The social share
+the threshold plays. Reduced motion skips the count and reveal, presenting the
+same finished date, progress, portrait and action immediately; its journey is
+manual and contains no automated camera travel. The social share
 image remains a static daily snapshot because animation support is not reliable
 across link-preview consumers; the guest page supplies the live sequence.
 
-The post-click welcome transforms the opening rather than replacing it: the
+The post-Play welcome transforms the opening rather than replacing it: the
 portrait recedes, the numeric date remains as atmosphere, the yellow threshold
 completes and moves to the invitation copy, and the couple names retain their
 top-left anchor. The first new statement is the literal invitation. No second
-button is added; native scroll is the continuation.
+primary action is added. A quiet fixed control becomes `Pause` during directed
+travel and `Play` while paused. Manual scroll is always a first-class
+continuation and never fights the director.
+
+The Play gesture may begin one licensed atmospheric recording with the journey.
+Audio never starts before that gesture, pauses with the director and stops at
+the final chapter. The current yardstick track is *Gymnopédie No. 1*, performed
+by Kevin MacLeod under CC BY 3.0. Its visible credit and retained license record
+are mandatory; see `MUSIC-LICENSES.md`. Music is omitted when playback is
+blocked or reduced motion is requested without weakening the experience.
 
 The guest journey is intentionally limited to six resting chapters: welcome,
 two truthful story beats, celebration details, dress guidance and RSVP. Wedding
@@ -218,7 +231,7 @@ conflicts, including:
 - the old envelope-first opening choreography;
 - decorative hairlines, glass cards, haze and framed copy surfaces.
 
-Privacy, accessibility, truthful content, native-scroll ownership, responsive
-composition and reduced-motion requirements remain in force. Earlier research,
+Privacy, accessibility, truthful content, immediate guest-input ownership,
+responsive composition and reduced-motion requirements remain in force. Earlier research,
 storyboards and concept assets are retained as historical evidence and possible
 narrative-source material; they are not implementation authority for the new UI.

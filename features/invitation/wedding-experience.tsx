@@ -29,6 +29,8 @@ import {
   ExternalLink,
   Heart,
   MapPin,
+  Pause,
+  Play,
   Share2,
   Sparkles,
 } from "@/ui/icons";
@@ -107,6 +109,19 @@ type JourneyChapter =
   | "celebration"
   | "dress"
   | "rsvp";
+
+type JourneyPlayback = "idle" | "playing" | "paused" | "complete" | "manual";
+
+const DIRECTOR_HOLD_MS = 1600;
+const DIRECTOR_SPEED_PX_PER_SECOND = 108;
+const DIRECTOR_MIN_TRAVEL_MS = 4200;
+const DIRECTOR_MAX_TRAVEL_MS = 13000;
+
+function easeDirectorTravel(progress: number) {
+  return progress < 0.5
+    ? 4 * progress * progress * progress
+    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+}
 
 const chapterLabels: Record<JourneyChapter, string> = {
   welcome: "Welcome",
@@ -289,10 +304,7 @@ function ShareInvitation({
           <Button tone="quiet" onPress={() => void share("personalized")}>
             Share my named card
           </Button>
-          <p>
-            Your named link opens this private invitation and may reveal its
-            salutation. Social apps may keep its preview.
-          </p>
+          <p>Named links may be cached by social apps.</p>
         </div>
       ) : null}
       <span aria-live="polite">{feedback}</span>
@@ -462,7 +474,9 @@ export function WeddingExperience({
 }: WeddingExperienceProps) {
   const [opened, setOpened] = useState(false);
   const [spatialUnavailable, setSpatialUnavailable] = useState(false);
+  const [playback, setPlayback] = useState<JourneyPlayback>("idle");
   const rootRef = useRef<HTMLElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const { hydrated, reducedMotion, webgl } = useClientPreferences();
   const activeChapter = useJourneyPosition(rootRef, opened);
   const date = useMemo(
@@ -486,10 +500,158 @@ export function WeddingExperience({
   const spatialMode =
     opened && webgl && !spatialUnavailable ? "webgl" : opened ? "static" : "closed";
 
+  const pauseJourney = useCallback(() => {
+    setPlayback((current) => (current === "playing" ? "paused" : current));
+    audioRef.current?.pause();
+  }, []);
+
+  const playJourney = useCallback(() => {
+    if (reducedMotion) {
+      setPlayback("manual");
+      return;
+    }
+
+    if (playback === "complete") {
+      window.scrollTo(0, 0);
+      if (audioRef.current) audioRef.current.currentTime = 0;
+    }
+
+    setPlayback("playing");
+    if (audioRef.current) {
+      audioRef.current.volume = 0.34;
+      void audioRef.current.play().catch(() => undefined);
+    }
+  }, [playback, reducedMotion]);
+
+  useEffect(() => {
+    if (!opened || playback !== "playing" || reducedMotion) return;
+
+    const root = rootRef.current;
+    if (!root) return;
+
+    const maxScroll = Math.max(
+      0,
+      document.documentElement.scrollHeight - window.innerHeight,
+    );
+    const currentScroll = Math.min(maxScroll, Math.max(0, window.scrollY));
+    const chapterTargets = Array.from(
+      root.querySelectorAll<HTMLElement>("[data-journey-chapter]"),
+    )
+      .map((section) =>
+        Math.min(
+          maxScroll,
+          section.offsetTop +
+            Math.min(section.offsetHeight * 0.2, window.innerHeight * 0.42),
+        ),
+      )
+      .filter((target) => target > currentScroll + window.innerHeight * 0.08);
+    const targets = [...chapterTargets, maxScroll].filter(
+      (target, index, values) => index === 0 || target - values[index - 1] > 8,
+    );
+
+    if (!targets.length) {
+      setPlayback("complete");
+      audioRef.current?.pause();
+      return;
+    }
+
+    let cancelled = false;
+    let frame = 0;
+    let targetIndex = 0;
+    let phase: "hold" | "travel" = "hold";
+    let phaseStartedAt: number | null = null;
+    let travelStartedAt = 0;
+    let travelFrom = currentScroll;
+
+    const tick = (now: number) => {
+      if (cancelled) return;
+      phaseStartedAt ??= now;
+
+      if (phase === "hold") {
+        if (now - phaseStartedAt < DIRECTOR_HOLD_MS) {
+          frame = requestAnimationFrame(tick);
+          return;
+        }
+        phase = "travel";
+        travelFrom = window.scrollY;
+        travelStartedAt = now;
+      }
+
+      const target = targets[targetIndex];
+      const distance = Math.max(0, target - travelFrom);
+      const duration = Math.min(
+        DIRECTOR_MAX_TRAVEL_MS,
+        Math.max(
+          DIRECTOR_MIN_TRAVEL_MS,
+          (distance / DIRECTOR_SPEED_PX_PER_SECOND) * 1000,
+        ),
+      );
+      const progress = Math.min(1, (now - travelStartedAt) / duration);
+      const nextScroll =
+        travelFrom + (target - travelFrom) * easeDirectorTravel(progress);
+      window.scrollTo(0, nextScroll);
+
+      if (progress < 1) {
+        frame = requestAnimationFrame(tick);
+        return;
+      }
+
+      targetIndex += 1;
+      if (targetIndex >= targets.length) {
+        setPlayback("complete");
+        audioRef.current?.pause();
+        return;
+      }
+
+      phase = "hold";
+      phaseStartedAt = now;
+      frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+    };
+  }, [opened, playback, reducedMotion]);
+
+  useEffect(() => {
+    if (playback !== "playing") return;
+
+    const pauseForGuest = () => pauseJourney();
+    const pauseForKey = (event: KeyboardEvent) => {
+      if (
+        ["ArrowDown", "ArrowUp", "PageDown", "PageUp", " ", "Home", "End"].includes(
+          event.key,
+        )
+      ) {
+        pauseJourney();
+      }
+    };
+
+    addEventListener("wheel", pauseForGuest, { passive: true });
+    addEventListener("touchstart", pauseForGuest, { passive: true });
+    addEventListener("keydown", pauseForKey);
+    return () => {
+      removeEventListener("wheel", pauseForGuest);
+      removeEventListener("touchstart", pauseForGuest);
+      removeEventListener("keydown", pauseForKey);
+    };
+  }, [pauseJourney, playback]);
+
   const openExperience = () => {
     document.body.classList.remove("live-opening-locked");
     window.scrollTo(0, 0);
     setOpened(true);
+    if (reducedMotion) {
+      setPlayback("manual");
+    } else {
+      setPlayback("playing");
+      if (audioRef.current) {
+        audioRef.current.volume = 0.34;
+        void audioRef.current.play().catch(() => undefined);
+      }
+    }
     requestAnimationFrame(() => {
       window.scrollTo(0, 0);
       document.querySelector<HTMLElement>("#welcome-copy")?.focus({
@@ -502,6 +664,8 @@ export function WeddingExperience({
     event.preventDefault();
     document.body.classList.remove("live-opening-locked");
     setOpened(true);
+    setPlayback("manual");
+    audioRef.current?.pause();
     window.history.replaceState(null, "", "#details");
     requestAnimationFrame(() => {
       const details = document.querySelector<HTMLElement>("#details");
@@ -514,7 +678,18 @@ export function WeddingExperience({
     <main
       className={`editorial-experience${opened ? " is-open" : ""}`}
       data-active-chapter={activeChapter}
+      data-playback={playback}
       data-spatial-mode={spatialMode}
+      onPointerDownCapture={(event) => {
+        const target = event.target as HTMLElement;
+        if (
+          playback === "playing" &&
+          target.closest("a,button,input,select,textarea") &&
+          !target.closest(".journey-director-control")
+        ) {
+          pauseJourney();
+        }
+      }}
       ref={rootRef}
       style={{
         "--opening-progress": progress,
@@ -524,6 +699,13 @@ export function WeddingExperience({
       <noscript>
         <style>{`.live-ogb-opening{display:none!important}`}</style>
       </noscript>
+
+      <audio
+        aria-hidden="true"
+        preload="metadata"
+        ref={audioRef}
+        src="/audio/gymnopedie-no-1-kevin-macleod.mp3"
+      />
 
       <a className="journey-skip" href="#details" onClick={skipExperience}>
         Skip to celebration details
@@ -549,6 +731,32 @@ export function WeddingExperience({
       <div className="journey-progress" aria-hidden="true">
         <i />
       </div>
+
+      {opened && !reducedMotion ? (
+        <div className="journey-director">
+          <span aria-live="polite">
+            {playback === "paused" ? "Scroll to enter" : ""}
+          </span>
+          <button
+            aria-label={
+              playback === "playing"
+                ? "Pause invitation"
+                : playback === "complete"
+                  ? "Replay invitation"
+                  : "Play invitation"
+            }
+            className="journey-director-control"
+            onClick={playback === "playing" ? pauseJourney : playJourney}
+            type="button"
+          >
+            {playback === "playing" ? (
+              <Pause aria-hidden="true" fill="currentColor" size={20} strokeWidth={1.5} />
+            ) : (
+              <Play aria-hidden="true" fill="currentColor" size={20} strokeWidth={1.5} />
+            )}
+          </button>
+        </div>
+      ) : null}
 
       <section
         className="journey-welcome"
@@ -591,7 +799,6 @@ export function WeddingExperience({
             </time>
           </div>
 
-          <p className="journey-scroll-cue">Scroll to enter</p>
         </div>
 
         <LiveInvitationOpening
@@ -699,6 +906,14 @@ export function WeddingExperience({
           <p>{wedding.couple.first} &amp; {wedding.couple.second}</p>
           <time>{wedding.dateLabel} · {wedding.locationLabel}</time>
           <small>Created with Dyrane Weddings</small>
+          <a
+            className="journey-music-credit"
+            href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100787"
+            rel="noreferrer"
+            target="_blank"
+          >
+            Gymnopédie No. 1 · Kevin MacLeod · CC BY 3.0
+          </a>
         </footer>
       </section>
     </main>

@@ -202,7 +202,7 @@ test("rapid forward input interrupted by reverse scroll settles coherently", asy
     "data-active-chapter",
     "story-one",
   );
-  await expect(page.locator("canvas")).toHaveCount(1);
+  await expect(page.locator('canvas[data-context-loss-ready="true"]')).toHaveCount(1);
   await expect(page.locator("#story h2")).toBeVisible();
   await expect(page.locator("#details")).toContainText("The Glass House");
 
@@ -343,7 +343,7 @@ test("Chromium lab vitals and the WebGL demand loop stay within Phase 1 budgets"
   await expect(open).toBeEnabled();
   await open.click();
   await expect(page.locator("main")).toHaveAttribute("data-spatial-mode", "webgl");
-  await expect(page.locator("canvas")).toBeVisible();
+  await expect(page.locator('canvas[data-context-loss-ready="true"]')).toBeVisible();
 
   await page.locator("#story").evaluate((story) =>
     story.scrollIntoView({ behavior: "instant" }),

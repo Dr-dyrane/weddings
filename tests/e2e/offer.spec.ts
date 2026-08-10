@@ -62,7 +62,7 @@ test("a selected package enters the private one-question enquiry", async ({
 
   await expect(page).toHaveURL(/\/start\?package=intermediate$/);
   await expect(
-    page.getByRole("heading", { level: 1, name: "Whose story are we entering?" }),
+    page.getByRole("heading", { level: 1, name: "Who are we celebrating?" }),
   ).toBeVisible();
 
   await page.getByLabel("First partner").fill("Ada");

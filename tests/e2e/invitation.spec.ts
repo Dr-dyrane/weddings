@@ -192,7 +192,7 @@ test("reduced motion keeps authored chapter art and removes the spatial canvas",
 
   await page.getByRole("button", { name: "Play invitation" }).click();
   await expect(page.locator("main")).toHaveAttribute("data-spatial-mode", "static");
-  await expect(page.locator("canvas")).toHaveCount(0);
+  await expect(page.locator('canvas[data-context-loss-ready="true"]')).toHaveCount(0);
   await page.locator("#story").scrollIntoViewIfNeeded();
   await expect(page.locator(".journey-static-world")).toHaveAttribute(
     "data-static-chapter",
@@ -220,17 +220,18 @@ test("WebGL context loss swaps the live world for its authored static equivalent
   await expect(open).toBeEnabled({ timeout: 10_000 });
   await open.click();
   await expect(page.locator("main")).toHaveAttribute("data-spatial-mode", "webgl");
-  await expect(page.locator("canvas")).toHaveAttribute(
+  const spatialCanvas = page.locator('canvas[data-context-loss-ready="true"]');
+  await expect(spatialCanvas).toHaveAttribute(
     "data-context-loss-ready",
     "true",
   );
 
-  await page.locator("canvas").evaluate((canvas) =>
+  await spatialCanvas.evaluate((canvas) =>
     canvas.dispatchEvent(new Event("webglcontextlost", { cancelable: true })),
   );
 
   await expect(page.locator("main")).toHaveAttribute("data-spatial-mode", "static");
-  await expect(page.locator("canvas")).toHaveCount(0);
+  await expect(spatialCanvas).toHaveCount(0);
   await page.locator("#story").scrollIntoViewIfNeeded();
   await expect(page.locator(".journey-static-world")).toHaveAttribute(
     "data-static-chapter",

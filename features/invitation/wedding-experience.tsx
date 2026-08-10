@@ -112,8 +112,12 @@ type JourneyChapter =
 
 type JourneyPlayback = "idle" | "playing" | "paused" | "complete" | "manual";
 
+const DIRECTOR_FIRST_HOLD_MS = 350;
 const DIRECTOR_HOLD_MS = 1600;
+const DIRECTOR_FIRST_SPEED_PX_PER_SECOND = 260;
 const DIRECTOR_SPEED_PX_PER_SECOND = 108;
+const DIRECTOR_FIRST_MIN_TRAVEL_MS = 2800;
+const DIRECTOR_FIRST_MAX_TRAVEL_MS = 6000;
 const DIRECTOR_MIN_TRAVEL_MS = 4200;
 const DIRECTOR_MAX_TRAVEL_MS = 13000;
 
@@ -121,6 +125,10 @@ function easeDirectorTravel(progress: number) {
   return progress < 0.5
     ? 4 * progress * progress * progress
     : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+}
+
+function easeDirectorEntrance(progress: number) {
+  return Math.sin((progress * Math.PI) / 2);
 }
 
 const chapterLabels: Record<JourneyChapter, string> = {
@@ -537,6 +545,9 @@ export function WeddingExperience({
     const chapterTargets = Array.from(
       root.querySelectorAll<HTMLElement>("[data-journey-chapter]"),
     )
+      // The cover already establishes the welcome hero. Direct the first
+      // movement toward the story instead of stopping inside the same frame.
+      .filter((section) => section.dataset.journeyChapter !== "welcome")
       .map((section) =>
         Math.min(
           maxScroll,
@@ -555,6 +566,10 @@ export function WeddingExperience({
       return;
     }
 
+    const documentElement = document.documentElement;
+    const previousScrollBehavior = documentElement.style.scrollBehavior;
+    documentElement.style.scrollBehavior = "auto";
+
     let cancelled = false;
     let frame = 0;
     let targetIndex = 0;
@@ -568,7 +583,9 @@ export function WeddingExperience({
       phaseStartedAt ??= now;
 
       if (phase === "hold") {
-        if (now - phaseStartedAt < DIRECTOR_HOLD_MS) {
+        const holdDuration =
+          targetIndex === 0 ? DIRECTOR_FIRST_HOLD_MS : DIRECTOR_HOLD_MS;
+        if (now - phaseStartedAt < holdDuration) {
           frame = requestAnimationFrame(tick);
           return;
         }
@@ -579,16 +596,28 @@ export function WeddingExperience({
 
       const target = targets[targetIndex];
       const distance = Math.max(0, target - travelFrom);
+      const isFirstTravel = targetIndex === 0;
+      const speed = isFirstTravel
+        ? DIRECTOR_FIRST_SPEED_PX_PER_SECOND
+        : DIRECTOR_SPEED_PX_PER_SECOND;
+      const minimumDuration = isFirstTravel
+        ? DIRECTOR_FIRST_MIN_TRAVEL_MS
+        : DIRECTOR_MIN_TRAVEL_MS;
+      const maximumDuration = isFirstTravel
+        ? DIRECTOR_FIRST_MAX_TRAVEL_MS
+        : DIRECTOR_MAX_TRAVEL_MS;
       const duration = Math.min(
-        DIRECTOR_MAX_TRAVEL_MS,
+        maximumDuration,
         Math.max(
-          DIRECTOR_MIN_TRAVEL_MS,
-          (distance / DIRECTOR_SPEED_PX_PER_SECOND) * 1000,
+          minimumDuration,
+          (distance / speed) * 1000,
         ),
       );
       const progress = Math.min(1, (now - travelStartedAt) / duration);
-      const nextScroll =
-        travelFrom + (target - travelFrom) * easeDirectorTravel(progress);
+      const easedProgress = isFirstTravel
+        ? easeDirectorEntrance(progress)
+        : easeDirectorTravel(progress);
+      const nextScroll = travelFrom + (target - travelFrom) * easedProgress;
       window.scrollTo(0, nextScroll);
 
       if (progress < 1) {
@@ -612,6 +641,7 @@ export function WeddingExperience({
     return () => {
       cancelled = true;
       cancelAnimationFrame(frame);
+      documentElement.style.scrollBehavior = previousScrollBehavior;
     };
   }, [opened, playback, reducedMotion]);
 
@@ -711,7 +741,7 @@ export function WeddingExperience({
         Skip to celebration details
       </a>
 
-      {opened && webgl && !spatialUnavailable ? (
+      {webgl && !spatialUnavailable ? (
         <JourneySpatialBoundary onUnavailable={markSpatialUnavailable}>
           <JourneySpatialWorld onUnavailable={markSpatialUnavailable} />
         </JourneySpatialBoundary>

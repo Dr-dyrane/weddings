@@ -144,7 +144,7 @@ test("play directs the journey and guest input pauses it", async ({ page }) => {
   await expect(page.locator("main")).toHaveAttribute("data-playback", "playing");
   await expect(page.getByRole("button", { name: "Pause invitation" })).toBeVisible();
   await expect
-    .poll(() => page.evaluate(() => window.scrollY), { timeout: 8_000 })
+    .poll(() => page.evaluate(() => window.scrollY), { timeout: 1_500 })
     .toBeGreaterThan(12);
 
   await page.mouse.wheel(0, 30);

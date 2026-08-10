@@ -13,27 +13,12 @@ proven draft, review and edit mechanics in `/planned`. The result remains a
 Dyrane Weddings object: pitch black, white Space Grotesk and exact Chioma
 yellow `#FFD21E`.
 
-## The orb is functional and spatial
+## The orb is functional
 
-The orb is a real, demand-rendered WebGL object rather than a CSS illustration.
-Directional white and Chioma-yellow light reveal its volume; a yellow path sits
-on the sphere and grows with real completion. The orb compresses, turns and
-settles only when the conversation changes state. It must never pulse, glow or
-move decoratively while idle.
-
-The DOM remains the source of truth: the orb wrapper exposes the current step
-and progress to assistive technology, while a tonal static sphere remains under
-the canvas for reduced-capability or failed-WebGL rendering. Reduced motion
-keeps a stable rendered frame. The canvas uses demand rendering so an idle
-intake does not continuously consume the GPU.
-
-## Conversation grammar
-
-The prompt is the orb's voice. It is centred, brief and emotionally phrased;
-answers rest quietly beneath it. Do not display administrative step names such
-as “Step 02” as primary interface copy. Back, progress and review controls stay
-secondary, and review reads like the conversation concluding rather than a
-form table.
+The orb is a semantic progress and state instrument. Its yellow arc reports
+real completion, its accessible name identifies the current step, and its
+completed state may become a check. It must never pulse, glow or move without a
+corresponding state change.
 
 ## Interaction contract
 

@@ -8,31 +8,33 @@
 
 .journey {
   --accent: #ffd21e;
-  --muted: rgba(255, 255, 255, 0.56);
-  --surface: rgba(255, 255, 255, 0.065);
-  align-content: center;
+  --muted: rgba(255, 255, 255, 0.58);
+  --surface: #101010;
+  align-items: center;
   background: #000;
   color: #fff;
   display: grid;
   font-family: "Dyrane Intake", "Space Grotesk", Arial, sans-serif;
-  justify-items: center;
+  gap: clamp(42px, 8vw, 120px);
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.32fr);
   min-height: 100svh;
   overflow: hidden;
-  padding: clamp(96px, 12svh, 148px) clamp(20px, 5vw, 72px) clamp(50px, 8svh, 92px);
+  padding: clamp(88px, 12svh, 150px) clamp(20px, 6vw, 96px);
   position: relative;
 }
 
 .embedded {
   background: transparent;
-  min-height: 660px;
-  padding: clamp(56px, 8vw, 92px) clamp(18px, 4vw, 48px);
+  gap: clamp(34px, 6vw, 80px);
+  grid-template-columns: minmax(0, 1fr) minmax(116px, 0.25fr);
+  min-height: 620px;
+  padding: clamp(42px, 7vw, 78px) 0;
 }
 
 .studio {
-  background: #090909;
-  border-radius: 36px;
-  min-height: 700px;
-  padding: clamp(54px, 7vw, 88px) clamp(20px, 5vw, 62px);
+  background: #0d0d0d;
+  min-height: 680px;
+  padding: clamp(32px, 6vw, 70px);
 }
 
 .journey :where(h1, h2, h3, p, dl, dd) {
@@ -60,17 +62,26 @@
   overflow: hidden;
 }
 
-.atmosphere i {
-  background:
-    radial-gradient(circle, rgba(255, 210, 30, 0.09), transparent 43%),
-    radial-gradient(circle at 58% 55%, rgba(86, 60, 128, 0.07), transparent 54%);
-  filter: blur(12px);
-  height: min(760px, 88vw);
-  left: 50%;
-  opacity: 0.9;
-  top: 40%;
+.atmosphere i:first-child {
+  background: radial-gradient(circle, rgba(255, 210, 30, 0.13), transparent 68%);
+  filter: blur(8px);
+  height: 58vw;
+  left: 63%;
+  opacity: 0.72;
+  top: 14%;
   transform: translate3d(-50%, -50%, 0);
-  width: min(760px, 88vw);
+  width: 58vw;
+}
+
+.atmosphere i:last-child {
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  box-shadow: 0 0 44px rgba(255, 210, 30, 0.32);
+  height: 2px;
+  left: 24%;
+  opacity: 0.52;
+  top: 55%;
+  transform: rotate(-5deg) translateZ(-120px);
+  width: 66%;
 }
 
 .content,
@@ -79,166 +90,135 @@
   z-index: 1;
 }
 
-.progressColumn {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: clamp(24px, 4svh, 44px);
-}
-
-.orb {
-  aspect-ratio: 1;
-  filter: drop-shadow(0 0 34px rgba(255, 210, 30, 0.1));
-  position: relative;
-  width: clamp(168px, 17vw, 224px);
-}
-
-.embedded .orb,
-.studio .orb {
-  width: clamp(142px, 14vw, 184px);
-}
-
-.orbFallback,
-.orbCanvas {
-  border-radius: 50%;
-  inset: 0;
-  position: absolute;
-}
-
-.orbFallback {
-  background:
-    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.2), transparent 19%),
-    radial-gradient(circle at 28% 43%, rgba(255, 210, 30, 0.16), transparent 29%),
-    radial-gradient(circle at 64% 68%, #000, #0b0b0b 56%, #171717 100%);
-  box-shadow:
-    inset -18px -20px 30px rgba(0, 0, 0, 0.82),
-    inset 8px 8px 20px rgba(255, 255, 255, 0.04),
-    0 0 58px rgba(255, 210, 30, 0.08);
-}
-
-.orbCanvas {
-  overflow: hidden;
-}
-
-.orbCanvas canvas {
-  display: block;
-}
-
-.orbCheck {
-  align-items: center;
-  background: var(--accent);
-  border-radius: 50%;
-  color: #000;
-  display: flex;
-  height: 52px;
-  justify-content: center;
-  left: 50%;
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 52px;
-  z-index: 2;
-}
-
-.progressCopy {
-  color: rgba(255, 255, 255, 0.4);
-  display: flex;
-  font-size: 10px;
-  gap: 8px;
-  letter-spacing: 0.12em;
-  margin-top: 14px !important;
-}
-
 .content {
   max-width: 880px;
-  text-align: center;
-  width: 100%;
 }
 
 .eyebrow {
-  color: rgba(255, 255, 255, 0.42);
+  color: var(--muted);
   font-size: 10px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .title {
-  font-size: clamp(44px, 5.7vw, 76px);
+  font-size: clamp(52px, 7vw, 112px);
   font-weight: 500;
-  letter-spacing: -0.065em;
-  line-height: 0.98;
-  margin: 18px auto 0 !important;
-  max-width: 830px;
+  letter-spacing: -0.07em;
+  line-height: 0.9;
+  margin-top: 24px !important;
+  max-width: 850px;
   text-wrap: balance;
 }
 
 .embedded .title,
 .studio .title {
-  font-size: clamp(38px, 4.9vw, 62px);
-  max-width: 720px;
+  font-size: clamp(42px, 6vw, 78px);
 }
 
 .description {
   color: var(--muted);
-  font-size: clamp(14px, 1.4vw, 18px);
+  font-size: clamp(15px, 1.6vw, 20px);
   line-height: 1.55;
-  margin: 20px auto 0;
-  max-width: 570px;
+  margin-top: 28px;
+  max-width: 630px;
 }
 
 .answer {
-  animation: answer-enter 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
-  margin: clamp(28px, 4svh, 42px) auto 0;
-  max-width: 720px;
+  animation: answer-enter 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  margin-top: clamp(42px, 7svh, 76px);
+  max-width: 760px;
+}
+
+.progressColumn {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+}
+
+.orb {
+  align-items: center;
+  aspect-ratio: 1;
+  background: conic-gradient(var(--accent) var(--intake-progress), rgba(255, 255, 255, 0.12) 0);
+  border-radius: 50%;
+  box-shadow: 0 0 72px rgba(255, 210, 30, 0.12);
+  display: grid;
+  padding: 4px;
+  place-items: center;
+  transition: background 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  width: clamp(112px, 14vw, 184px);
+}
+
+.orb > span {
+  align-items: center;
+  background: radial-gradient(circle at 40% 34%, #181818, #030303 72%);
+  border-radius: inherit;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+}
+
+.orbComplete {
+  background: var(--accent);
+  color: #000;
+  transform: scale(0.9);
+}
+
+.orbComplete > span {
+  background: var(--accent);
+}
+
+.progressCopy {
+  color: var(--muted);
+  display: flex;
+  font-size: 10px;
+  justify-content: space-between;
+  letter-spacing: 0.1em;
+  margin-top: 18px !important;
   width: 100%;
 }
 
 .choiceGrid {
   display: grid;
-  gap: 10px;
+  gap: 12px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-inline: auto;
-  max-width: 680px;
 }
 
 .choice {
   background: var(--surface);
   border: 0;
-  border-radius: 28px;
+  border-radius: 24px;
   color: #fff;
   cursor: pointer;
   display: grid;
-  gap: 7px;
-  min-height: 92px;
-  padding: 19px 22px;
-  text-align: center;
-  transition:
-    background 0.22s ease,
-    color 0.22s ease,
-    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  gap: 10px;
+  min-height: 112px;
+  padding: 22px;
+  text-align: left;
+  transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease;
 }
 
 .choice:hover,
 .choice[aria-pressed="true"] {
   background: var(--accent);
   color: #000;
-  transform: scale(0.985);
-}
-
-.choice:active {
-  transform: scale(0.97);
+  transform: translateY(-2px);
 }
 
 .choice strong {
-  font-size: clamp(17px, 1.7vw, 22px);
+  font-size: clamp(18px, 2vw, 26px);
   font-weight: 500;
   letter-spacing: -0.035em;
 }
 
 .choice span {
-  font-size: 11px;
-  line-height: 1.42;
-  opacity: 0.62;
+  font-size: 12px;
+  line-height: 1.45;
+  opacity: 0.68;
 }
 
 .field,
@@ -247,17 +227,13 @@
 }
 
 .field {
-  gap: 10px;
-  margin-inline: auto;
-  max-width: 640px;
-  text-align: left;
+  gap: 12px;
 }
 
 .field > span {
   color: var(--muted);
   font-size: 10px;
   letter-spacing: 0.1em;
-  padding-left: 18px;
   text-transform: uppercase;
 }
 
@@ -266,50 +242,41 @@
 .field select {
   background: var(--surface);
   border: 0;
-  border-radius: 999px;
+  border-radius: 24px;
   color: #fff;
-  font-size: 18px;
-  min-height: 64px;
-  padding: 0 22px;
+  min-height: 62px;
+  padding: 0 20px;
   width: 100%;
 }
 
 .field textarea {
-  border-radius: 28px;
-  min-height: 146px;
-  padding-block: 20px;
+  min-height: 152px;
+  padding-block: 18px;
   resize: vertical;
 }
 
 .field input::placeholder,
 .field textarea::placeholder {
-  color: rgba(255, 255, 255, 0.33);
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .field small {
   color: var(--muted);
   font-size: 11px;
   line-height: 1.45;
-  padding-left: 18px;
 }
 
 .fieldPair {
-  gap: 12px;
+  gap: 16px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-inline: auto;
-  max-width: 680px;
 }
 
 .actions {
   align-items: center;
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 28px;
-}
-
-.actions > span:empty {
-  display: none;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr auto;
+  margin-top: 34px;
 }
 
 .actions button,
@@ -320,7 +287,7 @@
   cursor: pointer;
   display: inline-flex;
   font-size: 10px;
-  gap: 13px;
+  gap: 14px;
   justify-content: center;
   letter-spacing: 0.08em;
   min-height: 52px;
@@ -342,47 +309,49 @@
 .back {
   background: transparent;
   color: var(--muted);
+  justify-self: start;
 }
 
 .review {
   display: grid;
-  gap: 18px;
-  margin-inline: auto;
-  max-width: 620px;
+  gap: 2px;
 }
 
 .review > div {
   align-items: center;
+  background: var(--surface);
   display: grid;
-  gap: 4px 16px;
-  grid-template-columns: minmax(0, 1fr) auto;
-  padding: 0 8px;
-  text-align: left;
+  gap: 8px 18px;
+  grid-template-columns: minmax(92px, 0.35fr) minmax(0, 1fr) auto;
+  min-height: 70px;
+  padding: 16px 18px;
+}
+
+.review > div:first-child {
+  border-radius: 22px 22px 0 0;
+}
+
+.review > div:last-child {
+  border-radius: 0 0 22px 22px;
 }
 
 .review dt {
   color: var(--muted);
   font-size: 9px;
-  grid-column: 1;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .review dd {
-  font-size: clamp(17px, 2vw, 22px);
-  grid-column: 1;
-  letter-spacing: -0.025em;
+  font-size: 15px;
   overflow-wrap: anywhere;
 }
 
 .review button {
-  align-self: center;
   background: transparent;
   border: 0;
   color: var(--accent);
   cursor: pointer;
-  grid-column: 2;
-  grid-row: 1 / 3;
   min-height: 44px;
   padding: 0 8px;
 }
@@ -396,22 +365,19 @@
 
 .success {
   display: grid;
-  gap: 18px;
-  margin-inline: auto;
+  gap: 20px;
   max-width: 640px;
-  text-align: center;
 }
 
 .success > svg {
   color: var(--accent);
-  margin-inline: auto;
 }
 
 .success h3 {
-  font-size: clamp(36px, 5vw, 64px);
+  font-size: clamp(36px, 5vw, 68px);
   font-weight: 500;
   letter-spacing: -0.06em;
-  line-height: 0.98;
+  line-height: 0.95;
 }
 
 .success p {
@@ -430,7 +396,7 @@
 }
 
 @keyframes answer-enter {
-  from { opacity: 0; transform: translateY(14px); }
+  from { opacity: 0; transform: translateY(18px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -439,41 +405,59 @@
   .embedded,
   .studio {
     align-content: start;
+    gap: 34px;
+    grid-template-columns: 1fr;
     min-height: 100svh;
-    padding: 92px 20px 42px;
+    padding: 88px 20px 38px;
   }
 
   .embedded {
-    min-height: 720px;
-    padding-block: 56px;
+    min-height: 760px;
+    padding-inline: 0;
   }
 
   .studio {
-    border-radius: 28px;
     min-height: 680px;
-    padding-inline: 18px;
+    padding-inline: 20px;
   }
 
   .progressColumn {
-    margin-bottom: 28px;
+    align-items: center;
+    flex-direction: row;
+    gap: 16px;
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: stretch;
   }
 
-  .orb,
-  .embedded .orb,
-  .studio .orb {
-    width: clamp(138px, 42vw, 166px);
+  .orb {
+    flex: 0 0 58px;
+    padding: 3px;
+    width: 58px;
+  }
+
+  .orb svg {
+    height: 18px;
+    width: 18px;
+  }
+
+  .progressCopy {
+    flex: 1;
+    margin-top: 0 !important;
+  }
+
+  .content {
+    grid-row: 2;
   }
 
   .title,
   .embedded .title,
   .studio .title {
-    font-size: clamp(38px, 11vw, 50px);
-    letter-spacing: -0.055em;
-    line-height: 1;
+    font-size: clamp(46px, 14vw, 72px);
   }
 
   .answer {
-    margin-top: 28px;
+    margin-top: 42px;
   }
 
   .choiceGrid,
@@ -482,12 +466,20 @@
   }
 
   .choice {
-    border-radius: 24px;
-    min-height: 78px;
+    min-height: 94px;
+  }
+
+  .review > div {
+    grid-template-columns: 1fr auto;
+  }
+
+  .review dt {
+    grid-column: 1 / -1;
   }
 
   .actions {
-    flex-wrap: wrap;
+    align-items: stretch;
+    grid-template-columns: auto 1fr;
   }
 
   .actions button,
@@ -495,14 +487,14 @@
     min-height: 56px;
   }
 
-  .atmosphere i {
-    height: 150vw;
-    top: 27%;
-    width: 150vw;
+  .atmosphere i:first-child {
+    height: 120vw;
+    left: 82%;
+    width: 120vw;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .answer { animation: none; }
-  .choice { transition: none; }
+  .orb, .choice { transition: none; }
 }

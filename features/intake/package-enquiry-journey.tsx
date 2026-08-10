@@ -37,12 +37,12 @@ const steps = [
 type StepId = (typeof steps)[number]["id"];
 
 const stepTitles: Record<StepId, string> = {
-  package: "How should your wedding feel?",
-  couple: "Who are we celebrating?",
-  date: "When is your day?",
-  location: "Where will it unfold?",
-  reply: "Where should I meet you?",
-  review: "Here’s what I heard.",
+  package: "How deeply should the experience go?",
+  couple: "Whose story are we entering?",
+  date: "When will everyone arrive?",
+  location: "Where will the celebration live?",
+  reply: "How should we reach you?",
+  review: "This is where we begin.",
 };
 
 function getPackage(packageId: WeddingPackage["id"]) {
@@ -110,7 +110,7 @@ export function PackageEnquiryJourney({
       <main>
         <IntakeJourney
           activeIndex={activeIndex}
-          eyebrow="A private conversation"
+          eyebrow={`${activeStep.label} · Dyrane Weddings`}
           headingLevel={1}
           steps={steps}
           title={stepTitles[activeStep.id]}

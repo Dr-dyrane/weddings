@@ -70,7 +70,7 @@ export function StudioCreditIntake({
   return (
     <IntakeJourney
       activeIndex={activeIndex}
-      eyebrow="Public credit"
+      eyebrow={`${creditSteps[activeIndex].label} · Public credit`}
       headingLevel={3}
       steps={creditSteps}
       title={creditTitles[activeStep]}
@@ -279,7 +279,7 @@ export function StudioCollectionIntake({
   return (
     <IntakeJourney
       activeIndex={activeIndex}
-      eyebrow="Guest camera"
+      eyebrow={`${collectionSteps[activeIndex].label} · Guest camera`}
       headingLevel={3}
       steps={collectionSteps}
       title={collectionTitles[activeStep]}

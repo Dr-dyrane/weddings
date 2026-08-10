@@ -22,9 +22,9 @@ type RsvpStep = "attendance" | "name" | "meal" | "note" | "review";
 const titles: Record<RsvpStep, string> = {
   attendance: "Will you join us?",
   name: "How should we welcome you?",
-  meal: "What would feel good at your table?",
+  meal: "Which table should we prepare?",
   note: "Leave a little love.",
-  review: "Here’s what I heard.",
+  review: "Ready to send?",
 };
 
 export function WeddingRsvpIntake({
@@ -125,7 +125,7 @@ export function WeddingRsvpIntake({
     >
       <IntakeJourney
         activeIndex={activeIndex}
-        eyebrow="A note to the couple"
+        eyebrow={`${steps[activeIndex].label} · RSVP`}
         headingLevel={3}
         steps={steps}
         title={titles[activeStep]}

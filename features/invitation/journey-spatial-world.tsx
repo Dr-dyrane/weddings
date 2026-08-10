@@ -148,6 +148,7 @@ const GOLDEN_THREAD_FRAGMENT_SHADER = /* glsl */ `
   uniform float uReveal;
   uniform float uStart;
   uniform float uSpan;
+  uniform float uTail;
   varying vec2 vUv;
 
   void main() {
@@ -157,13 +158,25 @@ const GOLDEN_THREAD_FRAGMENT_SHADER = /* glsl */ `
       uReveal + 0.045,
       positionOnThread
     );
-    float lightFalloff = exp(
-      -pow((positionOnThread - 0.48) / 0.22, 2.0)
+    float tail = smoothstep(
+      uTail - 0.045,
+      uTail + 0.018,
+      positionOnThread
     );
-    float intensity = mix(0.42, 1.0, lightFalloff);
+    float openingLight = exp(
+      -pow((positionOnThread - 0.13) / 0.13, 2.0)
+    );
+    float pavilionLight = exp(
+      -pow((positionOnThread - 0.59) / 0.12, 2.0)
+    );
+    float intensity = mix(
+      0.36,
+      1.0,
+      max(openingLight, pavilionLight)
+    );
     gl_FragColor = vec4(
       vec3(1.0, 0.8235, 0.1176),
-      uOpacity * reveal * intensity
+      uOpacity * reveal * tail * intensity
     );
     #include <colorspace_fragment>
   }
@@ -215,9 +228,20 @@ const DESKTOP_GOLDEN_THREAD_PATH: readonly WorldPoint[] = [
   [1.5, -1.45, 2.2],
   [0.8, -2.4, -0.4],
   [-1.4, -2.8, -3.4],
-  [-2.3, -2.1, -6.5],
-  [-0.5, -0.6, -9.4],
-  [1.6, 0.4, -12.4],
+  [-2.3, -2.8, -6.5],
+  [-0.5, -3.2, -9.4],
+  [1.6, -2.6, -12.4],
+  [-1.8, -1.8, -16.5],
+  [2.3, 0.4, -20.5],
+  [3.1, -1, -24],
+  [0.6, -1.7, -27.5],
+  [-2.2, -2.5, -30.5],
+  [-0.6, -3.2, -34],
+  [3, -3.4, -37],
+  [1.4, -3.4, -40],
+  [-2.2, -2.8, -43],
+  [0.5, -1.2, -46],
+  [2.2, -0.5, -49],
 ] as const;
 
 const MOBILE_GOLDEN_THREAD_PATH: readonly WorldPoint[] = [
@@ -225,8 +249,18 @@ const MOBILE_GOLDEN_THREAD_PATH: readonly WorldPoint[] = [
   [0.5, -1.45, 2],
   [0.35, -2.35, -0.8],
   [-0.35, -2.5, -4],
-  [-0.55, -1.1, -7],
-  [0.25, 0.35, -10],
+  [-0.55, -2.8, -7],
+  [0.25, -3.1, -10],
+  [-0.55, -2.4, -14],
+  [0.8, -1.5, -18],
+  [0.95, -0.9, -22],
+  [0.2, -1.4, -26],
+  [-0.75, -2.4, -30],
+  [-0.2, -3.1, -34],
+  [0.9, -3.3, -38],
+  [0.4, -3.2, -41],
+  [-0.65, -2.7, -44],
+  [0.15, -1.1, -47],
 ] as const;
 
 function createWorldCurve(points: readonly WorldPoint[]) {
@@ -260,8 +294,8 @@ function GoldenThreadSegment({
   const mesh = useRef<THREE.Mesh>(null);
   const material = useRef<THREE.ShaderMaterial>(null);
   const segmentCurve = useMemo(() => {
-    const points = Array.from({ length: 13 }, (_, index) =>
-      curve.getPoint(start + (end - start) * (index / 12)),
+    const points = Array.from({ length: 17 }, (_, index) =>
+      curve.getPointAt(start + (end - start) * (index / 16)),
     );
     return new THREE.CatmullRomCurve3(points, false, "catmullrom", 0.42);
   }, [curve, end, start]);
@@ -271,26 +305,23 @@ function GoldenThreadSegment({
       uReveal: { value: 0 },
       uSpan: { value: end - start },
       uStart: { value: start },
+      uTail: { value: -0.08 },
     }),
     [end, start],
   );
 
   useFrame(() => {
     if (!material.current || !mesh.current) return;
-    const threadOpacity = windowOpacity(
-      motion.progress.current,
-      -0.015,
-      0.022,
-      0.27,
-      0.35,
-    );
-    mesh.current.visible = threadOpacity > 0.003;
+    const value = clamp(motion.progress.current);
+    const threadOpacity =
+      range(value, -0.02, 0.015) * (1 - range(value, 0.9, 0.97));
+    const reveal = clamp(value * 1.02 + 0.14);
+    const tail = value * 1.02 - 0.04;
+    mesh.current.visible =
+      threadOpacity > 0.003 && reveal >= start - 0.05 && tail <= end + 0.05;
     material.current.uniforms.uOpacity.value = threadOpacity * peakOpacity;
-    material.current.uniforms.uReveal.value = range(
-      motion.progress.current,
-      -0.005,
-      0.12,
-    );
+    material.current.uniforms.uReveal.value = reveal;
+    material.current.uniforms.uTail.value = tail;
   });
 
   return (
@@ -325,36 +356,61 @@ function GoldenThread({ motion }: { motion: JourneyMotion }) {
     <group>
       <GoldenThreadSegment
         curve={curve}
-        end={0.36}
+        end={0.22}
         motion={motion}
-        opacity={0.46}
+        opacity={0.52}
         radius={mobile ? 0.004 : 0.006}
         start={0}
       />
       <GoldenThreadSegment
         curve={curve}
-        end={0.67}
+        end={0.39}
         motion={motion}
-        opacity={0.92}
-        radius={mobile ? 0.011 : 0.016}
-        start={0.32}
+        opacity={0.86}
+        radius={mobile ? 0.009 : 0.014}
+        start={0.18}
       />
       <GoldenThreadSegment
         additive
         curve={curve}
-        end={0.67}
+        end={0.39}
+        motion={motion}
+        opacity={0.07}
+        radius={mobile ? 0.026 : 0.04}
+        start={0.18}
+      />
+      <GoldenThreadSegment
+        curve={curve}
+        end={0.62}
+        motion={motion}
+        opacity={0.54}
+        radius={mobile ? 0.005 : 0.008}
+        start={0.35}
+      />
+      <GoldenThreadSegment
+        curve={curve}
+        end={0.75}
+        motion={motion}
+        opacity={0.92}
+        radius={mobile ? 0.012 : 0.018}
+        start={0.58}
+      />
+      <GoldenThreadSegment
+        additive
+        curve={curve}
+        end={0.75}
         motion={motion}
         opacity={0.08}
-        radius={mobile ? 0.03 : 0.045}
-        start={0.32}
+        radius={mobile ? 0.035 : 0.052}
+        start={0.58}
       />
       <GoldenThreadSegment
         curve={curve}
         end={1}
         motion={motion}
-        opacity={0.54}
-        radius={mobile ? 0.006 : 0.009}
-        start={0.62}
+        opacity={0.48}
+        radius={mobile ? 0.005 : 0.007}
+        start={0.7}
       />
     </group>
   );

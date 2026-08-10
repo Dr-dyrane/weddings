@@ -1,7 +1,8 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import {
-  type CSSProperties,
+  Component,
   type ReactNode,
   useEffect,
   useRef,
@@ -9,6 +10,29 @@ import {
 
 import { ArrowRight, Check } from "@/ui/icons";
 import styles from "@/features/intake/intake-journey.module.css";
+
+const IntakeOrb3D = dynamic(
+  () =>
+    import("@/features/intake/intake-orb-3d").then(
+      (module) => module.IntakeOrb3D,
+    ),
+  { ssr: false },
+);
+
+class IntakeOrbBoundary extends Component<
+  { children: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
 
 export type IntakeStep = {
   id: string;
@@ -40,7 +64,8 @@ export function IntakeJourney({
 }: IntakeJourneyProps) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const safeIndex = Math.max(0, Math.min(activeIndex, steps.length - 1));
-  const progress = isComplete ? 100 : ((safeIndex + 1) / steps.length) * 100;
+  const progress = isComplete ? 1 : (safeIndex + 1) / steps.length;
+  const progressPercent = Math.round(progress * 100);
   const Heading = `h${headingLevel}` as const;
 
   useEffect(() => {
@@ -54,23 +79,32 @@ export function IntakeJourney({
     >
       <div className={styles.atmosphere} aria-hidden="true">
         <i />
-        <i />
       </div>
 
       <div className={styles.progressColumn}>
         <div
-          aria-label={`${steps[safeIndex]?.label}: ${Math.round(progress)}% complete`}
+          aria-label={`${steps[safeIndex]?.label}: ${progressPercent}% complete`}
           aria-valuemax={100}
           aria-valuemin={0}
-          aria-valuenow={Math.round(progress)}
+          aria-valuenow={progressPercent}
           className={`${styles.orb} ${isComplete ? styles.orbComplete : ""}`}
           role="progressbar"
-          style={{ "--intake-progress": `${progress}%` } as CSSProperties}
         >
-          <span aria-hidden="true">{isComplete ? <Check size={24} /> : null}</span>
+          <span className={styles.orbFallback} aria-hidden="true" />
+          <span className={styles.orbCanvas} aria-hidden="true">
+            <IntakeOrbBoundary>
+              <IntakeOrb3D isComplete={isComplete} progress={progress} />
+            </IntakeOrbBoundary>
+          </span>
+          {isComplete ? (
+            <span className={styles.orbCheck} aria-hidden="true">
+              <Check size={24} />
+            </span>
+          ) : null}
         </div>
         <p className={styles.progressCopy} aria-hidden="true">
           <span>{String(safeIndex + 1).padStart(2, "0")}</span>
+          <span>—</span>
           <span>{String(steps.length).padStart(2, "0")}</span>
         </p>
       </div>

@@ -42,9 +42,9 @@ type PhotoStep = (typeof photoSteps)[number]["id"];
 
 const photoTitles: Record<PhotoStep, string> = {
   photo: "Choose one moment.",
-  name: "Who saw it?",
-  consent: "Keep it private until approved.",
-  review: "Ready to send?",
+  name: "Who captured it?",
+  consent: "May we keep it safe for them?",
+  review: "Here’s what will arrive.",
 };
 
 export function GuestPhotoCollection({
@@ -156,7 +156,7 @@ export function GuestPhotoCollection({
         >
           <IntakeJourney
             activeIndex={activeIndex}
-            eyebrow={`${photoSteps[activeIndex].label} · Guest camera`}
+            eyebrow="Guest camera"
             headingLevel={2}
             steps={photoSteps}
             title={photoTitles[activeStep]}

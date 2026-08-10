@@ -1,7 +1,5 @@
 import "server-only";
 
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import { ImageResponse } from "next/og";
 
 import type { InvitationProjection } from "@/domains/invitations/invitation";
@@ -9,15 +7,16 @@ import { getWeddingDayProgress } from "@/domains/invitations/wedding-progress";
 import { getWeddingOpeningPortrait } from "@/domains/weddings/opening-portrait";
 import type { PublishedWedding } from "@/domains/weddings/published-wedding";
 
-const spaceGroteskFontPromise = readFile(
-  path.join(process.cwd(), "public/fonts/dyrane-space-grotesk.ttf"),
-);
+async function getSpaceGroteskFont(requestUrl: string) {
+  const response = await fetch(
+    new URL("/fonts/dyrane-space-grotesk.ttf", requestUrl),
+  );
 
-function asArrayBuffer(font: Buffer) {
-  return font.buffer.slice(
-    font.byteOffset,
-    font.byteOffset + font.byteLength,
-  ) as ArrayBuffer;
+  if (!response.ok) {
+    throw new Error("Unable to load the share-card font.");
+  }
+
+  return response.arrayBuffer();
 }
 
 function codePointLength(value: string) {
@@ -60,19 +59,23 @@ function fittedCoupleSize(value: string) {
 export async function createInvitationShareCard(
   wedding: PublishedWedding,
   invitation: InvitationProjection,
+  requestUrl: string,
 ) {
   void invitation;
-  return createShareCard(wedding);
+  return createShareCard(wedding, requestUrl);
 }
 
-export async function createDyraneShareCard() {
-  return createShareCard(null);
+export async function createDyraneShareCard(requestUrl: string) {
+  return createShareCard(null, requestUrl);
 }
 
-async function createShareCard(wedding: PublishedWedding | null) {
-  const spaceGroteskFont = await spaceGroteskFontPromise;
+async function createShareCard(
+  wedding: PublishedWedding | null,
+  requestUrl: string,
+) {
+  const spaceGroteskFont = await getSpaceGroteskFont(requestUrl);
   const couplePortrait = wedding
-    ? await getWeddingOpeningPortrait(wedding)
+    ? getWeddingOpeningPortrait(wedding)
     : null;
   const coupleLine = wedding
     ? `${wedding.couple.first} & ${wedding.couple.second}`
@@ -105,7 +108,7 @@ async function createShareCard(wedding: PublishedWedding | null) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             alt=""
-            src={`data:image/png;base64,${couplePortrait.toString("base64")}`}
+            src={new URL(couplePortrait, requestUrl).toString()}
             style={{
               height: "690px",
               opacity: wedding?.shareCard?.portraitOpacity ?? 0,
@@ -177,7 +180,7 @@ async function createShareCard(wedding: PublishedWedding | null) {
       fonts: [
         {
           name: "Space Grotesk",
-          data: asArrayBuffer(spaceGroteskFont),
+          data: spaceGroteskFont,
           style: "normal",
           weight: 500,
         },

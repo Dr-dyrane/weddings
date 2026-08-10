@@ -15,7 +15,7 @@ import { getPublishedWedding } from "@/domains/weddings/published-wedding";
 export const runtime = "nodejs";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   {
     params,
   }: {
@@ -31,7 +31,7 @@ export async function GET(
   const invitation = resolveInvitation(weddingSlug, token);
 
   if (!wedding) {
-    return setShareCardHeaders(await createDyraneShareCard(), {
+    return setShareCardHeaders(await createDyraneShareCard(request.url), {
       personalized: true,
       published: false,
     });
@@ -39,13 +39,17 @@ export async function GET(
 
   if (!invitation || !cardEditionMatches(edition, invitation.cardEdition)) {
     return setShareCardHeaders(
-      await createInvitationShareCard(wedding, getPublicInvitation()),
+      await createInvitationShareCard(
+        wedding,
+        getPublicInvitation(),
+        request.url,
+      ),
       { personalized: true, published: false },
     );
   }
 
   return setShareCardHeaders(
-    await createInvitationShareCard(wedding, invitation),
+    await createInvitationShareCard(wedding, invitation, request.url),
     { personalized: true, published: false },
   );
 }

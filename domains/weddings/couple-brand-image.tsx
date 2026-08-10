@@ -1,7 +1,5 @@
 import "server-only";
 
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import { ImageResponse } from "next/og";
 
 import type { WeddingIconSize } from "@/domains/weddings/couple-brand";
@@ -13,19 +11,20 @@ import {
   getCoupleMonogramText,
 } from "@/ui/brand/couple-monogram";
 
-const monogramFontPromise = readFile(
-  path.join(process.cwd(), "public/fonts/dyrane-space-grotesk.ttf"),
-);
-
 export async function createWeddingAppIcon(
   wedding: PublishedWedding,
   size: WeddingIconSize,
+  requestUrl: string,
 ) {
-  const monogramFont = await monogramFontPromise;
-  const monogramFontData = monogramFont.buffer.slice(
-    monogramFont.byteOffset,
-    monogramFont.byteOffset + monogramFont.byteLength,
-  ) as ArrayBuffer;
+  const fontResponse = await fetch(
+    new URL("/fonts/dyrane-space-grotesk.ttf", requestUrl),
+  );
+
+  if (!fontResponse.ok) {
+    throw new Error("Unable to load the wedding icon font.");
+  }
+
+  const monogramFontData = await fontResponse.arrayBuffer();
   const ringSize = size * 0.75;
 
   return new ImageResponse(

@@ -5,7 +5,7 @@ import { getPublishedWedding } from "@/domains/weddings/published-wedding";
 export const runtime = "nodejs";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   {
     params,
   }: { params: Promise<{ size: string; weddingSlug: string }> },
@@ -18,7 +18,7 @@ export async function GET(
     return new Response("Icon not found", { status: 404 });
   }
 
-  const response = await createWeddingAppIcon(wedding, size);
+  const response = await createWeddingAppIcon(wedding, size, request.url);
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set(
     "Cache-Control",

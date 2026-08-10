@@ -12,7 +12,7 @@ import { getPublishedWedding } from "@/domains/weddings/published-wedding";
 export const runtime = "nodejs";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   {
     params,
   }: { params: Promise<{ edition: string; weddingSlug: string }> },
@@ -22,14 +22,14 @@ export async function GET(
   const invitation = getPublicInvitation();
 
   if (!wedding || !cardEditionMatches(edition, invitation.cardEdition)) {
-    return setShareCardHeaders(await createDyraneShareCard(), {
+    return setShareCardHeaders(await createDyraneShareCard(request.url), {
       personalized: false,
       published: false,
     });
   }
 
   return setShareCardHeaders(
-    await createInvitationShareCard(wedding, invitation),
+    await createInvitationShareCard(wedding, invitation, request.url),
     { personalized: false, published: wedding.status === "published" },
   );
 }

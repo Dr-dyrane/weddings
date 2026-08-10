@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-import { describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { GET as getWeddingIcon } from "@/app/[weddingSlug]/icon/[size]/route";
 import { GET as getWeddingLogo } from "@/app/[weddingSlug]/logo.svg/route";
@@ -19,6 +19,23 @@ import {
 } from "@/ui/brand/couple-monogram";
 
 const yardstickParams = Promise.resolve({ weddingSlug: "the_ogranyas" });
+
+beforeAll(async () => {
+  const font = await readFile(
+    path.join(process.cwd(), "public/fonts/dyrane-space-grotesk.ttf"),
+  );
+
+  vi.stubGlobal("fetch", async (input: string | URL | Request) => {
+    const url = new URL(
+      input instanceof Request ? input.url : input.toString(),
+    );
+    return url.pathname.endsWith("dyrane-space-grotesk.ttf")
+      ? new Response(font)
+      : new Response(null, { status: 404 });
+  });
+});
+
+afterAll(() => vi.unstubAllGlobals());
 
 describe("dynamic couple brand", () => {
   it("keeps the checked-in root favicon on the approved mark", async () => {
@@ -104,7 +121,9 @@ describe("dynamic couple brand", () => {
     const logo = await logoResponse.text();
     expect(logo).toContain(">A &amp; C</text>");
     expect(logo).toContain('stroke="#ffd21e"');
-    expect(logo).toContain("data:font/ttf;base64,");
+    expect(logo).toContain(
+      "https://example.test/fonts/dyrane-space-grotesk.ttf",
+    );
     expect(manifestResponse.headers.get("content-type")).toContain(
       "application/manifest+json",
     );

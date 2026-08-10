@@ -1,18 +1,11 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-
 import { weddingBrandCacheControl } from "@/domains/weddings/couple-brand";
 import { getPublishedWedding } from "@/domains/weddings/published-wedding";
 import { renderCoupleMonogramSvg } from "@/ui/brand/couple-monogram";
 
 export const runtime = "nodejs";
 
-const monogramFontPromise = readFile(
-  path.join(process.cwd(), "public/fonts/dyrane-space-grotesk.ttf"),
-);
-
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ weddingSlug: string }> },
 ) {
   const { weddingSlug } = await params;
@@ -22,11 +15,12 @@ export async function GET(
     return new Response("Wedding not found", { status: 404 });
   }
 
-  const monogramFont = await monogramFontPromise;
-
   const svg = renderCoupleMonogramSvg({
     firstName: wedding.couple.first,
-    fontDataUri: `data:font/ttf;base64,${monogramFont.toString("base64")}`,
+    fontDataUri: new URL(
+      "/fonts/dyrane-space-grotesk.ttf",
+      request.url,
+    ).toString(),
     secondName: wedding.couple.second,
     title: `${wedding.couple.first} and ${wedding.couple.second} wedding monogram`,
   });

@@ -17,7 +17,7 @@ describe("published wedding snapshot", () => {
     expect(wedding.couple).not.toHaveProperty("monogram");
     expect(wedding.dress.weddingPartyPaletteLabel).toBe("Wedding party palette");
     expect(wedding.dress.guestPaletteLabel).toBe("Optional guest colour");
-    expect(wedding.dress.guestGuidance).toContain("black tailoring");
+    expect(wedding.dress.guestGuidance).toContain("deep-plum accent");
     expect(wedding.dress.reservation).toContain("wedding party");
     expect(wedding.dress.weddingPartyPalette).toEqual([
       { name: "Pitch black", hex: "#000000" },
@@ -25,7 +25,7 @@ describe("published wedding snapshot", () => {
       { name: "Celebration yellow", hex: "#FFD21E" },
     ]);
     expect(wedding.dress.guestPalette).toEqual([
-      { name: "Deep emerald", hex: "#0D3B2E" },
+      { name: "Deep plum", hex: "#4B214F" },
     ]);
   });
 

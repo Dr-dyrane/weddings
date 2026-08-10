@@ -694,11 +694,11 @@ function ForegroundOcclusionGates({ motion }: { motion: JourneyMotion }) {
       >
         <mesh position={[0, 0, 0.08]}>
           <shapeGeometry args={[fabricShape, 18]} />
-          <FabricOcclusionMaterial colour="#0d3b2e" />
+          <FabricOcclusionMaterial colour="#4b214f" />
         </mesh>
         <mesh position={[0.62, 0.2, -0.38]} scale={[0.72, 0.92, 1]}>
           <shapeGeometry args={[fabricShape, 18]} />
-          <FabricOcclusionMaterial colour="#071f18" />
+          <FabricOcclusionMaterial colour="#1f0e20" />
         </mesh>
         <pointLight
           color="#ffd21e"

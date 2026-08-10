@@ -78,9 +78,9 @@ function createApprovedDraft(
       weddingPartyPaletteLabel: "Wedding party palette",
       weddingPartyPalette: [{ name: "Pitch black", hex: "#000000" }],
       guestPaletteLabel: "Optional guest colour",
-      guestGuidance: "Black tailoring with one emerald accent.",
+      guestGuidance: "Black tailoring with one deep-plum accent.",
       reservation: "Please reserve white for the wedding party.",
-      guestPalette: [{ name: "Deep emerald", hex: "#0D3B2E" }],
+      guestPalette: [{ name: "Deep plum", hex: "#4B214F" }],
     },
     people: [
       {

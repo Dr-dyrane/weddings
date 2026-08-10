@@ -215,11 +215,11 @@ const alexanderAndChioma = publishedWeddingSchema.parse({
     ],
     guestPaletteLabel: "Optional guest colour",
     guestGuidance:
-      "Emerald traditional attire—or black tailoring with one emerald accent.",
+      "Plum traditional attire—or black tailoring with one deep-plum accent.",
     reservation:
-      "Emerald is encouraged, never required. White, ivory, champagne and celebration yellow are reserved for the wedding party.",
+      "Deep plum is encouraged, never required. White, ivory, champagne and celebration yellow are reserved for the wedding party.",
     guestPalette: [
-      { name: "Deep emerald", hex: "#0D3B2E" },
+      { name: "Deep plum", hex: "#4B214F" },
     ],
   },
   people: [],

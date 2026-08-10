@@ -982,7 +982,7 @@ function PavilionDepthScene({ motion }: { motion: JourneyMotion }) {
   );
 }
 
-function SpatialJourney() {
+function SpatialJourney({ animateTravel }: { animateTravel: boolean }) {
   const { camera, invalidate, size } = useThree();
   const pointer = useRef(new THREE.Vector2());
   const progress = useRef(0);
@@ -1052,17 +1052,23 @@ function SpatialJourney() {
   }, [invalidate]);
 
   useFrame((_, delta) => {
-    const step = Math.min(delta, 1 / 30);
-    const displacement = targetProgress.current - progress.current;
-    progressVelocity.current +=
-      (displacement * 38 - progressVelocity.current * 12) * step;
-    progress.current += progressVelocity.current * step;
-    if (
-      Math.abs(displacement) < 0.00001 &&
-      Math.abs(progressVelocity.current) < 0.0001
-    ) {
+    if (animateTravel) {
+      const step = Math.min(delta, 1 / 30);
+      const displacement = targetProgress.current - progress.current;
+      progressVelocity.current +=
+        (displacement * 38 - progressVelocity.current * 12) * step;
+      progress.current += progressVelocity.current * step;
+      if (
+        Math.abs(displacement) < 0.00001 &&
+        Math.abs(progressVelocity.current) < 0.0001
+      ) {
+        progress.current = targetProgress.current;
+        progressVelocity.current = 0;
+      }
+    } else {
       progress.current = targetProgress.current;
       progressVelocity.current = 0;
+      pointer.current.copy(targetPointer.current);
     }
     if (progress.current <= 0 && progressVelocity.current < 0) {
       progress.current = 0;
@@ -1071,18 +1077,20 @@ function SpatialJourney() {
       progress.current = 1;
       progressVelocity.current = 0;
     }
-    pointer.current.x = THREE.MathUtils.damp(
-      pointer.current.x,
-      targetPointer.current.x,
-      6,
-      delta,
-    );
-    pointer.current.y = THREE.MathUtils.damp(
-      pointer.current.y,
-      targetPointer.current.y,
-      6,
-      delta,
-    );
+    if (animateTravel) {
+      pointer.current.x = THREE.MathUtils.damp(
+        pointer.current.x,
+        targetPointer.current.x,
+        6,
+        delta,
+      );
+      pointer.current.y = THREE.MathUtils.damp(
+        pointer.current.y,
+        targetPointer.current.y,
+        6,
+        delta,
+      );
+    }
 
     const travel = clamp(progress.current);
     const pavilionAlignment = windowOpacity(travel, 0.38, 0.45, 0.67, 0.74);
@@ -1105,12 +1113,9 @@ function SpatialJourney() {
       ) *
       (1 - pavilionAlignment) *
       (0.72 + travelEnergy * 0.28);
-    cameraBank.current = THREE.MathUtils.damp(
-      cameraBank.current,
-      bankTarget,
-      4.5,
-      delta,
-    );
+    cameraBank.current = animateTravel
+      ? THREE.MathUtils.damp(cameraBank.current, bankTarget, 4.5, delta)
+      : bankTarget;
     camera.position.set(
       cameraPosition.x +
         pointer.current.x *
@@ -1126,9 +1131,10 @@ function SpatialJourney() {
     camera.rotateZ(cameraBank.current);
 
     if (
-      Math.abs(progress.current - targetProgress.current) > 0.0002 ||
-      Math.abs(progressVelocity.current) > 0.0001 ||
-      pointer.current.distanceTo(targetPointer.current) > 0.001
+      animateTravel &&
+      (Math.abs(progress.current - targetProgress.current) > 0.0002 ||
+        Math.abs(progressVelocity.current) > 0.0001 ||
+        pointer.current.distanceTo(targetPointer.current) > 0.001)
     ) {
       invalidate();
     }
@@ -1202,8 +1208,10 @@ function SpatialJourney() {
 }
 
 export function JourneySpatialWorld({
+  animateTravel,
   onUnavailable,
 }: {
+  animateTravel: boolean;
   onUnavailable: () => void;
 }) {
   return (
@@ -1231,7 +1239,7 @@ export function JourneySpatialWorld({
       }}
     >
       <Suspense fallback={null}>
-        <SpatialJourney />
+        <SpatialJourney animateTravel={animateTravel} />
       </Suspense>
     </Canvas>
   );

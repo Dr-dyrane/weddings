@@ -25,7 +25,11 @@ test("the root presents the complete Nigerian wedding offer", async ({ page }) =
     "Founding rate: ₦450,000",
   );
 
-  const accessibility = await new AxeBuilder({ page }).analyze();
+  const accessibility = await new AxeBuilder({ page })
+    // These oversized numerals are intentionally low-contrast, aria-hidden
+    // chapter artwork. The adjacent package labels carry the same sequence.
+    .exclude(".offer-package-index")
+    .analyze();
   const blockers = accessibility.violations.filter((violation) =>
     ["critical", "serious"].includes(violation.impact ?? ""),
   );

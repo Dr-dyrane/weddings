@@ -743,7 +743,10 @@ export function WeddingExperience({
 
       {webgl && !spatialUnavailable ? (
         <JourneySpatialBoundary onUnavailable={markSpatialUnavailable}>
-          <JourneySpatialWorld onUnavailable={markSpatialUnavailable} />
+          <JourneySpatialWorld
+            animateTravel={playback === "playing"}
+            onUnavailable={markSpatialUnavailable}
+          />
         </JourneySpatialBoundary>
       ) : null}
 

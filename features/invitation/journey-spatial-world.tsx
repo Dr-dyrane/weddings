@@ -989,6 +989,8 @@ function SpatialJourney({ animateTravel }: { animateTravel: boolean }) {
   const progressVelocity = useRef(0);
   const targetPointer = useRef(new THREE.Vector2());
   const targetProgress = useRef(0);
+  const pausedTarget = useRef(0);
+  const wasAnimating = useRef(animateTravel);
   const cameraBank = useRef(0);
   const mobile = size.width <= 700;
   const worldCurve = useMemo(
@@ -1052,6 +1054,8 @@ function SpatialJourney({ animateTravel }: { animateTravel: boolean }) {
   }, [invalidate]);
 
   useFrame((_, delta) => {
+    const isPauseTransition = wasAnimating.current && !animateTravel;
+
     if (animateTravel) {
       const step = Math.min(delta, 1 / 30);
       const displacement = targetProgress.current - progress.current;
@@ -1065,11 +1069,21 @@ function SpatialJourney({ animateTravel }: { animateTravel: boolean }) {
         progress.current = targetProgress.current;
         progressVelocity.current = 0;
       }
+    } else if (isPauseTransition) {
+      // Pause means freeze on the frame the guest saw. Do not teleport to the
+      // scroll target during the button interaction; a later manual scroll is
+      // allowed to update the paused scene directly.
+      progressVelocity.current = 0;
+      pausedTarget.current = targetProgress.current;
     } else {
-      progress.current = targetProgress.current;
+      if (Math.abs(targetProgress.current - pausedTarget.current) > 0.00001) {
+        progress.current = targetProgress.current;
+        pausedTarget.current = targetProgress.current;
+      }
       progressVelocity.current = 0;
       pointer.current.copy(targetPointer.current);
     }
+    wasAnimating.current = animateTravel;
     if (progress.current <= 0 && progressVelocity.current < 0) {
       progress.current = 0;
       progressVelocity.current = 0;
@@ -1113,9 +1127,16 @@ function SpatialJourney({ animateTravel }: { animateTravel: boolean }) {
       ) *
       (1 - pavilionAlignment) *
       (0.72 + travelEnergy * 0.28);
-    cameraBank.current = animateTravel
-      ? THREE.MathUtils.damp(cameraBank.current, bankTarget, 4.5, delta)
-      : bankTarget;
+    if (animateTravel) {
+      cameraBank.current = THREE.MathUtils.damp(
+        cameraBank.current,
+        bankTarget,
+        4.5,
+        delta,
+      );
+    } else if (!isPauseTransition) {
+      cameraBank.current = bankTarget;
+    }
     camera.position.set(
       cameraPosition.x +
         pointer.current.x *

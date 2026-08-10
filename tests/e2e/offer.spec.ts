@@ -82,6 +82,6 @@ test("a selected package enters the private one-question enquiry", async ({
   await expect(whatsapp).toHaveAttribute("href", /wa\.me\/19517284218/);
   await expect(page.getByRole("link", { name: "Send by email" })).toHaveAttribute(
     "href",
-    /^mailto:halodyrane@gmail\.com/,
+    /^mailto:hello@dyrane\.tech/,
   );
 });

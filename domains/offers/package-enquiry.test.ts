@@ -27,6 +27,7 @@ describe("package enquiry handoff", () => {
   it("uses the approved Dyrane WhatsApp and email destinations", () => {
     const handoffs = getPackageEnquiryHandoffs(enquiry);
 
+    expect(dyraneWeddingContact.email).toBe("hello@dyrane.tech");
     expect(handoffs.whatsapp).toContain(
       `https://wa.me/${dyraneWeddingContact.whatsapp}`,
     );

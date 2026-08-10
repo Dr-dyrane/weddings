@@ -1,7 +1,7 @@
 import type { WeddingPackage } from "@/domains/offers/wedding-packages";
 
 export const dyraneWeddingContact = {
-  email: "halodyrane@gmail.com",
+  email: "hello@dyrane.tech",
   whatsapp: "19517284218",
 } as const;
 

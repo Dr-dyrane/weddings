@@ -6,18 +6,9 @@ import type { InvitationProjection } from "@/domains/invitations/invitation";
 import { getWeddingDayProgress } from "@/domains/invitations/wedding-progress";
 import { getWeddingOpeningPortrait } from "@/domains/weddings/opening-portrait";
 import type { PublishedWedding } from "@/domains/weddings/published-wedding";
+import { readRuntimeAsset } from "@/domains/weddings/runtime-assets";
 
-async function getSpaceGroteskFont(requestUrl: string) {
-  const response = await fetch(
-    new URL("/fonts/dyrane-space-grotesk.ttf", requestUrl),
-  );
-
-  if (!response.ok) {
-    throw new Error("Unable to load the share-card font.");
-  }
-
-  return response.arrayBuffer();
-}
+const SPACE_GROTESK_PATH = "/fonts/dyrane-space-grotesk.ttf";
 
 function codePointLength(value: string) {
   return Array.from(value).length;
@@ -73,9 +64,15 @@ async function createShareCard(
   wedding: PublishedWedding | null,
   requestUrl: string,
 ) {
-  const spaceGroteskFont = await getSpaceGroteskFont(requestUrl);
-  const couplePortrait = wedding
+  const portraitPath = wedding
     ? getWeddingOpeningPortrait(wedding)
+    : null;
+  const [spaceGroteskFont, portraitData] = await Promise.all([
+    readRuntimeAsset(SPACE_GROTESK_PATH, requestUrl),
+    portraitPath ? readRuntimeAsset(portraitPath, requestUrl) : null,
+  ]);
+  const couplePortrait = portraitData
+    ? `data:image/png;base64,${Buffer.from(portraitData).toString("base64")}`
     : null;
   const coupleLine = wedding
     ? `${wedding.couple.first} & ${wedding.couple.second}`
@@ -108,7 +105,7 @@ async function createShareCard(
           // eslint-disable-next-line @next/next/no-img-element
           <img
             alt=""
-            src={new URL(couplePortrait, requestUrl).toString()}
+            src={couplePortrait}
             style={{
               height: "690px",
               opacity: wedding?.shareCard?.portraitOpacity ?? 0,

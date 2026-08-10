@@ -1,5 +1,6 @@
 import { getWeddingOpeningPortrait } from "@/domains/weddings/opening-portrait";
 import { getPublishedWedding } from "@/domains/weddings/published-wedding";
+import { fetchRuntimeAsset } from "@/domains/weddings/runtime-assets";
 
 export const runtime = "nodejs";
 
@@ -13,7 +14,7 @@ export async function GET(
 
   if (!portrait) return new Response(null, { status: 404 });
 
-  const assetResponse = await fetch(new URL(portrait, request.url));
+  const assetResponse = await fetchRuntimeAsset(portrait, request.url);
 
   if (!assetResponse.ok || !assetResponse.body) {
     return new Response(null, { status: 404 });

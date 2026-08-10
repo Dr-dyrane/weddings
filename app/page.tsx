@@ -12,11 +12,10 @@ export function generateMetadata(): Metadata {
 }
 
 const liveInvitationPath = "/the_ogranyas";
-const consultationPath =
-  "https://www.dyrane.tech/?service=dyrane-weddings#contact";
+const consultationPath = "/start";
 
 function getPackageConsultationPath(packageId: string) {
-  return `https://www.dyrane.tech/?service=dyrane-weddings&package=${packageId}#contact`;
+  return `/start?package=${packageId}`;
 }
 
 export default function HomePage() {
@@ -122,13 +121,13 @@ export default function HomePage() {
                     <li key={benefit}>{benefit}</li>
                   ))}
                 </ul>
-                <a
+                <Link
                   className="offer-package-action"
                   href={getPackageConsultationPath(weddingPackage.id)}
                 >
                   Choose {weddingPackage.label}
                   <span aria-hidden="true">↗</span>
-                </a>
+                </Link>
               </div>
             </article>
           ))}
@@ -163,10 +162,10 @@ export default function HomePage() {
           <p>
             Begin with the package that fits. We will shape the rest around the wedding.
           </p>
-          <a className="offer-primary-action" href={consultationPath}>
+          <Link className="offer-primary-action" href={consultationPath}>
             Start a conversation
             <span aria-hidden="true">↗</span>
-          </a>
+          </Link>
           <Link className="offer-text-action" href={liveInvitationPath}>
             Or experience Alexander &amp; Chioma
           </Link>

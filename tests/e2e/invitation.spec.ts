@@ -73,8 +73,13 @@ test("the public RSVP exposes a real guest response form", async ({
   await expect(attending).not.toBeChecked();
   await expect(attending).toBeEnabled();
   await page.locator("label").filter({ hasText: "Joyfully, yes" }).click();
-  await expect(attending).toBeChecked();
-  await page.getByPlaceholder("How should we welcome you?").fill("Release Guest");
+  const name = page.getByPlaceholder("How should we welcome you?");
+  await expect(name).toBeVisible();
+  await name.fill("Release Guest");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.getByLabel("Table preference")).toBeVisible();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Continue" }).click();
   const submit = page.getByRole("button", { name: "Send my response" });
   await expect(submit).toBeEnabled();
 });

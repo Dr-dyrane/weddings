@@ -24,6 +24,9 @@ This directory is the durable memory for the product. A decision is not consider
 13. `COUPLE-LINE-PORTRAIT-WORKFLOW.md` — reusable private-intake,
     identity-derived contour, directional-light, approval, versioning and
     cross-wedding isolation workflow.
+14. `INTAKE-JOURNEY.md` — the shared one-question-at-a-time engine, functional
+    orb semantics, privacy boundary and implemented package, RSVP, camera and
+    Studio journeys.
 
 ## Separate product lanes
 
@@ -92,6 +95,10 @@ This directory is the durable memory for the product. A decision is not consider
   a revocable QR guest camera, consented private R2 uploads, D1 operational
   state, persisted RSVP replies and an authenticated moderation Studio. Its
   public hub is linked from the primary six-chapter invitation.
+- The shared Intake Journey is implemented across package enquiry, RSVP,
+  guest-camera upload and the two persisted Celebration Studio creation flows.
+  Package selection now remains on Dyrane Weddings and hands off deliberately
+  to WhatsApp or email without putting personal answers in the URL.
 - The next boundary is literal 200% zoom, real high-refresh reverse-scroll
   observation, physical iOS/Android, branded desktop Safari/Firefox/Edge,
   screen reader, field Core Web Vitals and mobile GPU budgets, followed by

@@ -8,6 +8,10 @@ import { useState } from "react";
 import type { StudioDashboard } from "@/domains/event-collaboration/event-store";
 import type { StudioIdentity } from "@/domains/event-collaboration/studio-auth";
 import styles from "@/features/event-collaboration/studio.module.css";
+import {
+  StudioCollectionIntake,
+  StudioCreditIntake,
+} from "@/features/intake/studio-creation-intakes";
 
 type EventKit = { target: string; qrDataUrl: string };
 
@@ -103,59 +107,18 @@ export function CelebrationStudio({
           </button>
         </div>
 
-        <form
-          className={styles.formGrid}
-          onSubmit={(event) => {
-            event.preventDefault();
-            const formElement = event.currentTarget;
-            const form = new FormData(formElement);
-            void mutate("credit", actionPath, {
-              body: JSON.stringify({
-                action: "credit",
-                approvedForPublicDisplay:
-                  form.get("approvedForPublicDisplay") === "on",
-                displayName: form.get("displayName"),
-                groupName: form.get("groupName"),
-                kind: form.get("kind"),
-                role: form.get("role"),
-                sortOrder: Number(form.get("sortOrder")),
+        <StudioCreditIntake
+          isBusy={busy !== null}
+          onCreate={async (value) =>
+            Boolean(
+              await mutate("credit", actionPath, {
+                body: JSON.stringify({ action: "credit", ...value }),
+                headers: { "Content-Type": "application/json" },
+                method: "POST",
               }),
-              headers: { "Content-Type": "application/json" },
-              method: "POST",
-            }).then((body) => {
-              if (body) formElement.reset();
-            });
-          }}
-        >
-          <label>
-            <span>Type</span>
-            <select defaultValue="person" name="kind">
-              <option value="person">Person</option>
-              <option value="vendor">Vendor</option>
-            </select>
-          </label>
-          <label>
-            <span>Name</span>
-            <input maxLength={80} name="displayName" required />
-          </label>
-          <label>
-            <span>Role or service</span>
-            <input maxLength={80} name="role" required />
-          </label>
-          <label>
-            <span>Group</span>
-            <input defaultValue="wedding-party" maxLength={64} name="groupName" required />
-          </label>
-          <label>
-            <span>Order</span>
-            <input defaultValue="0" max="999" min="0" name="sortOrder" type="number" />
-          </label>
-          <label className={styles.approval}>
-            <input name="approvedForPublicDisplay" type="checkbox" />
-            <span>The couple approved this exact public credit.</span>
-          </label>
-          <button disabled={busy !== null} type="submit">Add credit</button>
-        </form>
+            )
+          }
+        />
 
         <ul className={styles.rows}>
           {dashboard.credits.map((credit) => (
@@ -190,58 +153,35 @@ export function CelebrationStudio({
             <h2>Guest-camera QR</h2>
           </div>
         </div>
-        <form
-          className={styles.formGrid}
-          onSubmit={(event) => {
-            event.preventDefault();
-            const form = new FormData(event.currentTarget);
-            void mutate("collection", actionPath, {
+        <StudioCollectionIntake
+          defaultClose={defaultCloseValue}
+          defaultOpen={defaultOpenValue}
+          isBusy={busy !== null}
+          onCreate={async (value) => {
+            const body = await mutate("collection", actionPath, {
               body: JSON.stringify({
                 action: "collection",
-                expiresAt: new Date(String(form.get("expiresAt"))).toISOString(),
-                label: form.get("label"),
-                opensAt: new Date(String(form.get("opensAt"))).toISOString(),
-                retentionDays: Number(form.get("retentionDays")),
+                expiresAt: new Date(value.expiresAt).toISOString(),
+                label: value.label,
+                opensAt: new Date(value.opensAt).toISOString(),
+                retentionDays: value.retentionDays,
               }),
               headers: { "Content-Type": "application/json" },
               method: "POST",
-            }).then(async (body) => {
-              if (!body?.target) return;
-              setEventKit({
-                target: body.target,
-                qrDataUrl: await QRCode.toDataURL(body.target, {
-                  color: { dark: "#000000", light: "#FFD21E" },
-                  errorCorrectionLevel: "H",
-                  margin: 2,
-                  width: 480,
-                }),
-              });
             });
+            if (!body?.target) return false;
+            setEventKit({
+              target: body.target,
+              qrDataUrl: await QRCode.toDataURL(body.target, {
+                color: { dark: "#000000", light: "#FFD21E" },
+                errorCorrectionLevel: "H",
+                margin: 2,
+                width: 480,
+              }),
+            });
+            return true;
           }}
-        >
-          <label>
-            <span>Collection label</span>
-            <input defaultValue="Wedding day" maxLength={64} name="label" required />
-          </label>
-          <label>
-            <span>Opens</span>
-            <input defaultValue={defaultOpenValue} name="opensAt" required type="datetime-local" />
-          </label>
-          <label>
-            <span>Closes</span>
-            <input defaultValue={defaultCloseValue} name="expiresAt" required type="datetime-local" />
-          </label>
-          <label>
-            <span>Retention after close</span>
-            <select defaultValue="90" name="retentionDays">
-              <option value="30">30 days</option>
-              <option value="60">60 days</option>
-              <option value="90">90 days</option>
-              <option value="180">180 days</option>
-            </select>
-          </label>
-          <button disabled={busy !== null} type="submit">Issue private QR</button>
-        </form>
+        />
 
         {eventKit ? (
           <article className={styles.eventKit}>

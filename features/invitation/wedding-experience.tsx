@@ -20,19 +20,16 @@ import {
   getWeddingDayProgress,
 } from "@/domains/invitations/wedding-progress";
 import type { PublishedWedding } from "@/domains/weddings/published-wedding";
+import { WeddingRsvpIntake } from "@/features/intake/wedding-rsvp-intake";
 import { LiveInvitationOpening } from "@/features/invitation/live-invitation-opening";
 import { Button } from "@/ui/primitives/button";
-import { Choice, ChoiceGroup } from "@/ui/primitives/choice-group";
 import {
-  ArrowRight,
   CalendarPlus,
   ExternalLink,
-  Heart,
   MapPin,
   Pause,
   Play,
   Share2,
-  Sparkles,
 } from "@/ui/icons";
 
 const JourneySpatialWorld = dynamic(
@@ -317,155 +314,6 @@ function ShareInvitation({
       ) : null}
       <span aria-live="polite">{feedback}</span>
     </div>
-  );
-}
-
-function RSVP({
-  invitation,
-  wedding,
-}: {
-  invitation: InvitationProjection;
-  wedding: PublishedWedding;
-}) {
-  const [answer, setAnswer] = useState<"yes" | "no" | "">("");
-  const [meal, setMeal] = useState("Celebration menu");
-  const [guestName, setGuestName] = useState(invitation.guestDisplayName ?? "");
-  const [note, setNote] = useState("");
-  const [idempotencyKey, setIdempotencyKey] = useState<string | null>(null);
-  const [submission, setSubmission] = useState<
-    | { state: "idle" }
-    | { state: "sending" }
-    | { state: "error"; message: string }
-    | { state: "received" }
-  >({ state: "idle" });
-
-  if (submission.state === "received") {
-    return (
-      <div className="journey-rsvp-received" role="status">
-        <span aria-hidden="true" />
-        <p>Response received</p>
-        <h3>Thank you, {guestName}.</h3>
-        <p>
-          {answer === "yes"
-            ? `${wedding.couple.first} & ${wedding.couple.second} will be delighted to welcome you.`
-            : "Your message has been shared with the couple."}
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <form
-      className="journey-rsvp-form"
-      onSubmit={async (event) => {
-        event.preventDefault();
-        if (!answer || !guestName.trim() || submission.state === "sending") return;
-        const key =
-          idempotencyKey ?? crypto.randomUUID().replaceAll("-", "");
-        if (!idempotencyKey) setIdempotencyKey(key);
-        setSubmission({ state: "sending" });
-        try {
-          const response = await fetch(
-            `/api/weddings/${encodeURIComponent(wedding.slug)}/rsvp`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                attendance: answer,
-                guestName: guestName.trim(),
-                idempotencyKey: key,
-                menuChoice: answer === "yes" ? meal : null,
-                note: note.trim() || null,
-              }),
-            },
-          );
-          const body = (await response.json().catch(() => null)) as
-            | { error?: string }
-            | null;
-          if (!response.ok) {
-            throw new Error(body?.error ?? "Your response could not be saved.");
-          }
-          setSubmission({ state: "received" });
-        } catch (error) {
-          setSubmission({
-            state: "error",
-            message:
-              error instanceof Error
-                ? error.message
-                : "Your response could not be saved.",
-          });
-        }
-      }}
-    >
-      <ChoiceGroup
-        aria-label="Will you join us?"
-        className="journey-rsvp-choices"
-        value={answer}
-        onChange={(value) => setAnswer(value as "yes" | "no")}
-      >
-        <Choice value="yes">
-          <Sparkles aria-hidden="true" size={18} strokeWidth={1.7} />
-          Joyfully, yes
-        </Choice>
-        <Choice value="no">
-          <Heart aria-hidden="true" size={18} strokeWidth={1.7} />
-          With love, no
-        </Choice>
-      </ChoiceGroup>
-
-      {answer ? (
-        <div className="journey-form-fields">
-          <label>
-            <span>Your name</span>
-            <input
-              autoComplete="name"
-              maxLength={96}
-              onChange={(event) => setGuestName(event.target.value)}
-              placeholder="How should we welcome you?"
-              required
-              value={guestName}
-            />
-          </label>
-          {answer === "yes" ? (
-            <label>
-              <span>Table preference</span>
-              <select value={meal} onChange={(event) => setMeal(event.target.value)}>
-                <option>Celebration menu</option>
-                <option>Vegetarian menu</option>
-                <option>Tell us privately</option>
-              </select>
-            </label>
-          ) : null}
-        </div>
-      ) : null}
-
-      {answer ? (
-        <label className="journey-note-field">
-          <span>Leave a little love</span>
-          <textarea
-            maxLength={600}
-            onChange={(event) => setNote(event.target.value)}
-            placeholder={`A note for ${wedding.couple.first} & ${wedding.couple.second}`}
-            value={note}
-          />
-        </label>
-      ) : null}
-
-      {submission.state === "error" ? (
-        <p className="journey-rsvp-error" role="alert">
-          {submission.message}
-        </p>
-      ) : null}
-
-      <Button
-        className="journey-submit"
-        isDisabled={!answer || !guestName.trim() || submission.state === "sending"}
-        type="submit"
-      >
-        {submission.state === "sending" ? "Sending…" : "Send my response"}
-        <ArrowRight aria-hidden="true" size={17} strokeWidth={1.7} />
-      </Button>
-    </form>
   );
 }
 
@@ -962,8 +810,8 @@ export function WeddingExperience({
         <div className="journey-chapter-copy">
           <p className="journey-index">05</p>
           <p className="journey-eyebrow">Kindly reply</p>
-          <h2>Will you join us?</h2>
-          <RSVP invitation={invitation} wedding={wedding} />
+          <h2>Your reply.</h2>
+          <WeddingRsvpIntake invitation={invitation} wedding={wedding} />
         </div>
         <footer>
           <p>{wedding.couple.first} &amp; {wedding.couple.second}</p>

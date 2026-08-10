@@ -53,3 +53,35 @@ test("the offer keeps the live invitation one action away", async ({ page }) => 
     page.getByRole("button", { name: "Play invitation" }),
   ).toBeVisible();
 });
+
+test("a selected package enters the private one-question enquiry", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Choose Intermediate" }).click();
+
+  await expect(page).toHaveURL(/\/start\?package=intermediate$/);
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Whose story are we entering?" }),
+  ).toBeVisible();
+
+  await page.getByLabel("First partner").fill("Ada");
+  await page.getByLabel("Second partner").fill("Chidi");
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  await page.getByLabel("Wedding date").fill("2027-09-15");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByLabel("Celebration location").fill("Lagos");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByLabel("WhatsApp number").fill("+234 800 000 0000");
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  await expect(page.getByText("Ada & Chidi")).toBeVisible();
+  await expect(page.getByText("Intermediate")).toBeVisible();
+  const whatsapp = page.getByRole("link", { name: "Continue on WhatsApp" });
+  await expect(whatsapp).toHaveAttribute("href", /wa\.me\/19517284218/);
+  await expect(page.getByRole("link", { name: "Send by email" })).toHaveAttribute(
+    "href",
+    /^mailto:halodyrane@gmail\.com/,
+  );
+});

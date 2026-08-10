@@ -1,0 +1,74 @@
+.page {
+  background: #000;
+  min-height: 100svh;
+}
+
+.navigation {
+  align-items: center;
+  color: #fff;
+  display: flex;
+  font-family: "Dyrane Intake", "Space Grotesk", Arial, sans-serif;
+  font-size: 11px;
+  justify-content: space-between;
+  left: clamp(20px, 6vw, 96px);
+  letter-spacing: 0.06em;
+  min-height: 74px;
+  position: absolute;
+  right: clamp(20px, 6vw, 96px);
+  text-transform: uppercase;
+  top: 0;
+  z-index: 4;
+}
+
+.navigation a {
+  color: #fff;
+  min-height: 44px;
+  text-decoration: none;
+  text-transform: none;
+}
+
+.navigation span {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.replyField {
+  margin-top: 22px;
+}
+
+.privacy {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 11px;
+  line-height: 1.5;
+  margin: 18px 0 0;
+}
+
+.handoffs {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.handoffs a:first-child {
+  background: #ffd21e;
+  color: #000;
+}
+
+.handoffs a:last-child {
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.35);
+  text-underline-offset: 5px;
+}
+
+@media (max-width: 700px) {
+  .navigation {
+    left: 20px;
+    right: 20px;
+  }
+
+  .handoffs {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

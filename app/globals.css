@@ -2274,8 +2274,8 @@ body.live-opening-locked{overflow:hidden}
   .offer-primary-action:active{transform:scale(.98)}
 }
 @keyframes offer-arrive{
-  from{opacity:0;transform:translateY(28px)}
-  to{opacity:1;transform:translateY(0)}
+  from{transform:translateY(28px)}
+  to{transform:translateY(0)}
 }
 @keyframes offer-portrait-arrive{
   from{opacity:0;transform:translateX(6%) scale(.98)}

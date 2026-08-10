@@ -499,12 +499,11 @@
 .uploadForm,
 .collectionClosed,
 .receivedState {
-  background: #101010;
+  background: transparent;
   display: grid;
-  gap: 32px;
   margin: 0 auto clamp(80px, 13svh, 150px);
-  max-width: 760px;
-  padding: clamp(28px, 6vw, 68px);
+  max-width: 1080px;
+  padding: 0;
 }
 
 .photoPicker {
@@ -584,6 +583,13 @@
   gap: 14px;
   grid-template-columns: 22px 1fr;
   line-height: 1.6;
+}
+
+.retentionCopy {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+  margin-top: 16px !important;
 }
 
 .consentChoice input {

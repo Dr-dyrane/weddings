@@ -44,6 +44,7 @@ describe("public wedding metadata", () => {
   it("gives the bare domain its own Dyrane Weddings OGB", () => {
     const metadata = getDyraneWeddingsMetadata();
 
+    expect(metadata.description).toContain("digital wedding experiences");
     expect(metadata.openGraph).toMatchObject({
       title: "Dyrane Weddings",
       url: "/",

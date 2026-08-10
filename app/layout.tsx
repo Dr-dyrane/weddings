@@ -22,7 +22,8 @@ export const metadata: Metadata = {
     default: "Dyrane Weddings",
     template: "%s · Dyrane Weddings",
   },
-  description: "Personal invitations, beautifully told.",
+  description:
+    "Personal digital wedding experiences, created to be felt before the day begins.",
   ...getWeddingBrandMetadata(getYardstickWedding()),
 };
 

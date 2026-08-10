@@ -132,9 +132,20 @@ export const authoringWeddingSchema = z.object({
     eyebrow: z.string().min(1),
     title: z.string().min(1),
     guidance: z.string().min(1),
-    paletteLabel: z.string().min(1).max(80),
+    weddingPartyPaletteLabel: z.string().min(1).max(80),
+    weddingPartyPalette: z
+      .array(
+        z.object({
+          name: z.string().min(1),
+          hex: z.string().regex(/^#[0-9a-f]{6}$/i),
+        }),
+      )
+      .min(1)
+      .max(4),
+    guestPaletteLabel: z.string().min(1).max(80),
+    guestGuidance: z.string().min(1).max(180),
     reservation: z.string().min(1).max(180),
-    palette: z
+    guestPalette: z
       .array(
         z.object({
           name: z.string().min(1),

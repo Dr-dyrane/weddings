@@ -1568,8 +1568,6 @@ body.live-opening-locked{overflow:hidden}
 
 .journey-dress{
   --guest-emerald:#0d3b2e;
-  --guest-oxblood:#5b1728;
-  --guest-cocoa:#6b4b3e;
   align-items:center;
   display:flex;
   min-height:145svh;
@@ -1582,11 +1580,17 @@ body.live-opening-locked{overflow:hidden}
   max-width:780px;
   margin-top:32px;
 }
+.journey-palette-groups{
+  display:grid;
+  gap:clamp(42px,6vw,86px);
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  margin-top:58px;
+  max-width:940px;
+}
 .journey-palette-label{
   color:#fff;
   font-size:10px;
   letter-spacing:.16em;
-  margin-top:58px;
   text-transform:uppercase;
 }
 .journey-palette{
@@ -1607,7 +1611,14 @@ body.live-opening-locked{overflow:hidden}
 }
 .journey-palette li:nth-child(even) i{transform:rotate(-7deg)}
 .journey-palette span{color:var(--journey-muted);font-size:11px}
-.journey-palette li:first-child span{color:rgba(255,255,255,.76)}
+.journey-palette-group-guest .journey-palette li:first-child span{color:rgba(255,255,255,.76)}
+.journey-guest-guidance{
+  color:rgba(255,255,255,.68);
+  font-size:12px;
+  line-height:1.55;
+  margin-top:24px;
+  max-width:360px;
+}
 .journey-dress-reservation{
   color:rgba(255,255,255,.44);
   font-size:11px;
@@ -1803,7 +1814,7 @@ body.live-opening-locked{overflow:hidden}
 
   .journey-dress{align-items:flex-start;min-height:150svh}
   .journey-dress-guidance{font-size:17px;line-height:1.5}
-  .journey-palette-label{margin-top:44px}
+  .journey-palette-groups{gap:40px;grid-template-columns:1fr;margin-top:44px}
   .journey-palette{display:grid;gap:20px;grid-template-columns:1fr 1fr;margin-top:22px}
   .journey-dress-reservation{max-width:320px}
 

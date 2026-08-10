@@ -910,15 +910,43 @@ export function WeddingExperience({
           <p className="journey-eyebrow">{wedding.dress.eyebrow}</p>
           <h2>{wedding.dress.title}</h2>
           <p className="journey-dress-guidance">{wedding.dress.guidance}</p>
-          <p className="journey-palette-label">{wedding.dress.paletteLabel}</p>
-          <ul className="journey-palette" aria-label={wedding.dress.paletteLabel}>
-            {wedding.dress.palette.map((colour) => (
-              <li key={colour.name}>
-                <i aria-hidden="true" style={{ background: colour.hex }} />
-                <span>{colour.name}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="journey-palette-groups">
+            <div className="journey-palette-group">
+              <p className="journey-palette-label">
+                {wedding.dress.weddingPartyPaletteLabel}
+              </p>
+              <ul
+                className="journey-palette"
+                aria-label={wedding.dress.weddingPartyPaletteLabel}
+              >
+                {wedding.dress.weddingPartyPalette.map((colour) => (
+                  <li key={colour.name}>
+                    <i aria-hidden="true" style={{ background: colour.hex }} />
+                    <span>{colour.name}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="journey-palette-group journey-palette-group-guest">
+              <p className="journey-palette-label">
+                {wedding.dress.guestPaletteLabel}
+              </p>
+              <ul
+                className="journey-palette"
+                aria-label={wedding.dress.guestPaletteLabel}
+              >
+                {wedding.dress.guestPalette.map((colour) => (
+                  <li key={colour.name}>
+                    <i aria-hidden="true" style={{ background: colour.hex }} />
+                    <span>{colour.name}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="journey-guest-guidance">
+                {wedding.dress.guestGuidance}
+              </p>
+            </div>
+          </div>
           <p className="journey-dress-reservation">{wedding.dress.reservation}</p>
         </div>
       </section>

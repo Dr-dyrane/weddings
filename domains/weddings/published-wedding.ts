@@ -82,9 +82,20 @@ export const publishedWeddingSchema = z.object({
     eyebrow: z.string().min(1),
     title: z.string().min(1),
     guidance: z.string().min(1),
-    paletteLabel: z.string().min(1).max(80),
+    weddingPartyPaletteLabel: z.string().min(1).max(80),
+    weddingPartyPalette: z
+      .array(
+        z.object({
+          name: z.string().min(1),
+          hex: z.string().regex(/^#[0-9a-f]{6}$/i),
+        }),
+      )
+      .min(1)
+      .max(4),
+    guestPaletteLabel: z.string().min(1).max(80),
+    guestGuidance: z.string().min(1).max(180),
     reservation: z.string().min(1).max(180),
-    palette: z
+    guestPalette: z
       .array(
         z.object({
           name: z.string().min(1),
@@ -195,15 +206,20 @@ const alexanderAndChioma = publishedWeddingSchema.parse({
   dress: {
     eyebrow: "Dress the part",
     title: "Dusk, devotion & a little magic.",
-    guidance:
-      "Formal or traditional elegance. Deep jewel tones and warm neutrals are encouraged, never required.",
-    paletteLabel: "Optional guest palette",
+    guidance: "Formal · traditional elegance · unmistakably you",
+    weddingPartyPaletteLabel: "Wedding party palette",
+    weddingPartyPalette: [
+      { name: "Pitch black", hex: "#000000" },
+      { name: "Pure white", hex: "#FFFFFF" },
+      { name: "Celebration yellow", hex: "#FFD21E" },
+    ],
+    guestPaletteLabel: "Optional guest colour",
+    guestGuidance:
+      "Emerald traditional attire—or black tailoring with one emerald accent.",
     reservation:
-      "Please reserve white, ivory, champagne and celebration yellow for the wedding party.",
-    palette: [
+      "Emerald is encouraged, never required. White, ivory, champagne and celebration yellow are reserved for the wedding party.",
+    guestPalette: [
       { name: "Deep emerald", hex: "#0D3B2E" },
-      { name: "Oxblood", hex: "#5B1728" },
-      { name: "Warm cocoa", hex: "#6B4B3E" },
     ],
   },
   people: [],

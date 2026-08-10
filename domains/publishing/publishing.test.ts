@@ -75,9 +75,12 @@ function createApprovedDraft(
       eyebrow: "Dress the part",
       title: "Dusk, devotion & a little magic.",
       guidance: "Formal",
-      paletteLabel: "Optional guest palette",
+      weddingPartyPaletteLabel: "Wedding party palette",
+      weddingPartyPalette: [{ name: "Pitch black", hex: "#000000" }],
+      guestPaletteLabel: "Optional guest colour",
+      guestGuidance: "Black tailoring with one emerald accent.",
       reservation: "Please reserve white for the wedding party.",
-      palette: [{ name: "Pitch black", hex: "#000000" }],
+      guestPalette: [{ name: "Deep emerald", hex: "#0D3B2E" }],
     },
     people: [
       {

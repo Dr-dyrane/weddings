@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import {
@@ -48,6 +49,12 @@ function getPackage(packageId: WeddingPackage["id"]) {
   return weddingPackages.find((item) => item.id === packageId) ?? weddingPackages[0];
 }
 
+function getPackageId(value: string | null) {
+  return weddingPackages.some((item) => item.id === value)
+    ? (value as WeddingPackage["id"])
+    : undefined;
+}
+
 function isReplyAddressValid(channel: "whatsapp" | "email", value: string) {
   const trimmed = value.trim();
   if (channel === "email") return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
@@ -59,9 +66,11 @@ export function PackageEnquiryJourney({
 }: {
   initialPackageId?: WeddingPackage["id"];
 }) {
-  const [activeIndex, setActiveIndex] = useState(initialPackageId ? 1 : 0);
+  const searchParams = useSearchParams();
+  const requestedPackageId = initialPackageId ?? getPackageId(searchParams.get("package"));
+  const [activeIndex, setActiveIndex] = useState(requestedPackageId ? 1 : 0);
   const [packageId, setPackageId] = useState<WeddingPackage["id"]>(
-    initialPackageId ?? "basic",
+    requestedPackageId ?? "basic",
   );
   const [firstName, setFirstName] = useState("");
   const [secondName, setSecondName] = useState("");

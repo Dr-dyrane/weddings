@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { weddingPackages, type WeddingPackage } from "@/domains/offers/wedding-packages";
 import { PackageEnquiryJourney } from "@/features/intake/package-enquiry-journey";
 
 export const metadata: Metadata = {
@@ -9,18 +9,10 @@ export const metadata: Metadata = {
   robots: { follow: false, index: false },
 };
 
-function getPackageId(value: string | string[] | undefined) {
-  const candidate = Array.isArray(value) ? value[0] : value;
-  return weddingPackages.some((item) => item.id === candidate)
-    ? (candidate as WeddingPackage["id"])
-    : undefined;
-}
-
-export default async function StartPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ package?: string | string[] }>;
-}) {
-  const params = await searchParams;
-  return <PackageEnquiryJourney initialPackageId={getPackageId(params.package)} />;
+export default function StartPage() {
+  return (
+    <Suspense fallback={<main aria-label="Loading private enquiry" style={{ background: "#000", minHeight: "100svh" }} />}>
+      <PackageEnquiryJourney />
+    </Suspense>
+  );
 }

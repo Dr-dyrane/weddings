@@ -1,6 +1,6 @@
 # Event Collaboration Lane
 
-Status: **captured — separate product lane**
+Status: **complete public vertical slice — production promotion pending**
 
 Captured: 2026-08-09
 
@@ -105,15 +105,46 @@ guest needs context about the people involved or when the event is underway.
 People, roles and vendor credits can then use the already-defined published
 snapshot consent model without being forced into the primary invitation path.
 
-## Decisions still open
+## Current implementation seam
 
-- Are people and vendor credits public, invitation-only or configurable per item?
-- Are vendor links attribution-only, contact links or both?
-- Is the Guest Camera anonymous, invitation-bound or protected by an event PIN?
-- Are videos included in the first release, or photographs only?
-- What are the upload limits and retention period?
-- Is there ever a live public gallery, or only a private couple archive?
-- Who can moderate during the wedding besides the couple?
+- `/{weddingSlug}/celebration` is the people and creative-credits hub. It
+  resolves fail-closed until the Studio publishes the hub, and then reveals
+  only records carrying both public visibility and explicit approval.
+- `/{weddingSlug}/celebration/photos` is the stable ordinary fallback and
+  no-scan status page. It contains no invitation or collection credential.
+- A live Event Kit QR targets
+  `/{weddingSlug}/celebration/photos/{opaqueCollectionCredential}`. That
+  credential is distinct from guest invitations, revocable, time-bounded,
+  wedding-bound, stored only as SHA-256 and resolved fail-closed.
+- Credential routes carry private `no-store`, `no-referrer`, `nosniff` and
+  noindex/nofollow/noarchive/nosnippet response headers.
+- Guest uploads accept one JPEG, PNG, WebP or HEIC photograph up to 12 MB,
+  require the current consent statement, show real upload progress and retry
+  truthfully with an idempotency key.
+- Originals live in private R2 storage. D1 stores collection policy, consent,
+  moderation and lifecycle metadata. Nothing becomes public automatically.
+- The authenticated Studio issues and prints one-time QR credentials, publishes
+  approved credits, previews/downloads contributions, approves or rejects them,
+  verifies deletion and revokes a collection immediately.
+- Public invitation replies are saved idempotently in D1, rate-limited without
+  storing raw IP addresses, visible only in the owner Studio and directly
+  deletable there.
+- Expired private media is purged opportunistically on collection and Studio
+  traffic according to each collection's retention window. Moderators retain a
+  direct delete control at all times.
+- Yardstick snapshot names remain simulation-only. They are never copied into
+  live credits tables or exposed by the public hub.
+
+## Locked first-release decisions
+
+- Credits are configurable per item and cannot publish without explicit couple
+  approval. Vendor entries are attribution-only in this slice.
+- The Guest Camera is an anonymous bearer QR, independent of invitation tokens.
+- The first release is photographs only, with a 12 MB limit.
+- Retention is collection-specific and defaults to 90 days after close.
+- There is no public gallery. Contributions remain in the private Studio inbox.
+- Studio access requires ChatGPT sign-in plus an explicit hosted owner-email
+  allowlist. No authenticated stranger may claim or operate a wedding.
 
 ## Non-goals for the current experience
 
@@ -121,6 +152,5 @@ snapshot consent model without being forced into the primary invitation path.
   six-chapter invitation.
 - Do not interrupt the approved opening, story, celebration, dress or RSVP flow.
 - Do not auto-publish contributed media.
-- Do not begin implementation until the access, consent, moderation and retention
-  decisions above are approved.
-
+- Do not add public galleries, video, facial recognition or automatic media
+  publication to this release.

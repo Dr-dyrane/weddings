@@ -84,6 +84,13 @@ reference-device frame and Core Web Vitals budgets.
 
 Introduce PostgreSQL authoring tables, immutable published revisions, consent and visibility approvals, media records, theme versions, and preview/publish/rollback controls. Generate stable share-card edition URLs from the published revision.
 
+Current local foundation: the relational PostgreSQL metadata, validated
+allowlist compiler, immutable revision envelope, optimistic atomic activation
+and rollback seam are implemented with an in-memory executable adapter. The
+production runtime still uses D1/SQLite. PostgreSQL provisioning, configuration,
+reviewed migrations and the production adapter remain required before this
+phase can be described as integrated.
+
 Exit gate: migrations reviewed; tenant isolation tests; draft data cannot leak; publication is atomic; previous revision rollback works; every public name and image has approval.
 
 ## Phase 3 — Guests and delivery
@@ -115,6 +122,15 @@ Exit gate: full keyboard and screen-reader alternative; audio controls and trans
 Add theme packs, wedding provisioning, domain management, team roles, operational dashboards, analytics, backups, retention/deletion workflows, observability, support tooling, and disaster recovery.
 
 Exit gate: second and third weddings launch without theme-specific source changes; load, security, backup restore, monitoring, rollback, and incident runbooks pass.
+
+## Event collaboration vertical slice
+
+The separate event-collaboration lane now has an executable D1/R2 adapter and a
+complete first workflow: approved public credits, authenticated Studio access,
+one-time revocable QR issuance, consented photo-only upload, progress/retry,
+private moderation, download, deletion and retention policy. It does not
+change the six-chapter invitation or pretend that the broader PostgreSQL Couple
+Studio roadmap is complete.
 
 ## UI/UX release gates
 

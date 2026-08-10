@@ -11,8 +11,8 @@ describe("published wedding snapshot", () => {
     const wedding = getYardstickWedding();
 
     expect(() => publishedWeddingSchema.parse(wedding)).not.toThrow();
-    expect(wedding.people).toHaveLength(4);
-    expect(wedding.vendors).toHaveLength(3);
+    expect(wedding.people).toEqual([]);
+    expect(wedding.vendors).toEqual([]);
     expect(wedding.events).toHaveLength(2);
     expect(wedding.couple).not.toHaveProperty("monogram");
     expect(wedding.dress.palette).toEqual([
@@ -31,6 +31,15 @@ describe("published wedding snapshot", () => {
     const result = publishedWeddingSchema.safeParse({
       ...wedding,
       status: "published",
+      people: [
+        {
+          id: "unapproved-person",
+          displayName: "Unapproved Person",
+          role: "Wedding party",
+          group: "wedding-party",
+          consent: "simulation",
+        },
+      ],
     });
 
     expect(result.success).toBe(false);
@@ -41,14 +50,23 @@ describe("published wedding snapshot", () => {
     const result = publishedWeddingSchema.safeParse({
       ...wedding,
       status: "published",
-      people: wedding.people.map((person) => ({
-        ...person,
-        consent: "approved",
-      })),
-      vendors: wedding.vendors.map((vendor) => ({
-        ...vendor,
-        consent: "approved",
-      })),
+      people: [
+        {
+          id: "approved-person",
+          displayName: "Approved Person",
+          role: "Wedding party",
+          group: "wedding-party",
+          consent: "approved",
+        },
+      ],
+      vendors: [
+        {
+          id: "approved-vendor",
+          displayName: "Approved Vendor",
+          category: "Photography",
+          consent: "approved",
+        },
+      ],
     });
 
     expect(result.success).toBe(true);

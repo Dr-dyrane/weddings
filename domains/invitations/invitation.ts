@@ -24,16 +24,16 @@ const publicProjection = invitationProjectionSchema.parse({
   salutation: "Honoured Guest",
   guestDisplayName: null,
   cardEdition: 3,
-  canRespond: false,
+  canRespond: true,
   allowedEventIds: null,
 });
 
-const previewInvitation = invitationProjectionSchema.parse({
+const personalizedInvitation = invitationProjectionSchema.parse({
   kind: "personalized",
   salutation: "Dr. Dyrane",
   guestDisplayName: "Dr. Dyrane",
   cardEdition: 3,
-  canRespond: false,
+  canRespond: true,
   allowedEventIds: ["vow", "gathering"],
 });
 
@@ -48,11 +48,11 @@ export function resolveInvitation(
   const wedding = getPublishedWedding(weddingSlug);
 
   if (
-    wedding?.status === "preview" &&
+    wedding &&
     weddingSlug === "the_ogranyas" &&
     opaqueToken === DEMO_INVITATION_TOKEN
   ) {
-    return previewInvitation;
+    return personalizedInvitation;
   }
 
   return null;

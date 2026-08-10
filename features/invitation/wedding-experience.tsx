@@ -4,7 +4,9 @@ import dynamic from "next/dynamic";
 import {
   Component,
   type CSSProperties,
+  type MouseEvent,
   type ReactNode,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -24,6 +26,7 @@ import { Choice, ChoiceGroup } from "@/ui/primitives/choice-group";
 import {
   ArrowRight,
   CalendarPlus,
+  ExternalLink,
   Heart,
   MapPin,
   Share2,
@@ -114,6 +117,53 @@ const chapterLabels: Record<JourneyChapter, string> = {
   rsvp: "Kindly reply",
 };
 
+type JourneyStaticScene = {
+  desktop: string;
+  mobile: string;
+};
+
+const journeyStaticScenes: Partial<Record<JourneyChapter, JourneyStaticScene>> = {
+  "story-one": {
+    desktop: "/concepts/scene-3-story-garden-desktop.webp",
+    mobile: "/concepts/scene-3-story-garden-mobile.webp",
+  },
+  "story-two": {
+    desktop: "/concepts/scene-4-wedding-circle-desktop.webp",
+    mobile: "/concepts/scene-4-wedding-circle-mobile.webp",
+  },
+  celebration: {
+    desktop: "/journey/pavilion-depth-desktop.webp",
+    mobile: "/journey/pavilion-depth-mobile.webp",
+  },
+  dress: {
+    desktop: "/concepts/scene-6-dress-atmosphere-desktop.webp",
+    mobile: "/concepts/scene-6-dress-atmosphere-mobile.webp",
+  },
+  rsvp: {
+    desktop: "/concepts/scene-7-rsvp-desktop.webp",
+    mobile: "/concepts/scene-7-rsvp-mobile.webp",
+  },
+};
+
+function JourneyStaticWorld({ chapter }: { chapter: JourneyChapter }) {
+  const scene = journeyStaticScenes[chapter];
+  if (!scene) return null;
+
+  return (
+    <div
+      aria-hidden="true"
+      className="journey-static-world"
+      data-static-chapter={chapter}
+      key={chapter}
+    >
+      <picture>
+        <source media="(max-width: 700px)" srcSet={scene.mobile} />
+        <img alt="" src={scene.desktop} />
+      </picture>
+    </div>
+  );
+}
+
 function useJourneyPosition(
   rootRef: React.RefObject<HTMLElement | null>,
   enabled: boolean,
@@ -183,14 +233,21 @@ function ShareInvitation({
   wedding: PublishedWedding;
 }) {
   const [feedback, setFeedback] = useState("");
+  const [showChoices, setShowChoices] = useState(false);
 
-  const share = async () => {
+  const share = async (kind: "public" | "personalized") => {
     const publicUrl = new URL(`/${wedding.slug}`, window.location.origin);
     publicUrl.searchParams.set("edition", String(invitation.cardEdition));
+    const personalizedUrl = new URL(window.location.href);
+    personalizedUrl.hash = "";
+    personalizedUrl.search = "";
+    const isPersonalized = kind === "personalized";
     const data = {
-      title: `${wedding.couple.first} & ${wedding.couple.second} — You’re invited`,
+      title: isPersonalized
+        ? `${invitation.salutation}, ${wedding.couple.first} & ${wedding.couple.second} invite you`
+        : `${wedding.couple.first} & ${wedding.couple.second} — You’re invited`,
       text: `${wedding.dateLabel} · ${wedding.locationLabel}`,
-      url: publicUrl.href,
+      url: isPersonalized ? personalizedUrl.href : publicUrl.href,
     };
 
     try {
@@ -209,10 +266,35 @@ function ShareInvitation({
 
   return (
     <div className="journey-share">
-      <Button tone="quiet" onPress={share}>
+      <Button
+        aria-expanded={invitation.kind === "personalized" ? showChoices : undefined}
+        tone="quiet"
+        onPress={() => {
+          if (invitation.kind === "personalized") {
+            setShowChoices((visible) => !visible);
+            return;
+          }
+          void share("public");
+        }}
+      >
         Share invitation
         <Share2 aria-hidden="true" size={16} strokeWidth={1.7} />
       </Button>
+
+      {invitation.kind === "personalized" && showChoices ? (
+        <div className="journey-share-choices">
+          <Button tone="quiet" onPress={() => void share("public")}>
+            Share public card
+          </Button>
+          <Button tone="quiet" onPress={() => void share("personalized")}>
+            Share my named card
+          </Button>
+          <p>
+            Your named link opens this private invitation and may reveal its
+            salutation. Social apps may keep its preview.
+          </p>
+        </div>
+      ) : null}
       <span aria-live="polite">{feedback}</span>
     </div>
   );
@@ -227,13 +309,77 @@ function RSVP({
 }) {
   const [answer, setAnswer] = useState<"yes" | "no" | "">("");
   const [meal, setMeal] = useState("Celebration menu");
+  const [guestName, setGuestName] = useState(invitation.guestDisplayName ?? "");
+  const [note, setNote] = useState("");
+  const [idempotencyKey, setIdempotencyKey] = useState<string | null>(null);
+  const [submission, setSubmission] = useState<
+    | { state: "idle" }
+    | { state: "sending" }
+    | { state: "error"; message: string }
+    | { state: "received" }
+  >({ state: "idle" });
+
+  if (submission.state === "received") {
+    return (
+      <div className="journey-rsvp-received" role="status">
+        <span aria-hidden="true" />
+        <p>Response received</p>
+        <h3>Thank you, {guestName}.</h3>
+        <p>
+          {answer === "yes"
+            ? `${wedding.couple.first} & ${wedding.couple.second} will be delighted to welcome you.`
+            : "Your message has been shared with the couple."}
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <form className="journey-rsvp-form" onSubmit={(event) => event.preventDefault()}>
+    <form
+      className="journey-rsvp-form"
+      onSubmit={async (event) => {
+        event.preventDefault();
+        if (!answer || !guestName.trim() || submission.state === "sending") return;
+        const key =
+          idempotencyKey ?? crypto.randomUUID().replaceAll("-", "");
+        if (!idempotencyKey) setIdempotencyKey(key);
+        setSubmission({ state: "sending" });
+        try {
+          const response = await fetch(
+            `/api/weddings/${encodeURIComponent(wedding.slug)}/rsvp`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                attendance: answer,
+                guestName: guestName.trim(),
+                idempotencyKey: key,
+                menuChoice: answer === "yes" ? meal : null,
+                note: note.trim() || null,
+              }),
+            },
+          );
+          const body = (await response.json().catch(() => null)) as
+            | { error?: string }
+            | null;
+          if (!response.ok) {
+            throw new Error(body?.error ?? "Your response could not be saved.");
+          }
+          setSubmission({ state: "received" });
+        } catch (error) {
+          setSubmission({
+            state: "error",
+            message:
+              error instanceof Error
+                ? error.message
+                : "Your response could not be saved.",
+          });
+        }
+      }}
+    >
       <ChoiceGroup
         aria-label="Will you join us?"
         className="journey-rsvp-choices"
-        isDisabled={!invitation.canRespond}
         value={answer}
         onChange={(value) => setAnswer(value as "yes" | "no")}
       >
@@ -247,24 +393,29 @@ function RSVP({
         </Choice>
       </ChoiceGroup>
 
-      {answer === "yes" ? (
+      {answer ? (
         <div className="journey-form-fields">
           <label>
             <span>Your name</span>
             <input
-              defaultValue={invitation.guestDisplayName ?? ""}
+              autoComplete="name"
+              maxLength={96}
+              onChange={(event) => setGuestName(event.target.value)}
               placeholder="How should we welcome you?"
               required
+              value={guestName}
             />
           </label>
-          <label>
-            <span>Table preference</span>
-            <select value={meal} onChange={(event) => setMeal(event.target.value)}>
-              <option>Celebration menu</option>
-              <option>Vegetarian menu</option>
-              <option>Tell us privately</option>
-            </select>
-          </label>
+          {answer === "yes" ? (
+            <label>
+              <span>Table preference</span>
+              <select value={meal} onChange={(event) => setMeal(event.target.value)}>
+                <option>Celebration menu</option>
+                <option>Vegetarian menu</option>
+                <option>Tell us privately</option>
+              </select>
+            </label>
+          ) : null}
         </div>
       ) : null}
 
@@ -272,26 +423,28 @@ function RSVP({
         <label className="journey-note-field">
           <span>Leave a little love</span>
           <textarea
+            maxLength={600}
+            onChange={(event) => setNote(event.target.value)}
             placeholder={`A note for ${wedding.couple.first} & ${wedding.couple.second}`}
+            value={note}
           />
         </label>
       ) : null}
 
-      <Button
-        className="journey-submit"
-        isDisabled={!answer || !invitation.canRespond}
-        type="submit"
-      >
-        {invitation.canRespond ? "Send my response" : "Replies open soon"}
-        <ArrowRight aria-hidden="true" size={17} strokeWidth={1.7} />
-      </Button>
-
-      {!invitation.canRespond ? (
-        <p className="journey-rsvp-status">
-          Your invitation is reserved. Personal replies open when the final
-          celebration details are confirmed.
+      {submission.state === "error" ? (
+        <p className="journey-rsvp-error" role="alert">
+          {submission.message}
         </p>
       ) : null}
+
+      <Button
+        className="journey-submit"
+        isDisabled={!answer || !guestName.trim() || submission.state === "sending"}
+        type="submit"
+      >
+        {submission.state === "sending" ? "Sending…" : "Send my response"}
+        <ArrowRight aria-hidden="true" size={17} strokeWidth={1.7} />
+      </Button>
     </form>
   );
 }
@@ -320,19 +473,40 @@ export function WeddingExperience({
     () => getWeddingDayProgress(wedding.dateLabel, wedding.timezone),
     [wedding.dateLabel, wedding.timezone],
   );
+  const markSpatialUnavailable = useCallback(
+    () => setSpatialUnavailable(true),
+    [],
+  );
   const dateParts = `${String(date.month).padStart(2, "0")} ${String(
     date.day,
   ).padStart(2, "0")}`;
   const portraitUrl = `/${wedding.slug}/opening-portrait?v=${encodeURIComponent(
     wedding.shareCard?.portraitAsset ?? String(wedding.revision),
   )}`;
+  const spatialMode =
+    opened && webgl && !spatialUnavailable ? "webgl" : opened ? "static" : "closed";
 
   const openExperience = () => {
+    document.body.classList.remove("live-opening-locked");
+    window.scrollTo(0, 0);
     setOpened(true);
     requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
       document.querySelector<HTMLElement>("#welcome-copy")?.focus({
         preventScroll: true,
       });
+    });
+  };
+
+  const skipExperience = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    document.body.classList.remove("live-opening-locked");
+    setOpened(true);
+    window.history.replaceState(null, "", "#details");
+    requestAnimationFrame(() => {
+      const details = document.querySelector<HTMLElement>("#details");
+      details?.scrollIntoView({ block: "start" });
+      details?.focus({ preventScroll: true });
     });
   };
 
@@ -340,20 +514,29 @@ export function WeddingExperience({
     <main
       className={`editorial-experience${opened ? " is-open" : ""}`}
       data-active-chapter={activeChapter}
+      data-spatial-mode={spatialMode}
       ref={rootRef}
       style={{
         "--opening-progress": progress,
         "--journey-progress": 0,
       } as CSSProperties}
     >
-      <a className="journey-skip" href="#details">
+      <noscript>
+        <style>{`.live-ogb-opening{display:none!important}`}</style>
+      </noscript>
+
+      <a className="journey-skip" href="#details" onClick={skipExperience}>
         Skip to celebration details
       </a>
 
       {opened && webgl && !spatialUnavailable ? (
-        <JourneySpatialBoundary onUnavailable={() => setSpatialUnavailable(true)}>
-          <JourneySpatialWorld />
+        <JourneySpatialBoundary onUnavailable={markSpatialUnavailable}>
+          <JourneySpatialWorld onUnavailable={markSpatialUnavailable} />
         </JourneySpatialBoundary>
+      ) : null}
+
+      {spatialMode === "static" ? (
+        <JourneyStaticWorld chapter={activeChapter} />
       ) : null}
 
       <div className="journey-chrome" aria-hidden={!opened}>
@@ -468,6 +651,13 @@ export function WeddingExperience({
             <a className="journey-action" href={calendarHref}>
               Add to calendar
               <CalendarPlus aria-hidden="true" size={16} strokeWidth={1.7} />
+            </a>
+            <a
+              className="journey-action"
+              href={`/${wedding.slug}/celebration`}
+            >
+              Celebration hub
+              <ExternalLink aria-hidden="true" size={16} strokeWidth={1.7} />
             </a>
             <ShareInvitation invitation={invitation} wedding={wedding} />
           </div>

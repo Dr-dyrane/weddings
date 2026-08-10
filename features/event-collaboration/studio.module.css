@@ -1,0 +1,457 @@
+@font-face {
+  font-display: swap;
+  font-family: "Dyrane Studio";
+  font-style: normal;
+  font-weight: 500;
+  src: url("/fonts/dyrane-space-grotesk.ttf") format("truetype");
+}
+
+.shell {
+  --yellow: #ffd21e;
+  --muted: rgba(255, 255, 255, 0.58);
+  background:
+    radial-gradient(ellipse at 82% 9%, rgba(255, 210, 30, 0.08), transparent 32%),
+    radial-gradient(ellipse at 10% 58%, rgba(255, 255, 255, 0.035), transparent 28%),
+    #000;
+  color: #fff;
+  font-family: "Dyrane Studio", "Space Grotesk", Arial, sans-serif;
+  min-height: 100svh;
+  padding: 0 clamp(18px, 4vw, 64px) 100px;
+  position: relative;
+}
+
+.shell::before {
+  background: linear-gradient(90deg, transparent, var(--yellow), transparent);
+  box-shadow: 0 0 52px rgba(255, 210, 30, 0.34);
+  content: "";
+  height: 2px;
+  left: 16vw;
+  opacity: 0.58;
+  pointer-events: none;
+  position: fixed;
+  top: 47svh;
+  transform: rotate(-7deg);
+  width: 68vw;
+  z-index: 0;
+}
+
+.shell > * {
+  position: relative;
+  z-index: 1;
+}
+
+.shell :where(h1, h2, p) {
+  margin: 0;
+}
+
+.shell :where(button, input, select) {
+  font: inherit;
+}
+
+.shell :where(a, button, input, select):focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 4px;
+}
+
+.navigation {
+  align-items: center;
+  display: flex;
+  font-size: 11px;
+  justify-content: space-between;
+  letter-spacing: 0.05em;
+  margin: 0 auto;
+  max-width: 1280px;
+  min-height: 80px;
+}
+
+.navigation a {
+  color: #fff;
+  min-height: 44px;
+  text-decoration: none;
+}
+
+.navigation span {
+  color: var(--muted);
+}
+
+.hero {
+  margin: 0 auto;
+  max-width: 1280px;
+  padding: clamp(70px, 12svh, 130px) 0 clamp(88px, 14svh, 160px);
+}
+
+.hero > p:first-child,
+.panelHeading p {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-size: clamp(64px, 9vw, 140px);
+  font-weight: 500;
+  letter-spacing: -0.075em;
+  line-height: 0.85;
+  margin-top: 28px;
+  max-width: 1080px;
+  text-wrap: balance;
+}
+
+.hero > p:last-child {
+  color: var(--muted);
+  font-size: clamp(16px, 1.8vw, 22px);
+  line-height: 1.55;
+  margin-top: 42px;
+  max-width: 700px;
+}
+
+.alert {
+  background: #38270a;
+  color: #ffe8a3;
+  margin: 0 auto 28px !important;
+  max-width: 1280px;
+  padding: 18px 20px;
+}
+
+.panel {
+  background: #101010;
+  margin: 0 auto 28px;
+  max-width: 1280px;
+  padding: clamp(24px, 5vw, 64px);
+}
+
+.panelHeading {
+  align-items: end;
+  display: flex;
+  gap: 28px;
+  justify-content: space-between;
+  margin-bottom: 48px;
+}
+
+.panelHeading h2 {
+  font-size: clamp(38px, 5vw, 72px);
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+  margin-top: 14px;
+}
+
+.panelHeading > span {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.panel button,
+.eventKit a,
+.inboxActions a {
+  align-items: center;
+  background: var(--yellow);
+  border: 0;
+  color: #000;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 10px;
+  justify-content: center;
+  letter-spacing: 0.08em;
+  min-height: 44px;
+  padding: 0 16px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.panel button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.formGrid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 50px;
+}
+
+.formGrid label {
+  display: grid;
+  gap: 10px;
+}
+
+.formGrid label > span {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.formGrid input,
+.formGrid select {
+  background: #222;
+  border: 0;
+  border-radius: 0;
+  color: #fff;
+  min-height: 50px;
+  padding: 0 14px;
+}
+
+.formGrid .approval {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.approval input {
+  accent-color: var(--yellow);
+  height: 22px;
+  min-height: 22px;
+  width: 22px;
+}
+
+.approval span {
+  line-height: 1.4;
+}
+
+.formGrid > button {
+  align-self: end;
+}
+
+.rows {
+  display: grid;
+  gap: 18px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rows li {
+  align-items: center;
+  background: #191919;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  min-height: 76px;
+  padding: 14px 16px;
+}
+
+.rows li > div {
+  display: grid;
+  gap: 6px;
+}
+
+.rows strong {
+  font-weight: 500;
+}
+
+.rows span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.eventKit {
+  background: var(--yellow);
+  color: #000;
+  display: grid;
+  gap: clamp(28px, 5vw, 64px);
+  grid-template-columns: minmax(180px, 360px) 1fr;
+  margin-bottom: 48px;
+  padding: clamp(20px, 4vw, 48px);
+}
+
+.eventKit img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.eventKit > div {
+  align-content: end;
+  display: grid;
+  gap: 20px;
+}
+
+.eventKit p {
+  font-size: clamp(20px, 2.7vw, 36px);
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.eventKit a {
+  background: #000;
+  color: #fff;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+  padding: 14px;
+  text-transform: none;
+}
+
+.eventKit button {
+  background: #000;
+  color: #fff;
+  justify-self: start;
+}
+
+.inbox {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.inbox article {
+  background: #191919;
+  display: grid;
+  gap: 16px;
+  padding: 12px;
+}
+
+.inbox article > img {
+  aspect-ratio: 4 / 3;
+  background: #252525;
+  display: block;
+  height: auto;
+  object-fit: cover;
+  width: 100%;
+}
+
+.inbox article > div:not(.inboxActions) {
+  display: grid;
+  gap: 6px;
+}
+
+.inbox article span,
+.empty {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.inboxActions {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.inboxActions button,
+.inboxActions a {
+  min-height: 40px;
+  padding: 0 8px;
+}
+
+.inboxActions button:last-child {
+  background: #2c2c2c;
+  color: #fff;
+}
+
+.rsvpRows {
+  display: grid;
+  gap: 14px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rsvpRows li {
+  align-items: start;
+  background: #191919;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr) auto;
+  padding: 20px;
+}
+
+.rsvpRows li > div {
+  display: grid;
+  gap: 7px;
+}
+
+.rsvpRows span,
+.rsvpRows time {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.rsvpMeta {
+  align-items: end;
+  display: grid;
+  gap: 10px;
+  justify-items: end;
+}
+
+.rsvpMeta button {
+  background: #2c2c2c;
+  color: #fff;
+  min-height: 40px;
+}
+
+.rsvpRows p {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+@media (max-width: 820px) {
+  .hero {
+    padding: 72px 0 96px;
+  }
+
+  .hero h1 {
+    font-size: clamp(60px, 18vw, 94px);
+  }
+
+  .panelHeading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .formGrid,
+  .inbox,
+  .eventKit {
+    grid-template-columns: 1fr;
+  }
+
+  .rows li {
+    align-items: start;
+    grid-template-columns: 1fr auto;
+  }
+
+  .rsvpRows li {
+    grid-template-columns: 1fr;
+  }
+
+  .rsvpMeta {
+    justify-items: start;
+  }
+
+  .rows li > button {
+    grid-column: 1 / -1;
+  }
+}
+
+@media print {
+  .shell > :not(.panel:has(.eventKit)),
+  .panel:has(.eventKit) > :not(.eventKit) {
+    display: none !important;
+  }
+
+  .shell,
+  .panel,
+  .eventKit {
+    background: #ffd21e !important;
+    color: #000 !important;
+    margin: 0;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .eventKit {
+    align-items: center;
+    display: grid !important;
+    padding: 12mm;
+  }
+
+  .eventKit button {
+    display: none;
+  }
+}

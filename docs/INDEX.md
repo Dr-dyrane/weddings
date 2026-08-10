@@ -31,6 +31,8 @@ This directory is the durable memory for the product. A decision is not consider
   QR-accessible guest-media collection. It is deliberately outside the current
   six-chapter invitation and carries its own access, consent and moderation
   decisions.
+- `EVENT-COLLABORATION-OPERATIONS.md` — activation, event-day operation,
+  privacy, recovery and production-owner requirements for that lane.
 
 ## Status language
 
@@ -63,8 +65,34 @@ This directory is the durable memory for the product. A decision is not consider
 - The restrained spatial layer is implemented behind the semantic journey. It
   uses one thin, chapter-specific light artifact at a time, demand rendering,
   native-scroll progress and eased camera knots. It introduces no additional
-  interface colour, preserves full DOM parity and does not mount for reduced
-  motion or unavailable WebGL.
-- The next boundary is release evidence: focused accessibility checks, the
-  final integration gate and production smoke after the semantic journey is
-  promoted.
+  interface colour and preserves full DOM parity.
+- Reduced motion, unavailable WebGL and live WebGL context loss now resolve to
+  independently composed desktop/mobile chapter plates rather than an empty
+  black journey. The static world preserves the same six chapters and keeps
+  text and actions in the semantic DOM.
+- Personalized invitations again disclose the choice between a generic public
+  card and the recipient's named link, including the salutation and social
+  preview caching warning required by `PRIVACY-CONTRACT.md`.
+- Automated release evidence now covers the current guest path, persisted
+  public RSVP, focus movement, public/personalized sharing, static parity,
+  context loss, artifacts and invalid credentials in desktop Chromium and a
+  Pixel 7 profile. Exact retained evidence and remaining manual gates are in
+  `VERIFICATION-MATRIX.md`.
+- Phase 1 lab evidence now also covers 320px reflow, a 640px CSS reflow
+  equivalent for a 1280px viewport at 200%, synthetic reverse-scroll
+  interruption, Playwright Chromium/Firefox/WebKit engines, 44px action targets
+  and a single-run performance sample. These are not substitutes for the still
+  open physical-device and manual accessibility gates.
+- Phase 2 has begun at the domain boundary: PostgreSQL authoring metadata, an
+  allowlisted draft-to-snapshot compiler, append-only immutable revisions,
+  atomic activation and rollback semantics are executable locally. The active
+  runtime remains D1/SQLite; PostgreSQL provisioning, reviewed migration and a
+  production transaction adapter are explicit dependencies, not completed work.
+- The separate event-collaboration lane now implements approved public credits,
+  a revocable QR guest camera, consented private R2 uploads, D1 operational
+  state, persisted RSVP replies and an authenticated moderation Studio. Its
+  public hub is linked from the primary six-chapter invitation.
+- The next boundary is literal 200% zoom, real high-refresh reverse-scroll
+  observation, physical iOS/Android, branded desktop Safari/Firefox/Edge,
+  screen reader, field Core Web Vitals and mobile GPU budgets, followed by
+  production smoke after promotion.

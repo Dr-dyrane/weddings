@@ -128,7 +128,7 @@ const alexanderAndChioma = publishedWeddingSchema.parse({
   id: "wedding_alexander_chioma",
   slug: "the_ogranyas",
   revision: 1,
-  status: "preview",
+  status: "published",
   locale: "en-NG",
   timezone: "Africa/Lagos",
   couple: {
@@ -200,56 +200,8 @@ const alexanderAndChioma = publishedWeddingSchema.parse({
       { name: "Celebration yellow", hex: "#FFD21E" },
     ],
   },
-  people: [
-    {
-      id: "person-adaeze",
-      displayName: "Adaeze Ojukwu",
-      role: "Maid of Honour",
-      group: "wedding-party",
-      consent: "simulation",
-    },
-    {
-      id: "person-tunde",
-      displayName: "Tunde Adebayo",
-      role: "Best Man",
-      group: "wedding-party",
-      consent: "simulation",
-    },
-    {
-      id: "person-nneka",
-      displayName: "Nneka Eze",
-      role: "Chief Bridesmaid",
-      group: "wedding-party",
-      consent: "simulation",
-    },
-    {
-      id: "person-chinedu",
-      displayName: "Chinedu Okafor",
-      role: "Master of Ceremonies",
-      group: "ceremony",
-      consent: "simulation",
-    },
-  ],
-  vendors: [
-    {
-      id: "vendor-violet-palm",
-      displayName: "Violet & Palm Atelier",
-      category: "Floral direction",
-      consent: "simulation",
-    },
-    {
-      id: "vendor-sunday-light",
-      displayName: "Sunday Light House",
-      category: "Photography & film",
-      consent: "simulation",
-    },
-    {
-      id: "vendor-orchid-table",
-      displayName: "The Orchid Table",
-      category: "Celebration dining",
-      consent: "simulation",
-    },
-  ],
+  people: [],
+  vendors: [],
   theme: {
     id: "modern-heirloom",
     version: 1,

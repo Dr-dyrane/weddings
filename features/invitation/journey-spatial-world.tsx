@@ -658,7 +658,11 @@ function SpatialJourney() {
   );
 }
 
-export function JourneySpatialWorld() {
+export function JourneySpatialWorld({
+  onUnavailable,
+}: {
+  onUnavailable: () => void;
+}) {
   return (
     <Canvas
       camera={{ far: 90, fov: 38, near: 0.1, position: [0, 0, 8] }}
@@ -670,7 +674,18 @@ export function JourneySpatialWorld() {
         antialias: true,
         powerPreference: "high-performance",
       }}
-      onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
+      onCreated={({ gl }) => {
+        gl.setClearColor(0x000000, 0);
+        gl.domElement.addEventListener(
+          "webglcontextlost",
+          (event) => {
+            event.preventDefault();
+            onUnavailable();
+          },
+          { once: true },
+        );
+        gl.domElement.dataset.contextLossReady = "true";
+      }}
     >
       <Suspense fallback={null}>
         <SpatialJourney />

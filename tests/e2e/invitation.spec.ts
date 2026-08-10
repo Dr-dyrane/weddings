@@ -6,53 +6,67 @@ import { DEMO_INVITATION_TOKEN } from "../../domains/invitations/invitation";
 test("the public invitation remains useful before the optional presentation", async ({
   page,
 }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/the_ogranyas");
 
+  const open = page.getByRole("button", { name: "Open invitation" });
+  await expect(open).toBeEnabled();
+  await open.click();
   await expect(
     page.getByRole("heading", { name: "You’re invited to celebrate with us." }),
   ).toBeVisible();
-  await expect(page.getByRole("link", { name: "View invitation details" })).toBeVisible();
-  await expect(page.getByText("Adaeze Ojukwu")).toBeAttached();
-  await expect(page.getByText("Violet & Palm Atelier")).toBeAttached();
+  await page.locator("#details").scrollIntoViewIfNeeded();
+  await expect(page.locator("#details")).toContainText("The Glass House");
+  await expect(page.locator("#details")).toContainText("Moon Garden");
+  await expect(page.getByRole("link", { name: "Add to calendar" })).toBeVisible();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     "content",
-    /noindex/,
+    /index, follow/,
   );
 
-  const accessibility = await new AxeBuilder({ page }).analyze();
+  const accessibility = await new AxeBuilder({ page })
+    // This oversized date is incidental artwork; the adjacent semantic <time>
+    // carries the same date at full contrast for assistive technology.
+    .exclude(".journey-welcome-date")
+    .analyze();
   const blockers = accessibility.violations.filter((violation) =>
     ["critical", "serious"].includes(violation.impact ?? ""),
   );
   expect(blockers).toEqual([]);
 });
 
-test("attendance is a semantic single choice with progressive disclosure", async ({
+test("the public RSVP exposes a real guest response form", async ({
   page,
 }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/the_ogranyas");
+  await page.getByRole("button", { name: "Open invitation" }).click();
+  await page.locator("#rsvp").scrollIntoViewIfNeeded();
 
   const attending = page.getByRole("radio", { name: "Joyfully, yes" });
-  const declining = page.getByRole("radio", { name: "With love, no" });
-  const attendingControl = page
-    .locator("label.dyrane-choice")
-    .filter({ has: attending });
   await expect(attending).not.toBeChecked();
-  await attendingControl.click();
+  await expect(attending).toBeEnabled();
+  await page.locator("label").filter({ hasText: "Joyfully, yes" }).click();
   await expect(attending).toBeChecked();
-  await expect(declining).not.toBeChecked();
-  await expect(
-    page.getByRole("textbox", { name: "How should we welcome you?" }),
-  ).toBeVisible();
-  await expect(page.getByRole("button", { name: /Replies open soon/ })).toBeDisabled();
+  await page.getByPlaceholder("How should we welcome you?").fill("Release Guest");
+  const submit = page.getByRole("button", { name: "Send my response" });
+  await expect(submit).toBeEnabled();
 });
 
 test("opening and bypass actions move focus to meaningful content", async ({
   page,
 }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/the_ogranyas");
 
-  await page.getByRole("button", { name: "Open your invitation" }).click();
-  await expect(page.locator("#story")).toBeFocused();
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await page.getByRole("button", { name: "Open invitation" }).click();
+  await expect(page.locator("#welcome-copy")).toBeFocused();
+  await expect(page.locator("main")).toHaveAttribute(
+    "data-active-chapter",
+    "welcome",
+  );
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
 
   await page.goto("/the_ogranyas");
   const skip = page.getByRole("link", {
@@ -61,29 +75,53 @@ test("opening and bypass actions move focus to meaningful content", async ({
   await skip.focus();
   await skip.click();
   await expect(page.locator("#details")).toBeFocused();
+  await expect(page.locator("main")).toHaveClass(/is-open/);
+  await expect(page.locator(".live-ogb-opening")).toHaveClass(/is-hidden/);
+  await expect(page.locator("body")).not.toHaveClass(/live-opening-locked/);
 });
 
-test("a personalized invitation is private and recipient-specific", async ({
+test("the no-JavaScript bypass exposes the semantic journey", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+
+  await page.goto("/the_ogranyas");
+  const skip = page.getByRole("link", { name: "Skip to celebration details" });
+  await skip.focus();
+  await skip.press("Enter");
+
+  await expect(page).toHaveURL(/#details$/);
+  await expect(page.locator("#details")).toBeVisible();
+  await expect(page.locator(".live-ogb-opening")).toBeHidden();
+  await expect(page.locator("body")).not.toHaveClass(/live-opening-locked/);
+
+  await context.close();
+});
+
+test("a personalized invitation is private and makes sharing consequences explicit", async ({
   page,
   request,
 }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   const response = await page.goto(
     `/the_ogranyas/invite/${DEMO_INVITATION_TOKEN}`,
   );
 
-  await expect(page.getByText("Reserved for Dr. Dyrane")).toBeVisible();
+  await page.getByRole("button", { name: "Open invitation" }).click();
+  await expect(page.getByText("For Dr. Dyrane")).toBeVisible();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     "content",
     /noindex/,
   );
   expect(response?.headers()["cache-control"]).toContain("no-store");
   expect(response?.headers()["referrer-policy"]).toBe("no-referrer");
+
+  await page.locator("#details").scrollIntoViewIfNeeded();
+  await page.getByRole("button", { name: "Share invitation" }).click();
   await expect(page.getByRole("button", { name: "Share public card" })).toBeVisible();
-  await expect(page.getByText("Share my named card")).toBeVisible();
-  await page.getByText("Share my named card").click();
-  await expect(
-    page.getByText(/Social apps may keep its preview/),
-  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Share my named card" })).toBeVisible();
+  await expect(page.getByText(/Social apps may keep its preview/)).toBeVisible();
 
   const personalizedCardUrl = await page
     .locator('meta[property="og:image"]')
@@ -97,15 +135,58 @@ test("a personalized invitation is private and recipient-specific", async ({
   expect(personalizedCard.headers()["x-robots-tag"]).toContain("noindex");
 });
 
-test("reduced motion keeps the full invitation and removes the spatial canvas", async ({
+test("reduced motion keeps authored chapter art and removes the spatial canvas", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/the_ogranyas");
 
+  await page.getByRole("button", { name: "Open invitation" }).click();
+  await expect(page.locator("main")).toHaveAttribute("data-spatial-mode", "static");
   await expect(page.locator("canvas")).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "View invitation details" })).toBeVisible();
+  await page.locator("#story").scrollIntoViewIfNeeded();
+  await expect(page.locator(".journey-static-world")).toHaveAttribute(
+    "data-static-chapter",
+    "story-one",
+  );
+  await expect(page.locator(".journey-static-world img")).toHaveAttribute(
+    "src",
+    "/concepts/scene-3-story-garden-desktop.webp",
+  );
+  await page.locator("#details").scrollIntoViewIfNeeded();
   await expect(page.locator("#details")).toContainText("The Glass House");
+});
+
+test("WebGL context loss swaps the live world for its authored static equivalent", async ({
+  browserName,
+  page,
+}) => {
+  test.skip(
+    browserName !== "chromium",
+    "The release gate exercises context loss in Chromium.",
+  );
+
+  await page.goto("/the_ogranyas");
+  const open = page.getByRole("button", { name: "Open invitation" });
+  await expect(open).toBeEnabled({ timeout: 10_000 });
+  await open.click();
+  await expect(page.locator("main")).toHaveAttribute("data-spatial-mode", "webgl");
+  await expect(page.locator("canvas")).toHaveAttribute(
+    "data-context-loss-ready",
+    "true",
+  );
+
+  await page.locator("canvas").evaluate((canvas) =>
+    canvas.dispatchEvent(new Event("webglcontextlost", { cancelable: true })),
+  );
+
+  await expect(page.locator("main")).toHaveAttribute("data-spatial-mode", "static");
+  await expect(page.locator("canvas")).toHaveCount(0);
+  await page.locator("#story").scrollIntoViewIfNeeded();
+  await expect(page.locator(".journey-static-world")).toHaveAttribute(
+    "data-static-chapter",
+    "story-one",
+  );
 });
 
 test("an invalid credential reveals no recipient", async ({ page }) => {
@@ -136,7 +217,7 @@ test("the share card and calendar endpoints return real artifacts", async ({
   const calendar = await request.get("/the_ogranyas/calendar");
   expect(calendar.ok()).toBeTruthy();
   expect(calendar.headers()["content-type"]).toContain("text/calendar");
-  expect(calendar.headers()["cache-control"]).toContain("no-store");
+  expect(calendar.headers()["cache-control"]).toContain("public");
   expect(await calendar.text()).toContain("BEGIN:VCALENDAR");
 });
 

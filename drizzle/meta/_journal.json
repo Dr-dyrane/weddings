@@ -1,5 +1,27 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1786322930576,
+      "tag": "0000_melodic_valkyrie",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1786324099124,
+      "tag": "0001_far_zaladane",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1786326099025,
+      "tag": "0002_keen_silver_fox",
+      "breakpoints": true
+    }
+  ]
 }

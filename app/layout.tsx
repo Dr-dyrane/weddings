@@ -24,9 +24,6 @@ export const metadata: Metadata = {
   },
   description: "Personal invitations, beautifully told.",
   ...getWeddingBrandMetadata(getYardstickWedding()),
-  ...(process.env.NODE_ENV === "development"
-    ? { other: { "codex-preview": "development" } }
-    : {}),
 };
 
 export const viewport: Viewport = {

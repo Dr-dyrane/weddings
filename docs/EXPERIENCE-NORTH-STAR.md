@@ -112,8 +112,9 @@ separate decorative invitation. Its locked sequence is:
 3. count the day from `01` through `15`;
 4. grow the yellow threshold to the wedding's live calendar progress;
 5. reveal the couple contour in the same left-to-right direction as the light;
-6. let the progress slit resolve into the sole round `Play` action only after
-   the frame settles.
+6. contract the progress slit into a centred `34 × 34` yellow threshold—the
+   exact height of the approved bar—then let that same shape grow into the
+   sole round `64 × 64` `Play` action after the frame settles.
 
 No header, monogram, RSVP action or other application chrome is visible before
 the threshold plays. Reduced motion skips the count and reveal, presenting the
@@ -188,6 +189,11 @@ behind semantic copy, disappear before RSVP controls, and never become fog,
 particles, bloom or ornamental post-processing. Authored plates separate
 background, middle and foreground sampling so parallax reads as layered space
 rather than a flat image translation.
+
+The passage must remain perceptible on mobile as well as desktop: the camera
+may bank a few degrees more on the narrow path, while the near foliage and
+fabric travel far enough laterally to enter and leave the frame. Yellow light
+must catch their camera-facing edges briefly; it must not become a global glow.
 
 The pavilion plate is a composed destination, not a surface to skew around the
 camera. Its plane remains perpendicular to the approach and uses only internal

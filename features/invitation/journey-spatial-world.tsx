@@ -237,16 +237,16 @@ const DESKTOP_WORLD_PATH: readonly WorldPoint[] = [
 const MOBILE_WORLD_PATH: readonly WorldPoint[] = [
   [0, 0, 8],
   [0.05, 0.02, 6.2],
-  [0.18, -0.04, 1.6],
-  [0.55, 0.12, -5.2],
-  [0.65, 0, -10.2],
-  [0.32, -0.12, -15.2],
+  [0.24, -0.05, 1.6],
+  [0.72, 0.15, -5.2],
+  [0.82, 0, -10.2],
+  [0.38, -0.15, -15.2],
   [0.12, 0.05, -19.4],
   [0.06, 0.02, -22],
   [0.04, 0, -25.1],
-  [0.28, -0.04, -29.6],
-  [0.6, 0.05, -34],
-  [0.25, -0.04, -38.8],
+  [0.36, -0.05, -29.6],
+  [0.76, 0.07, -34],
+  [0.32, -0.05, -38.8],
   [0, -0.15, -43],
 ] as const;
 
@@ -581,9 +581,9 @@ function ForegroundOcclusionGates({ motion }: { motion: JourneyMotion }) {
 
     storyGate.current.position.x = THREE.MathUtils.damp(
       storyGate.current.position.x,
-      (mobile ? 1.55 : 3.25) +
-        motion.pointer.current.x * (mobile ? 0.06 : 0.18) +
-        (storyLocal - 0.5) * (mobile ? 0.28 : 0.72),
+      (mobile ? 1.16 : 2.7) +
+        motion.pointer.current.x * (mobile ? 0.1 : 0.22) +
+        (storyLocal - 0.5) * (mobile ? 0.72 : 1.2),
       5.2,
       delta,
     );
@@ -595,9 +595,9 @@ function ForegroundOcclusionGates({ motion }: { motion: JourneyMotion }) {
     );
     proposalGate.current.position.x = THREE.MathUtils.damp(
       proposalGate.current.position.x,
-      (mobile ? -1.38 : -1.95) -
-        motion.pointer.current.x * (mobile ? 0.05 : 0.16) -
-        (proposalLocal - 0.5) * (mobile ? 0.24 : 0.64),
+      (mobile ? -1.05 : -1.68) -
+        motion.pointer.current.x * (mobile ? 0.09 : 0.2) -
+        (proposalLocal - 0.5) * (mobile ? 0.66 : 1.08),
       5,
       delta,
     );
@@ -609,9 +609,9 @@ function ForegroundOcclusionGates({ motion }: { motion: JourneyMotion }) {
     );
     fabricGate.current.position.x = THREE.MathUtils.damp(
       fabricGate.current.position.x,
-      (mobile ? 1.62 : 3) +
-        motion.pointer.current.x * (mobile ? 0.04 : 0.12) +
-        (fabricLocal - 0.5) * (mobile ? 0.32 : 0.85),
+      (mobile ? 1.18 : 2.42) +
+        motion.pointer.current.x * (mobile ? 0.08 : 0.18) +
+        (fabricLocal - 0.5) * (mobile ? 0.78 : 1.32),
       4.8,
       delta,
     );
@@ -627,8 +627,8 @@ function ForegroundOcclusionGates({ motion }: { motion: JourneyMotion }) {
         object instanceof THREE.Mesh &&
         object.material instanceof THREE.MeshStandardMaterial
       ) {
-        object.material.opacity = storyOpacity * (mobile ? 0.5 : 0.78);
-        object.material.emissiveIntensity = 0.08 + storyOpacity * 0.16;
+        object.material.opacity = storyOpacity * (mobile ? 0.64 : 0.86);
+        object.material.emissiveIntensity = 0.08 + storyOpacity * 0.22;
       }
     });
     proposalGate.current.traverse((object) => {
@@ -636,8 +636,8 @@ function ForegroundOcclusionGates({ motion }: { motion: JourneyMotion }) {
         object instanceof THREE.Mesh &&
         object.material instanceof THREE.MeshStandardMaterial
       ) {
-        object.material.opacity = proposalOpacity * (mobile ? 0.48 : 0.74);
-        object.material.emissiveIntensity = 0.08 + proposalOpacity * 0.14;
+        object.material.opacity = proposalOpacity * (mobile ? 0.6 : 0.82);
+        object.material.emissiveIntensity = 0.08 + proposalOpacity * 0.2;
       }
     });
     fabricGate.current.traverse((object) => {
@@ -645,13 +645,13 @@ function ForegroundOcclusionGates({ motion }: { motion: JourneyMotion }) {
         object instanceof THREE.Mesh &&
         object.material instanceof THREE.MeshStandardMaterial
       ) {
-        object.material.opacity = fabricOpacity * (mobile ? 0.55 : 0.82);
-        object.material.emissiveIntensity = 0.08 + fabricOpacity * 0.14;
+        object.material.opacity = fabricOpacity * (mobile ? 0.68 : 0.88);
+        object.material.emissiveIntensity = 0.08 + fabricOpacity * 0.2;
       }
     });
-    storyLight.current.intensity = storyOpacity * (mobile ? 2.2 : 5.5);
-    proposalLight.current.intensity = proposalOpacity * (mobile ? 2 : 4.8);
-    fabricLight.current.intensity = fabricOpacity * (mobile ? 2.8 : 6.2);
+    storyLight.current.intensity = storyOpacity * (mobile ? 3.2 : 6.4);
+    proposalLight.current.intensity = proposalOpacity * (mobile ? 3 : 5.8);
+    fabricLight.current.intensity = fabricOpacity * (mobile ? 4 : 7.2);
   });
 
   return (
@@ -1099,9 +1099,9 @@ function SpatialJourney() {
     worldCurve.getTangentAt(Math.min(1, travel + 0.018), tangentAfter);
     const bankTarget =
       clamp(
-        (tangentAfter.x - tangentBefore.x) * (mobile ? -0.18 : -0.58),
-        mobile ? -0.022 : -0.068,
-        mobile ? 0.022 : 0.068,
+        (tangentAfter.x - tangentBefore.x) * (mobile ? -0.3 : -0.72),
+        mobile ? -0.038 : -0.085,
+        mobile ? 0.038 : 0.085,
       ) *
       (1 - pavilionAlignment) *
       (0.72 + travelEnergy * 0.28);
@@ -1114,11 +1114,11 @@ function SpatialJourney() {
     camera.position.set(
       cameraPosition.x +
         pointer.current.x *
-          (mobile ? 0.018 : 0.1) *
+          (mobile ? 0.03 : 0.12) *
           (1 - pavilionAlignment * 0.9),
       cameraPosition.y -
         pointer.current.y *
-          (mobile ? 0.012 : 0.065) *
+          (mobile ? 0.02 : 0.075) *
           (1 - pavilionAlignment * 0.9),
       cameraPosition.z,
     );

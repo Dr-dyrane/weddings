@@ -35,6 +35,32 @@ test("the public invitation remains useful before the optional presentation", as
   expect(blockers).toEqual([]);
 });
 
+test("the live threshold contracts to the bar height before Play grows", async ({
+  page,
+}) => {
+  await page.goto("/the_ogranyas");
+
+  const opening = page.locator(".live-ogb-opening");
+  const fill = page.locator(".live-ogb-threshold-fill");
+  const label = page.locator(".live-ogb-threshold-label");
+
+  await expect(opening).toHaveAttribute("data-phase", "collapse", {
+    timeout: 10_000,
+  });
+  await expect
+    .poll(() => fill.evaluate((element) => element.getBoundingClientRect().width))
+    .toBeLessThanOrEqual(35);
+  await expect
+    .poll(() => fill.evaluate((element) => element.getBoundingClientRect().height))
+    .toBe(34);
+
+  await expect(opening).toHaveAttribute("data-phase", "ready");
+  await expect
+    .poll(() => label.evaluate((element) => element.getBoundingClientRect().width))
+    .toBe(64);
+  await expect(page.getByRole("button", { name: "Play invitation" })).toBeEnabled();
+});
+
 test("the public RSVP exposes a real guest response form", async ({
   page,
 }) => {

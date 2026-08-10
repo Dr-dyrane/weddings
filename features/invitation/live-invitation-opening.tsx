@@ -14,7 +14,13 @@ import {
 import type { PublishedWedding } from "@/domains/weddings/published-wedding";
 import { Play } from "@/ui/icons";
 
-type OpeningPhase = "month" | "day" | "fill" | "portrait" | "ready";
+type OpeningPhase =
+  | "month"
+  | "day"
+  | "fill"
+  | "portrait"
+  | "collapse"
+  | "ready";
 
 function twoDigits(value: number) {
   return String(value).padStart(2, "0");
@@ -71,7 +77,9 @@ export function LiveInvitationOpening({
     schedule(() => setPhase("fill"), elapsed);
     elapsed += 820;
     schedule(() => setPhase("portrait"), elapsed);
-    elapsed += 920;
+    elapsed += 620;
+    schedule(() => setPhase("collapse"), elapsed);
+    elapsed += 420;
     schedule(() => setPhase("ready"), elapsed);
 
     return () => timers.forEach(window.clearTimeout);

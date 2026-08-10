@@ -328,6 +328,11 @@ test("Chromium lab vitals and the WebGL demand loop stay within Phase 1 budgets"
     "data-active-chapter",
     "story-one",
   );
+  await page.getByRole("button", { name: "Pause invitation" }).click();
+  await expect(page.locator("main")).toHaveAttribute(
+    "data-playback",
+    "paused",
+  );
 
   await expect
     .poll(

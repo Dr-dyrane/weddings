@@ -100,17 +100,44 @@ const JOURNEY_PLATE_FRAGMENT_SHADER = /* glsl */ `
   varying vec2 vUv;
 
   void main() {
-    vec3 source = texture2D(uMap, vUv).rgb;
-    float sourceLuminance = dot(source, vec3(0.299, 0.587, 0.114));
+    vec3 baseSample = texture2D(uMap, vUv).rgb;
+    float sourceLuminance = dot(baseSample, vec3(0.299, 0.587, 0.114));
     float foreground = smoothstep(0.2, 0.94, 1.0 - vUv.y);
     float lightDepth = smoothstep(0.06, 0.82, sourceLuminance);
-    float depth = clamp(foreground * 0.52 + lightDepth * 0.48, 0.0, 1.0);
-    vec2 shiftedUv = clamp(
-      vUv + uParallax * (depth - 0.34),
+    float foregroundMask = smoothstep(
+      0.58,
+      0.94,
+      foreground * 0.86 + lightDepth * 0.14
+    );
+    float middleMask =
+      smoothstep(0.18, 0.62, foreground * 0.58 + lightDepth * 0.42) *
+      (1.0 - foregroundMask);
+    vec2 backgroundUv = clamp(
+      vUv - uParallax * 0.18,
       vec2(0.002),
       vec2(0.998)
     );
-    vec3 colourSample = texture2D(uMap, shiftedUv).rgb;
+    vec2 middleUv = clamp(
+      vUv + uParallax * 0.3,
+      vec2(0.002),
+      vec2(0.998)
+    );
+    vec2 foregroundUv = clamp(
+      vUv + uParallax * 0.86,
+      vec2(0.002),
+      vec2(0.998)
+    );
+    vec3 colourSample = texture2D(uMap, backgroundUv).rgb;
+    colourSample = mix(
+      colourSample,
+      texture2D(uMap, middleUv).rgb,
+      middleMask
+    );
+    colourSample = mix(
+      colourSample,
+      texture2D(uMap, foregroundUv).rgb,
+      foregroundMask
+    );
     float luminance = dot(colourSample, vec3(0.299, 0.587, 0.114));
     float ink = pow(smoothstep(0.025, 0.9, luminance), 1.18);
     vec3 colour = vec3(ink * 0.56);
@@ -314,7 +341,7 @@ function GoldenThreadSegment({
     if (!material.current || !mesh.current) return;
     const value = clamp(motion.progress.current);
     const threadOpacity =
-      range(value, -0.02, 0.015) * (1 - range(value, 0.9, 0.97));
+      range(value, -0.02, 0.015) * (1 - range(value, 0.84, 0.9));
     const reveal = clamp(value * 1.02 + 0.14);
     const tail = value * 1.02 - 0.04;
     mesh.current.visible =
@@ -413,6 +440,276 @@ function GoldenThread({ motion }: { motion: JourneyMotion }) {
         start={0.7}
       />
     </group>
+  );
+}
+
+const OCCLUSION_LEAVES: ReadonlyArray<{
+  position: WorldPoint;
+  rotation: WorldPoint;
+  scale: WorldPoint;
+}> = [
+  {
+    position: [-0.42, 1.1, 0.08],
+    rotation: [0.1, -0.45, -0.72],
+    scale: [0.34, 0.82, 0.12],
+  },
+  {
+    position: [0.35, 1.55, -0.04],
+    rotation: [-0.2, 0.38, 0.64],
+    scale: [0.3, 0.7, 0.1],
+  },
+  {
+    position: [-0.7, 0.35, 0.14],
+    rotation: [0.24, -0.3, -0.46],
+    scale: [0.42, 0.96, 0.14],
+  },
+  {
+    position: [0.58, 0.62, -0.08],
+    rotation: [-0.16, 0.52, 0.52],
+    scale: [0.36, 0.88, 0.12],
+  },
+  {
+    position: [-0.46, -0.58, 0.06],
+    rotation: [0.18, -0.5, -0.82],
+    scale: [0.38, 0.9, 0.13],
+  },
+  {
+    position: [0.62, -0.42, -0.1],
+    rotation: [-0.2, 0.42, 0.76],
+    scale: [0.32, 0.78, 0.11],
+  },
+] as const;
+
+function FoliageOcclusionMaterial() {
+  return (
+    <meshStandardMaterial
+      color="#161712"
+      emissive="#3a3107"
+      emissiveIntensity={0.08}
+      metalness={0}
+      opacity={0}
+      roughness={0.98}
+      transparent
+    />
+  );
+}
+
+function FabricOcclusionMaterial() {
+  return (
+    <meshStandardMaterial
+      color="#141414"
+      emissive="#2b2405"
+      emissiveIntensity={0.08}
+      metalness={0.015}
+      opacity={0}
+      roughness={0.96}
+      side={THREE.DoubleSide}
+      transparent
+    />
+  );
+}
+
+function FoliageOccluder() {
+  return (
+    <>
+      <mesh position={[0, 0.12, 0]} rotation={[0, 0, -0.18]}>
+        <cylinderGeometry args={[0.035, 0.065, 4.2, 7]} />
+        <FoliageOcclusionMaterial />
+      </mesh>
+      <mesh position={[-0.2, 0.45, 0.02]} rotation={[0, 0, 0.36]}>
+        <cylinderGeometry args={[0.022, 0.045, 2.7, 7]} />
+        <FoliageOcclusionMaterial />
+      </mesh>
+      {OCCLUSION_LEAVES.map((leaf, index) => (
+        <mesh
+          key={index}
+          position={leaf.position as [number, number, number]}
+          rotation={leaf.rotation as [number, number, number]}
+          scale={leaf.scale as [number, number, number]}
+        >
+          <sphereGeometry args={[0.72, 9, 7]} />
+          <FoliageOcclusionMaterial />
+        </mesh>
+      ))}
+    </>
+  );
+}
+
+function ForegroundOcclusionGates({ motion }: { motion: JourneyMotion }) {
+  const { size } = useThree();
+  const storyGate = useRef<THREE.Group>(null);
+  const proposalGate = useRef<THREE.Group>(null);
+  const fabricGate = useRef<THREE.Group>(null);
+  const storyLight = useRef<THREE.PointLight>(null);
+  const proposalLight = useRef<THREE.PointLight>(null);
+  const fabricLight = useRef<THREE.PointLight>(null);
+  const fabricShape = useMemo(() => {
+    const shape = new THREE.Shape();
+    shape.moveTo(-0.28, -4.3);
+    shape.bezierCurveTo(-1.05, -2.4, -0.38, -0.25, -0.9, 2.25);
+    shape.bezierCurveTo(-1.05, 3.1, -0.62, 4.15, -0.42, 4.45);
+    shape.lineTo(0.72, 4.45);
+    shape.bezierCurveTo(0.34, 2.75, 1.02, 0.8, 0.48, -1.25);
+    shape.bezierCurveTo(0.16, -2.65, 0.58, -3.72, 0.48, -4.3);
+    shape.closePath();
+    return shape;
+  }, []);
+
+  useFrame((_, delta) => {
+    if (
+      !storyGate.current ||
+      !proposalGate.current ||
+      !fabricGate.current ||
+      !storyLight.current ||
+      !proposalLight.current ||
+      !fabricLight.current
+    ) {
+      return;
+    }
+    const value = clamp(motion.progress.current);
+    const mobile = size.width <= 700;
+    const storyOpacity = windowOpacity(value, 0.14, 0.2, 0.33, 0.4);
+    const proposalOpacity = windowOpacity(value, 0.29, 0.35, 0.46, 0.53);
+    const fabricOpacity = windowOpacity(value, 0.64, 0.7, 0.84, 0.91);
+    const storyLocal = range(value, 0.14, 0.4);
+    const proposalLocal = range(value, 0.29, 0.53);
+    const fabricLocal = range(value, 0.64, 0.91);
+
+    storyGate.current.visible = storyOpacity > 0.004;
+    proposalGate.current.visible = proposalOpacity > 0.004;
+    fabricGate.current.visible = fabricOpacity > 0.004;
+
+    storyGate.current.position.x = THREE.MathUtils.damp(
+      storyGate.current.position.x,
+      (mobile ? 1.55 : 3.25) +
+        motion.pointer.current.x * (mobile ? 0.06 : 0.18) +
+        (storyLocal - 0.5) * (mobile ? 0.28 : 0.72),
+      5.2,
+      delta,
+    );
+    storyGate.current.rotation.z = THREE.MathUtils.damp(
+      storyGate.current.rotation.z,
+      -0.22 + (storyLocal - 0.5) * 0.24,
+      4.6,
+      delta,
+    );
+    proposalGate.current.position.x = THREE.MathUtils.damp(
+      proposalGate.current.position.x,
+      (mobile ? -1.38 : -1.95) -
+        motion.pointer.current.x * (mobile ? 0.05 : 0.16) -
+        (proposalLocal - 0.5) * (mobile ? 0.24 : 0.64),
+      5,
+      delta,
+    );
+    proposalGate.current.rotation.z = THREE.MathUtils.damp(
+      proposalGate.current.rotation.z,
+      0.28 - (proposalLocal - 0.5) * 0.22,
+      4.4,
+      delta,
+    );
+    fabricGate.current.position.x = THREE.MathUtils.damp(
+      fabricGate.current.position.x,
+      (mobile ? 1.62 : 3) +
+        motion.pointer.current.x * (mobile ? 0.04 : 0.12) +
+        (fabricLocal - 0.5) * (mobile ? 0.32 : 0.85),
+      4.8,
+      delta,
+    );
+    fabricGate.current.rotation.y = THREE.MathUtils.damp(
+      fabricGate.current.rotation.y,
+      -0.38 + (fabricLocal - 0.5) * 0.24,
+      4.2,
+      delta,
+    );
+
+    storyGate.current.traverse((object) => {
+      if (
+        object instanceof THREE.Mesh &&
+        object.material instanceof THREE.MeshStandardMaterial
+      ) {
+        object.material.opacity = storyOpacity * (mobile ? 0.5 : 0.78);
+        object.material.emissiveIntensity = 0.08 + storyOpacity * 0.16;
+      }
+    });
+    proposalGate.current.traverse((object) => {
+      if (
+        object instanceof THREE.Mesh &&
+        object.material instanceof THREE.MeshStandardMaterial
+      ) {
+        object.material.opacity = proposalOpacity * (mobile ? 0.48 : 0.74);
+        object.material.emissiveIntensity = 0.08 + proposalOpacity * 0.14;
+      }
+    });
+    fabricGate.current.traverse((object) => {
+      if (
+        object instanceof THREE.Mesh &&
+        object.material instanceof THREE.MeshStandardMaterial
+      ) {
+        object.material.opacity = fabricOpacity * (mobile ? 0.55 : 0.82);
+        object.material.emissiveIntensity = 0.08 + fabricOpacity * 0.14;
+      }
+    });
+    storyLight.current.intensity = storyOpacity * (mobile ? 2.2 : 5.5);
+    proposalLight.current.intensity = proposalOpacity * (mobile ? 2 : 4.8);
+    fabricLight.current.intensity = fabricOpacity * (mobile ? 2.8 : 6.2);
+  });
+
+  return (
+    <>
+      <group
+        position={[3.25, -0.2, -9.6]}
+        ref={storyGate}
+        scale={size.width <= 700 ? 0.78 : 1.25}
+      >
+        <FoliageOccluder />
+        <pointLight
+          color="#ffd21e"
+          decay={2}
+          distance={5.5}
+          intensity={0}
+          position={[-1.1, 0.1, 1.25]}
+          ref={storyLight}
+        />
+      </group>
+      <group
+        position={[-1.95, 0.2, -17]}
+        ref={proposalGate}
+        scale={size.width <= 700 ? 0.74 : 1.08}
+      >
+        <FoliageOccluder />
+        <pointLight
+          color="#ffd21e"
+          decay={2}
+          distance={5}
+          intensity={0}
+          position={[1, -0.2, 1.1]}
+          ref={proposalLight}
+        />
+      </group>
+      <group
+        position={[3, -0.15, -35.2]}
+        ref={fabricGate}
+        rotation={[0.03, -0.38, -0.04]}
+        scale={size.width <= 700 ? 0.78 : 1.15}
+      >
+        <mesh position={[0, 0, 0.08]}>
+          <shapeGeometry args={[fabricShape, 18]} />
+          <FabricOcclusionMaterial />
+        </mesh>
+        <mesh position={[0.62, 0.2, -0.38]} scale={[0.72, 0.92, 1]}>
+          <shapeGeometry args={[fabricShape, 18]} />
+          <FabricOcclusionMaterial />
+        </mesh>
+        <pointLight
+          color="#ffd21e"
+          decay={2}
+          distance={7}
+          intensity={0}
+          position={[-1.45, 0.6, 1.6]}
+          ref={fabricLight}
+        />
+      </group>
+    </>
   );
 }
 
@@ -789,15 +1086,25 @@ function SpatialJourney() {
 
     const travel = clamp(progress.current);
     const pavilionAlignment = windowOpacity(travel, 0.38, 0.45, 0.67, 0.74);
-    const lookAhead = Math.min(1, travel + (mobile ? 0.035 : 0.05));
+    const travelEnergy = clamp(Math.abs(progressVelocity.current) * 0.42);
+    const lookAhead = Math.min(
+      1,
+      travel +
+        (mobile ? 0.03 : 0.046) +
+        travelEnergy * (mobile ? 0.01 : 0.018),
+    );
     worldCurve.getPointAt(travel, cameraPosition);
     worldCurve.getPointAt(lookAhead, cameraTarget);
     worldCurve.getTangentAt(Math.max(0, travel - 0.018), tangentBefore);
     worldCurve.getTangentAt(Math.min(1, travel + 0.018), tangentAfter);
-    const bankTarget = mobile
-      ? 0
-      : clamp((tangentAfter.x - tangentBefore.x) * -0.62, -0.075, 0.075) *
-        (1 - pavilionAlignment);
+    const bankTarget =
+      clamp(
+        (tangentAfter.x - tangentBefore.x) * (mobile ? -0.18 : -0.58),
+        mobile ? -0.022 : -0.068,
+        mobile ? 0.022 : 0.068,
+      ) *
+      (1 - pavilionAlignment) *
+      (0.72 + travelEnergy * 0.28);
     cameraBank.current = THREE.MathUtils.damp(
       cameraBank.current,
       bankTarget,
@@ -806,10 +1113,12 @@ function SpatialJourney() {
     );
     camera.position.set(
       cameraPosition.x +
-        pointer.current.x * (mobile ? 0 : 0.1) * (1 - pavilionAlignment * 0.9),
+        pointer.current.x *
+          (mobile ? 0.018 : 0.1) *
+          (1 - pavilionAlignment * 0.9),
       cameraPosition.y -
         pointer.current.y *
-          (mobile ? 0 : 0.065) *
+          (mobile ? 0.012 : 0.065) *
           (1 - pavilionAlignment * 0.9),
       cameraPosition.z,
     );
@@ -830,6 +1139,7 @@ function SpatialJourney() {
       <ambientLight intensity={0.8} />
       <pointLight color="#ffd21e" intensity={7} position={[3, 2, 4]} />
       <GoldenThread motion={motion} />
+      <ForegroundOcclusionGates motion={motion} />
       <JourneyDepthPlate
         desktopPosition={[2.35, -0.55, -7.5]}
         desktopSize={[8.5, 5.67]}

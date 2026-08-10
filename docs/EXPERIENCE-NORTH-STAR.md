@@ -171,6 +171,16 @@ spatial beat without being rendered into WebGL. The required proof passage is:
 **She said yes → curve through darkness → pavilion appears in the distance →
 approach and pass its threshold → fabric emerges beyond it.**
 
+Foreground occlusion is sparse and physical: shadow foliage passes the camera
+on opposing sides of the story chapters, the pavilion jamb becomes the passage
+edge, and a curved fabric layer crosses the dress chapter before falling away.
+Each gate is real lightweight geometry, follows the spring-damped camera path,
+and may receive a local trace of the approved yellow light. It must remain
+behind semantic copy, disappear before RSVP controls, and never become fog,
+particles, bloom or ornamental post-processing. Authored plates separate
+background, middle and foreground sampling so parallax reads as layered space
+rather than a flat image translation.
+
 The pavilion plate is a composed destination, not a surface to skew around the
 camera. Its plane remains perpendicular to the approach and uses only internal
 depth parallax. The camera curves before and after the pavilion, straightens

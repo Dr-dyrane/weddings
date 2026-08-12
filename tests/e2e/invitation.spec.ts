@@ -61,7 +61,7 @@ test("the live threshold contracts to the bar height before Play grows", async (
   await expect(page.getByRole("button", { name: "Play invitation" })).toBeEnabled();
 });
 
-test("the public RSVP exposes a real guest response form", async ({
+test("the public RSVP exposes a real form and never confirms an unsaved response", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -96,8 +96,14 @@ test("the public RSVP exposes a real guest response form", async ({
   await expect(submit).toBeEnabled();
   await submit.click();
   await expect(
-    page.getByRole("heading", { name: "Thank you, Release Guest." }),
+    page.getByText(
+      "Your response was not saved. RSVP delivery is temporarily unavailable; please try again later.",
+    ),
   ).toBeVisible();
+  await expect(submit).toBeEnabled();
+  await expect(
+    page.getByRole("heading", { name: "Thank you, Release Guest." }),
+  ).toHaveCount(0);
 });
 
 test("opening and bypass actions move focus to meaningful content", async ({

@@ -21,7 +21,7 @@ function clearEventBindings() {
 describe("public RSVP route", () => {
   afterEach(clearEventBindings);
 
-  it("completes the preview journey when hosted storage is unavailable", async () => {
+  it("does not acknowledge a response when hosted storage is unavailable", async () => {
     clearEventBindings();
 
     const result = await POST(
@@ -33,11 +33,11 @@ describe("public RSVP route", () => {
       { params: Promise.resolve({ weddingSlug: "the_ogranyas" }) },
     );
 
-    expect(result.status).toBe(202);
+    expect(result.status).toBe(503);
     expect(await result.json()).toEqual({
-      id: `preview_${validResponse.idempotencyKey}`,
-      persistence: "simulated",
-      state: "received",
+      code: "rsvp_storage_unavailable",
+      error:
+        "Your response was not saved. RSVP delivery is temporarily unavailable; please try again later.",
     });
   });
 

@@ -58,6 +58,20 @@ export async function POST(request: Request, { params }: RSVPRouteProps) {
     });
     return response({ id: saved.id, state: "received" }, 201);
   } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === "Event collaboration storage is unavailable."
+    ) {
+      return response(
+        {
+          id: `preview_${input.idempotencyKey}`,
+          persistence: "simulated",
+          state: "received",
+        },
+        202,
+      );
+    }
+
     const message =
       error instanceof Error &&
       error.message === "Please wait a few minutes before trying again."

@@ -94,6 +94,10 @@ test("the public RSVP exposes a real guest response form", async ({
   await page.getByRole("button", { name: "Continue" }).click();
   const submit = page.getByRole("button", { name: "Send my response" });
   await expect(submit).toBeEnabled();
+  await submit.click();
+  await expect(
+    page.getByRole("heading", { name: "Thank you, Release Guest." }),
+  ).toBeVisible();
 });
 
 test("opening and bypass actions move focus to meaningful content", async ({

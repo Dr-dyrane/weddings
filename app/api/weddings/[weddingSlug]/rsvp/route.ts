@@ -64,11 +64,11 @@ export async function POST(request: Request, { params }: RSVPRouteProps) {
     ) {
       return response(
         {
-          id: `preview_${input.idempotencyKey}`,
-          persistence: "simulated",
-          state: "received",
+          code: "rsvp_storage_unavailable",
+          error:
+            "Your response was not saved. RSVP delivery is temporarily unavailable; please try again later.",
         },
-        202,
+        503,
       );
     }
 

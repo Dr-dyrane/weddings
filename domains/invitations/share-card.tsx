@@ -6,7 +6,10 @@ import type { InvitationProjection } from "@/domains/invitations/invitation";
 import { getWeddingDayProgress } from "@/domains/invitations/wedding-progress";
 import { getWeddingOpeningPortrait } from "@/domains/weddings/opening-portrait";
 import type { PublishedWedding } from "@/domains/weddings/published-wedding";
-import { readRuntimeAsset } from "@/domains/weddings/runtime-assets";
+import {
+  readRuntimeAsset,
+  readRuntimeFontAsset,
+} from "@/domains/weddings/runtime-assets";
 
 const SPACE_GROTESK_PATH = "/fonts/dyrane-space-grotesk.ttf";
 
@@ -68,7 +71,7 @@ async function createShareCard(
     ? getWeddingOpeningPortrait(wedding)
     : null;
   const [spaceGroteskFont, portraitData] = await Promise.all([
-    readRuntimeAsset(SPACE_GROTESK_PATH, requestUrl),
+    readRuntimeFontAsset(SPACE_GROTESK_PATH, requestUrl),
     portraitPath ? readRuntimeAsset(portraitPath, requestUrl) : null,
   ]);
   const couplePortrait = portraitData

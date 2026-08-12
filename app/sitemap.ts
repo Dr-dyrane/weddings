@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 import { getSiteOrigin } from "@/domains/weddings/site-origin";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const origin = getSiteOrigin();
+  const origin = getSiteOrigin().origin;
 
   return [
     {

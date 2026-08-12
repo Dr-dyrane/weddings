@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import robots from "@/app/robots";
+import sitemap from "@/app/sitemap";
 import { getPublicInvitation } from "@/domains/invitations/invitation";
 import { getPublicWeddingMetadata } from "@/domains/invitations/public-metadata";
 import {
@@ -54,5 +56,32 @@ describe("public wedding metadata", () => {
       card: "summary_large_image",
       images: [ROOT_SHARE_CARD_PATH],
     });
+  });
+
+  it("indexes public experiences without exposing private invitation routes", () => {
+    const crawlerPolicy = robots();
+    const entries = sitemap();
+
+    expect(crawlerPolicy.sitemap).toBe(
+      "https://weddings.dyrane.tech/sitemap.xml",
+    );
+    expect(crawlerPolicy.rules).toEqual([
+      expect.objectContaining({
+        allow: "/",
+        disallow: expect.arrayContaining([
+          "/api/",
+          "/*/invite/",
+          "/*/studio/",
+        ]),
+      }),
+    ]);
+    expect(entries.map((entry) => entry.url)).toEqual([
+      "https://weddings.dyrane.tech/",
+      "https://weddings.dyrane.tech/start",
+      "https://weddings.dyrane.tech/the_ogranyas",
+      "https://weddings.dyrane.tech/the_ogranyas/celebration",
+    ]);
+    expect(JSON.stringify(entries)).not.toContain("/invite/");
+    expect(JSON.stringify(entries)).not.toContain("/studio/");
   });
 });

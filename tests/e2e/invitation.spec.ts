@@ -78,6 +78,18 @@ test("the public RSVP exposes a real guest response form", async ({
   await name.fill("Release Guest");
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page.getByLabel("Table preference")).toBeVisible();
+  const orbIsContained = await page
+    .locator('.journey-rsvp-form [role="progressbar"]')
+    .evaluate((orb) => {
+      const orbBounds = orb.getBoundingClientRect();
+      const journeyBounds = orb.closest("section")?.getBoundingClientRect();
+      return Boolean(
+        journeyBounds &&
+          orbBounds.left >= journeyBounds.left &&
+          orbBounds.right <= journeyBounds.right,
+      );
+    });
+  expect(orbIsContained).toBe(true);
   await page.getByRole("button", { name: "Continue" }).click();
   await page.getByRole("button", { name: "Continue" }).click();
   const submit = page.getByRole("button", { name: "Send my response" });

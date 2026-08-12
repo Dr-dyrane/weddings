@@ -25,8 +25,8 @@
 
 .embedded {
   background: transparent;
-  gap: clamp(34px, 6vw, 80px);
-  grid-template-columns: minmax(0, 1fr) minmax(116px, 0.25fr);
+  gap: clamp(28px, 4vw, 56px);
+  grid-template-columns: minmax(0, 1fr) minmax(216px, 0.42fr);
   min-height: 620px;
   padding: clamp(42px, 7vw, 78px) 0;
 }

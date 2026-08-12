@@ -582,7 +582,7 @@ export function WeddingExperience({
         aria-hidden="true"
         preload="metadata"
         ref={audioRef}
-        src="/audio/gymnopedie-no-1-kevin-macleod.mp3"
+        src="/audio/a-thousand-years-christina-perri.mp3"
       />
 
       <a className="journey-skip" href="#details" onClick={skipExperience}>
@@ -817,14 +817,9 @@ export function WeddingExperience({
           <p>{wedding.couple.first} &amp; {wedding.couple.second}</p>
           <time>{wedding.dateLabel} · {wedding.locationLabel}</time>
           <small>Created with Dyrane Weddings</small>
-          <a
-            className="journey-music-credit"
-            href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100787"
-            rel="noreferrer"
-            target="_blank"
-          >
-            Gymnopédie No. 1 · Kevin MacLeod · CC BY 3.0
-          </a>
+          <span className="journey-music-credit">
+            A Thousand Years · Christina Perri
+          </span>
         </footer>
       </section>
     </main>

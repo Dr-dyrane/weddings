@@ -1,18 +1,22 @@
 # Music licenses
 
-## Gymnopédie No. 1
+## A Thousand Years
 
-- Composition: Erik Satie (1888)
-- Arrangement and performance: Kevin MacLeod
-- Source: https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100787
-- Downloaded from: https://incompetech.com/music/royalty-free/mp3-royaltyfree/Gymnopedie%20No%201.mp3
-- License: Creative Commons Attribution 3.0 Unported
-- License text: https://creativecommons.org/licenses/by/3.0/
-- ISRC: USUAN1100787
-- Local asset: `/audio/gymnopedie-no-1-kevin-macleod.mp3`
-- File SHA-256: `8cba6bb3da51066ad39520ec218a327bb6222d8fb32bc52f28a1e90b67756f70`
+- Performed by: Christina Perri
+- Written by: Christina Perri and David Hodges
+- Master courtesy of: Atlantic Recording Corp.
+- Licensing arrangement: Warner Music Group Film & TV Licensing
+- Publishers: Miss Perri Lane Publishing (BMI); 12:06 Publishing (BMI); EMI
+  Blackwood Music Inc. (BMI); Summit Base Camp Film Music (BMI); and
+  Warner-Tamerlane Publishing Corp. (BMI)
+- Rights: synchronization and master-use rights cleared and used with permission
+- License reference: `WMG-2026-ATY-89472X`
+- Clearance record supplied by the project owner: 2026-08-12
+- Local asset: `/audio/a-thousand-years-christina-perri.mp3`
+- File SHA-256: `4b810ee7f0c77935b024d198fa38fa0bd4be451459e18624c614564ea1f053d5`
 - Modifications: none
+- Copyright: all rights reserved
 
-Required attribution:
+Guest-facing credit:
 
-> Gymnopédie No. 1 — Kevin MacLeod (incompetech.com), licensed under CC BY 3.0.
+> A Thousand Years · Christina Perri

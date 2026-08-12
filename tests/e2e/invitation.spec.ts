@@ -9,6 +9,14 @@ test("the public invitation remains useful before the optional presentation", as
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/the_ogranyas");
 
+  await expect(page.locator("audio")).toHaveAttribute(
+    "src",
+    "/audio/a-thousand-years-christina-perri.mp3",
+  );
+  await expect(page.locator(".journey-music-credit")).toHaveText(
+    "A Thousand Years · Christina Perri",
+  );
+
   const open = page.getByRole("button", { name: "Play invitation" });
   await expect(open).toBeEnabled();
   await open.click();

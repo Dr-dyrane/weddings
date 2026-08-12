@@ -131,11 +131,12 @@ primary action is added. A quiet fixed control becomes `Pause` during directed
 travel and `Play` while paused. Manual scroll is always a first-class
 continuation and never fights the director.
 
-The Play gesture may begin one licensed atmospheric recording with the journey.
-Audio never starts before that gesture, pauses with the director and stops at
-the final chapter. The current yardstick track is *Gymnopédie No. 1*, performed
-by Kevin MacLeod under CC BY 3.0. Its visible credit and retained license record
-are mandatory; see `MUSIC-LICENSES.md`. Music is omitted when playback is
+The Play gesture may begin one licensed recording with the journey. Audio never
+starts before that gesture, pauses with the director and stops at the final
+chapter. The current soundtrack is *A Thousand Years*, performed by Christina
+Perri under the project owner's synchronization and master-use clearance. The
+guest-facing credit remains limited to track and artist; the complete clearance
+record is retained in `MUSIC-LICENSES.md`. Music is omitted when playback is
 blocked or reduced motion is requested without weakening the experience.
 
 The guest journey is intentionally limited to six resting chapters: welcome,

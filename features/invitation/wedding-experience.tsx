@@ -107,7 +107,14 @@ type JourneyChapter =
   | "dress"
   | "rsvp";
 
-type JourneyPlayback = "idle" | "playing" | "paused" | "complete" | "manual";
+type JourneyPlayback =
+  | "idle"
+  | "playing"
+  | "paused"
+  | "soundtrack"
+  | "soundtrack-paused"
+  | "complete"
+  | "manual";
 
 const DIRECTOR_FIRST_HOLD_MS = 350;
 const DIRECTOR_HOLD_MS = 1600;
@@ -357,13 +364,28 @@ export function WeddingExperience({
     opened && webgl && !spatialUnavailable ? "webgl" : opened ? "static" : "closed";
 
   const pauseJourney = useCallback(() => {
-    setPlayback((current) => (current === "playing" ? "paused" : current));
+    setPlayback((current) =>
+      current === "playing"
+        ? "paused"
+        : current === "soundtrack"
+          ? "soundtrack-paused"
+          : current,
+    );
     audioRef.current?.pause();
   }, []);
 
   const playJourney = useCallback(() => {
     if (reducedMotion) {
       setPlayback("manual");
+      return;
+    }
+
+    if (playback === "soundtrack-paused") {
+      setPlayback("soundtrack");
+      if (audioRef.current) {
+        audioRef.current.volume = 0.34;
+        void audioRef.current.play().catch(() => setPlayback("complete"));
+      }
       return;
     }
 
@@ -409,8 +431,8 @@ export function WeddingExperience({
     );
 
     if (!targets.length) {
-      setPlayback("complete");
-      audioRef.current?.pause();
+      const audio = audioRef.current;
+      setPlayback(audio && !audio.paused && !audio.ended ? "soundtrack" : "complete");
       return;
     }
 
@@ -475,8 +497,8 @@ export function WeddingExperience({
 
       targetIndex += 1;
       if (targetIndex >= targets.length) {
-        setPlayback("complete");
-        audioRef.current?.pause();
+        const audio = audioRef.current;
+        setPlayback(audio && !audio.paused && !audio.ended ? "soundtrack" : "complete");
         return;
       }
 
@@ -552,6 +574,19 @@ export function WeddingExperience({
     });
   };
 
+  const directorIsPausing =
+    playback === "playing" || playback === "soundtrack";
+  const directorLabel =
+    playback === "playing"
+      ? "Pause invitation"
+      : playback === "soundtrack"
+        ? "Pause music"
+        : playback === "soundtrack-paused"
+          ? "Resume music"
+          : playback === "complete"
+            ? "Replay invitation"
+            : "Play invitation";
+
   return (
     <main
       className={`editorial-experience${opened ? " is-open" : ""}`}
@@ -580,6 +615,20 @@ export function WeddingExperience({
 
       <audio
         aria-hidden="true"
+        onEnded={() =>
+          setPlayback((current) =>
+            current === "soundtrack" || current === "soundtrack-paused"
+              ? "complete"
+              : current,
+          )
+        }
+        onError={() =>
+          setPlayback((current) =>
+            current === "soundtrack" || current === "soundtrack-paused"
+              ? "complete"
+              : current,
+          )
+        }
         preload="metadata"
         ref={audioRef}
         src="/audio/a-thousand-years-christina-perri.mp3"
@@ -619,18 +668,12 @@ export function WeddingExperience({
             {playback === "paused" ? "Scroll to enter" : ""}
           </span>
           <button
-            aria-label={
-              playback === "playing"
-                ? "Pause invitation"
-                : playback === "complete"
-                  ? "Replay invitation"
-                  : "Play invitation"
-            }
+            aria-label={directorLabel}
             className="journey-director-control"
-            onClick={playback === "playing" ? pauseJourney : playJourney}
+            onClick={directorIsPausing ? pauseJourney : playJourney}
             type="button"
           >
-            {playback === "playing" ? (
+            {directorIsPausing ? (
               <Pause aria-hidden="true" fill="currentColor" size={20} strokeWidth={1.5} />
             ) : (
               <Play aria-hidden="true" fill="currentColor" size={20} strokeWidth={1.5} />

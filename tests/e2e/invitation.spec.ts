@@ -214,6 +214,48 @@ test("play directs the journey and guest input pauses it", async ({ page }) => {
   await expect(page.getByText("Scroll to enter")).toBeVisible();
 });
 
+test("the soundtrack finishes naturally after directed travel", async ({
+  browserName,
+  isMobile,
+  page,
+}) => {
+  test.skip(browserName !== "chromium" || isMobile, "One deterministic lifecycle check is sufficient.");
+
+  await page.goto("/the_ogranyas");
+  const play = page.getByRole("button", { name: "Play invitation" });
+  await expect(play).toBeEnabled({ timeout: 10_000 });
+
+  await page.evaluate(() => {
+    const nativeAnimationFrame = window.requestAnimationFrame.bind(window);
+    let virtualTime = performance.now();
+    window.requestAnimationFrame = (callback) =>
+      nativeAnimationFrame(() => {
+        virtualTime += 20_000;
+        callback(virtualTime);
+      });
+  });
+  await play.click();
+
+  await expect(page.locator("main")).toHaveAttribute("data-playback", "soundtrack", {
+    timeout: 10_000,
+  });
+  const pauseMusic = page.getByRole("button", { name: "Pause music" });
+  await expect(pauseMusic).toBeVisible();
+  await pauseMusic.click();
+  await expect(page.locator("main")).toHaveAttribute(
+    "data-playback",
+    "soundtrack-paused",
+  );
+  await page.getByRole("button", { name: "Resume music" }).click();
+  await expect(page.locator("main")).toHaveAttribute("data-playback", "soundtrack");
+
+  await page.locator("audio").evaluate((audio) =>
+    audio.dispatchEvent(new Event("ended")),
+  );
+  await expect(page.locator("main")).toHaveAttribute("data-playback", "complete");
+  await expect(page.getByRole("button", { name: "Replay invitation" })).toBeVisible();
+});
+
 test("reduced motion keeps authored chapter art and removes the spatial canvas", async ({
   page,
 }) => {

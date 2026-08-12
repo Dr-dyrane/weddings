@@ -132,12 +132,14 @@ travel and `Play` while paused. Manual scroll is always a first-class
 continuation and never fights the director.
 
 The Play gesture may begin one licensed recording with the journey. Audio never
-starts before that gesture, pauses with the director and stops at the final
-chapter. The current soundtrack is *A Thousand Years*, performed by Christina
-Perri under the project owner's synchronization and master-use clearance. The
-guest-facing credit remains limited to track and artist; the complete clearance
-record is retained in `MUSIC-LICENSES.md`. Music is omitted when playback is
-blocked or reduced motion is requested without weakening the experience.
+starts before that gesture and pauses with the director. When directed travel
+reaches the final chapter, the soundtrack continues naturally for the rest of
+the guest's stay until the recording ends; it does not loop or restart. The
+current soundtrack is *A Thousand Years*, performed by Christina Perri under
+the project owner's synchronization and master-use clearance. The guest-facing
+credit remains limited to track and artist; the complete clearance record is
+retained in `MUSIC-LICENSES.md`. Music is omitted when playback is blocked or
+reduced motion is requested without weakening the experience.
 
 The guest journey is intentionally limited to six resting chapters: welcome,
 two truthful story beats, celebration details, dress guidance and RSVP. Wedding

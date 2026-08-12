@@ -1,0 +1,32 @@
+name: Production smoke
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 13 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: weddings-production-smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: Public production smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify public release
+        env:
+          WEDDINGS_PRODUCTION_ORIGIN: https://weddings.dyrane.tech
+        run: node scripts/verify-production.mjs
